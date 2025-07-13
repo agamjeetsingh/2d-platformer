@@ -15,6 +15,10 @@
 class InputManager {
 public:
 
+    /**
+      * @brief Gets the singleton instance of InputManager
+      * @return Reference to the single InputManager instance
+      */
     static InputManager& getInstance() {
         static InputManager instance;
         return instance;
