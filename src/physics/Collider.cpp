@@ -13,7 +13,7 @@ Collider::Collider(std::vector<sf::FloatRect> hitbox) : hitbox(std::move(hitbox)
 
 Collider::Collider(std::vector<sf::FloatRect> hitbox, sf::Vector2f position): hitbox(std::move(hitbox)), position(position) {}
 
-void Collider::setPosition(const sf::Vector2f position) {
+std::optional<Collider> Collider::setPosition(const sf::Vector2f position) {
     const sf::Vector2f old_position = this->position;
     const auto bodies = ColliderBodies::getInstance().getBodies();
     const auto old_hitbox = hitbox;
@@ -33,15 +33,16 @@ void Collider::setPosition(const sf::Vector2f position) {
             for (auto& box: hitbox) {
                 box.position -= position_diff;
             }
-            return;
+            return body;
         }
     }
+    return std::nullopt;
 }
 
 // TODO - With my current implementation of setPosition and addPosition, if there are multiple collisions with a delta
 // TODO - movement, I am returning an arbitrary one when I should return the "first" one.
 
-void Collider::addPosition(const sf::Vector2f position) {
+std::optional<Collider> Collider::addPosition(const sf::Vector2f position) {
     const sf::Vector2f old_position = this->position;
     const auto bodies = ColliderBodies::getInstance().getBodies();
     const auto old_hitbox = hitbox;
@@ -59,9 +60,10 @@ void Collider::addPosition(const sf::Vector2f position) {
             for (auto& box: hitbox) {
                 box.position -= position;
             }
-            return;
+            return body;
         }
     }
+    return std::nullopt;
 }
 
 [[nodiscard]] sf::Vector2f Collider::getPosition() const {

@@ -30,14 +30,18 @@ public:
     /**
      * @brief Sets the position of the object to the given one.
      * @param position The new position of the Collider object.
+     * @return \code std::nullopt\endcode if the new position doesn't intersect with any other collider.
+     * Otherwise, returns the collider its new position intersects with.
      */
-    void setPosition(sf::Vector2f position);
+    std::optional<Collider> setPosition(sf::Vector2f position);
 
     /**
      * @brief Updates the position of the object by adding the provided one to it.
      * @param position The position vector to be added.
+     * @return \code std::nullopt\endcode if the new position doesn't intersect with any other collider.
+     * Otherwise, returns the collider its new position intersects with.
      */
-    void addPosition(sf::Vector2f position);
+    std::optional<Collider> addPosition(sf::Vector2f position);
 
     /**
      * @brief Gets the position of the object.
@@ -56,8 +60,6 @@ public:
     bool operator==(const Collider& other) const;
 
     [[nodiscard]] const std::vector<sf::FloatRect>& getHitbox() const;
-
-    bool tryMove()
 
 private:
     sf::Vector2f position;
