@@ -9,15 +9,15 @@ ColliderBodies& ColliderBodies::getInstance() {
     return instance;
 }
 
-[[nodiscard]] const std::unordered_set<Collider, ColliderHash>& ColliderBodies::getBodies() const {
+[[nodiscard]] const std::unordered_set<std::reference_wrapper<Collider>, ColliderRefHash, ColliderRefEqual>& ColliderBodies::getBodies() const {
     return bodies;
 }
 
-void ColliderBodies::addBody(Collider body) {
-    bodies.insert(body);
+void ColliderBodies::addBody(Collider& body) {
+    bodies.insert(std::ref(body));
 }
 
-void ColliderBodies::removeBody(Collider body) {
-    bodies.erase(body);
+void ColliderBodies::removeBody(Collider& body) {
+    bodies.erase(std::ref(body));
 }
 
