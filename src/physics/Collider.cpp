@@ -4,16 +4,25 @@
 
 #include "../../include/physics/Collider.h"
 
+#include <iostream>
 #include <unordered_set>
 
 #include "../../include/physics/ColliderBodies.h"
 
 class ColliderBodies;
-Collider::Collider(std::vector<sf::FloatRect> hitbox) : hitbox(std::move(hitbox)), position({0, 0}) {}
+Collider::Collider(std::vector<sf::FloatRect> hitbox) : position({0, 0}), hitbox(std::move(hitbox)) {
+    ColliderBodies::getInstance().addBody(*this);
+}
 
-Collider::Collider(std::vector<sf::FloatRect> hitbox, sf::Vector2f position): hitbox(std::move(hitbox)), position(position) {}
+Collider::Collider(std::vector<sf::FloatRect> hitbox, sf::Vector2f position) : position(position), hitbox(std::move(hitbox)) {
+    for (auto& box: this->hitbox) {
+        box.position += position;
+    }
 
-std::optional<Collider> Collider::setPosition(const sf::Vector2f position) {
+    ColliderBodies::getInstance().addBody(*this);
+}
+
+[[nodiscard]] std::optional<Collider> Collider::setPosition(const sf::Vector2f position) {
     const sf::Vector2f old_position = this->position;
     const auto bodies = ColliderBodies::getInstance().getBodies();
     const auto old_hitbox = hitbox;
@@ -42,7 +51,7 @@ std::optional<Collider> Collider::setPosition(const sf::Vector2f position) {
 // TODO - With my current implementation of setPosition and addPosition, if there are multiple collisions with a delta
 // TODO - movement, I am returning an arbitrary one when I should return the "first" one.
 
-std::optional<Collider> Collider::addPosition(const sf::Vector2f position) {
+[[nodiscard]] std::optional<Collider> Collider::addPosition(const sf::Vector2f position) {
     const sf::Vector2f old_position = this->position;
     const auto bodies = ColliderBodies::getInstance().getBodies();
     const auto old_hitbox = hitbox;
@@ -54,12 +63,16 @@ std::optional<Collider> Collider::addPosition(const sf::Vector2f position) {
 
     for (const auto& body: bodies) {
         if (collidesWith(body)) {
+            if (*this == body) {
+                continue;
+            }
             // Reset the movement (TODO - or in future allow maximum possible movement before collision)
             this->position = old_position;
 
             for (auto& box: hitbox) {
                 box.position -= position;
             }
+            assert(*this != body);
             return body;
         }
     }
