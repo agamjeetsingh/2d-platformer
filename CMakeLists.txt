@@ -7,11 +7,42 @@ find_package(SFML 3.0.1 COMPONENTS Graphics Window System REQUIRED)
 
 add_executable(game main.cpp
         include/utility/InputManager.h
-        src/physics/Collider.cpp
-        include/physics/Collider.h
-        src/physics/ColliderBodies.cpp
-        include/physics/ColliderBodies.h
-        include/entity/Player.cpp
-        include/entity/Player.h
+        src/physics/CollisionsHandler.cpp
+        include/physics/CollisionsHandler.h
+        src/entity/player/Player.cpp
+        include/entity/player/Player.h
+        src/entity/CollidableObject.cpp
+        include/entity/CollidableObject.h
+        src/entity/PhysicsObject.cpp
+        include/entity/PhysicsObject.h
+        src/physics/Hitbox.cpp
+        include/physics/Hitbox.h
+        src/events/Collision.cpp
+        include/events/Collision.h
+        include/entity/CollidableObjectType.h
+        include/physics/CollisionAxis.h
+        include/physics/CollisionResolution.h
+        src/physics/ContactResolution.cpp
+        include/physics/ContactResolution.h
+        include/entity/PlayerState.cpp
+        include/entity/player/PlayerState.h
+        include/entity/player/sprites/PlayerSpriteHandler.cpp
+        include/entity/player/sprites/PlayerSpriteHandler.h
+        include/entity/player/Facing.h
+        include/entity/player/sprites/PlayerTextures.h
+        include/entity/player/sprites/PlayerIdle.h
+        include/entity/player/PlayerInputHandler.cpp
+        include/entity/player/PlayerInputHandler.h
+        include/utility/Scheduler.h
+        include/utility/ScheduledEvent.h
+        include/events/Contact.cpp
+        include/events/Contact.h
+        include/physics/ContactAxis.h
+        include/physics/ContactsHandler.cpp
+        include/physics/ContactsHandler.h
+        include/physics/Island.cpp
+        include/physics/Island.h
+        src/physics/GlobalIsland.cpp
+        include/physics/GlobalIsland.h
 )
 target_link_libraries(game SFML::Graphics SFML::Window SFML::System)
