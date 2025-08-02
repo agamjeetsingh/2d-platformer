@@ -111,8 +111,6 @@ public:
         return contacts;
     }
 
-    void updateIslands() const;
-
 private:
     std::unordered_map<std::pair<std::reference_wrapper<CollidableObject>, std::reference_wrapper<CollidableObject>>, Contact, ContactKeyHash, ContactKeyEqual> contacts;
 };

@@ -109,16 +109,6 @@ int main() {
         std::cout << CollisionsHandler::getInstance().getBodies().size() << std::endl;
         std::cout << "--------------------" << std::endl;
 
-        std::cout << "Island Info" << std::endl;
-        std::cout << "Player island size: " << player.getIsland()->getMembers().size() << std::endl;
-        std::cout << "Player in global island or not: " << (player.getIsland() == GlobalIsland::getInstance()) << std::endl;
-        std::cout << "Player island velocity" << (player.getIslandVelocity().x) << std::endl;
-        std::cout << "Box island size: " << box.getIsland()->getMembers().size() << std::endl;
-        std::cout << "Box in global island or not: " << (box.getIsland() == GlobalIsland::getInstance()) << std::endl;
-        assert(&GlobalIsland::getInstance()->getLeader() != &box);
-        std::cout << "--------------------" << std::endl;
-        std::cout << "--------------------" << std::endl;
-
         auto contacts = ContactsHandler::getInstance().getContacts();
         if (!contacts.empty()) {
 

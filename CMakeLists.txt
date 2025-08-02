@@ -40,9 +40,5 @@ add_executable(game main.cpp
         include/physics/ContactAxis.h
         include/physics/ContactsHandler.cpp
         include/physics/ContactsHandler.h
-        include/physics/Island.cpp
-        include/physics/Island.h
-        src/physics/GlobalIsland.cpp
-        include/physics/GlobalIsland.h
 )
 target_link_libraries(game SFML::Graphics SFML::Window SFML::System)

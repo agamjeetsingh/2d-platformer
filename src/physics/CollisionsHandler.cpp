@@ -70,8 +70,8 @@ void CollisionsHandler::update(float deltaTime, int recursionDepth) {
                         sweptCollision(
                             rectA,
                             rectB,
-                            bodyA.get().getAbsoluteVelocity(),
-                            bodyB.get().getAbsoluteVelocity(),
+                            bodyA.get().velocity,
+                            bodyB.get().velocity,
                             deltaTime);
                     if (&bodyA.get() > &bodyB.get() && incompleteCollision) {
                         body_ab_collisions[Collision{bodyA, bodyB, incompleteCollision.value()}] = incompleteCollision->collisionTime;
@@ -98,8 +98,8 @@ void CollisionsHandler::update(float deltaTime, int recursionDepth) {
         // Update velocities, accelerations for deltaTime
         // Use acceleration too s = ut + 1/2 at^2
         for (auto body: bodies) {
-            body.get().addPosition(body.get().getAbsoluteVelocity() * deltaTime);
-            body.get().velocity += body.get().getAbsoluteAcceleration() * deltaTime;
+            body.get().addPosition(body.get().velocity * deltaTime);
+            body.get().velocity += body.get().acceleration * deltaTime;
         }
 
         assert(ContactsHandler::getInstance().getContacts().empty());
@@ -131,8 +131,6 @@ void CollisionsHandler::update(float deltaTime, int recursionDepth) {
 
     auto earliest_collision_time = resolveEarliestCollision(collisions);
 
-    ContactsHandler::getInstance().updateIslands();
-
     if (deltaTime > earliest_collision_time) {
         update(deltaTime - earliest_collision_time, recursionDepth + 1);
     }
@@ -159,8 +157,8 @@ float CollisionsHandler::resolveEarliestCollision(std::unordered_map<Collision, 
             // Update velocities, accelerations for earliest_collision.collisionTime (very small time)
             for (auto body: bodies) {
                 // Update position first because the logic is based on current velocity
-                body.get().addPosition(body.get().getAbsoluteVelocity() * earliest_collision.collisionTime);
-                body.get().velocity += body.get().getAbsoluteAcceleration() * earliest_collision.collisionTime;
+                body.get().addPosition(body.get().velocity * earliest_collision.collisionTime);
+                body.get().velocity += body.get().acceleration * earliest_collision.collisionTime;
             }
 
             timeSpent += earliest_collision.collisionTime;
@@ -180,8 +178,8 @@ float CollisionsHandler::resolveEarliestCollision(std::unordered_map<Collision, 
     // Update velocities, accelerations for earliest_collision.collisionTime
     for (auto body: bodies) {
         // Update position first because the logic is based on current velocity
-        body.get().addPosition(body.get().getAbsoluteVelocity() * earliest_collision.collisionTime);
-        body.get().velocity += body.get().getAbsoluteAcceleration() * earliest_collision.collisionTime;
+        body.get().addPosition(body.get().velocity * earliest_collision.collisionTime);
+        body.get().velocity += body.get().acceleration * earliest_collision.collisionTime;
     }
     timeSpent += earliest_collision.collisionTime;
 

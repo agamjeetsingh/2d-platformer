@@ -14,10 +14,7 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include "CollidableObjectType.h"
-#include "../physics/GlobalIsland.h"
 
-class Island;
-class GlobalIsland;
 struct Collision;
 
 class CollidableObject : public PhysicsObject {
@@ -25,8 +22,7 @@ public:
     CollidableObject(std::vector<sf::FloatRect> hitbox,
         sf::Sprite sprite,
         sf::Vector2f position = {0, 0},
-        CollidableObjectType type = CollidableObjectType::Movable,
-        std::shared_ptr<Island> island = GlobalIsland::getInstance());
+        CollidableObjectType type = CollidableObjectType::Movable);
 
     const CollidableObjectType type;
 
@@ -53,35 +49,8 @@ public:
      */
     [[nodiscard]] std::optional<Collision> collidesWith(const CollidableObject& other) const;
 
-    [[nodiscard]] sf::Vector2f getIslandVelocity() const;
-
-    [[nodiscard]] sf::Vector2f getIslandAcceleration() const;
-
-    void joinIsland(std::shared_ptr<Island> new_island);
-
-    void joinIslandAsLeader(std::shared_ptr<Island> new_island);
-
-    void joinIslandIfMovable(std::shared_ptr<Island> new_island);
-
-    [[nodiscard]] std::shared_ptr<Island> getIsland() const;
-
-    static CollidableObject& getPointLeader() {
-        const sf::Texture texture;
-        static auto point_leader = CollidableObject{{}, sf::Sprite{texture}, {0,0}, CollidableObjectType::Immovable, nullptr};
-        return point_leader;
-    }
-
-    [[nodiscard]] sf::Vector2f getAbsoluteVelocity() const {
-        return (type == CollidableObjectType::Movable) ? velocity + island->getLeaderVelocity() : velocity;
-    }
-
-    [[nodiscard]] sf::Vector2f getAbsoluteAcceleration() const {
-        return (type == CollidableObjectType::Movable) ? acceleration + island->getLeaderAcceleration() : acceleration;
-    }
-
 private:
     Hitbox hitbox;
-    std::shared_ptr<Island> island;
 };
 
 
