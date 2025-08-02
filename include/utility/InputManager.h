@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <set>
-#include "../../../../../../opt/homebrew/Cellar/sfml/3.0.1/include/SFML/Window/Keyboard.hpp"
+#include <SFML/Window/Keyboard.hpp>
+#include <unordered_map>
 
 /**
  * \brief Manages all inputs. Can be used to check whether a key is currently being pressed. A better alternative to
@@ -28,7 +28,7 @@ public:
      * @brief Marks a key as pressed
      * @param key The keyboard key that was pressed
      */
-    void keyPressed(const sf::Keyboard::Key key) { pressedKeys.insert(key); }
+    void keyPressed(const sf::Keyboard::Key key) { pressedKeys.insert({key, clock.getElapsedTime()}); }
 
     /**
      * @brief Marks a key as released
@@ -43,6 +43,12 @@ public:
      */
     [[nodiscard]] bool isPressed(const sf::Keyboard::Key key) const { return pressedKeys.contains(key); }
 
+    bool wasPressedEarlierThan(sf::Keyboard::Key key1, sf::Keyboard::Key key2) {
+        assert(isPressed(key1) && isPressed(key2));
+        return pressedKeys[key1] < pressedKeys[key2];
+    }
+
 private:
-    std::set<sf::Keyboard::Key> pressedKeys;
+    std::unordered_map<sf::Keyboard::Key, sf::Time> pressedKeys;
+    sf::Clock clock;
 };
