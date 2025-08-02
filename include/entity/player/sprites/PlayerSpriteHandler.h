@@ -1,0 +1,68 @@
+//
+// Created by Agamjeet Singh on 25/07/25.
+//
+
+#ifndef PLAYERSPRITE_H
+#define PLAYERSPRITE_H
+
+#include <unordered_map>
+
+#include "PlayerIdle.h"
+#include "PlayerTextures.h"
+#include "../PlayerState.h"
+#include "../../../../../../../../opt/homebrew/Cellar/sfml/3.0.1/include/SFML/Graphics/Sprite.hpp"
+#include "../Facing.h"
+
+namespace sf {
+    class Sprite;
+}
+
+class PlayerSpriteHandler {
+public:
+    explicit PlayerSpriteHandler(PlayerState& state, sf::Sprite& sprite, Facing& facing): state(state), sprite(sprite), facing(facing) {
+        textures[PlayerState::Idle] = PlayerIdle::getInstance();
+        // Add all types
+    }
+
+    PlayerState& state;
+    sf::Sprite& sprite;
+    Facing& facing;
+
+    void update(float deltaTime) {
+        sf::FloatRect bounds = sprite.getLocalBounds();
+        sprite.setOrigin({bounds.size.x / 2.f, bounds.size.y / 2.f});
+
+        auto scale = (facing == Facing::Left) ? sf::Vector2f{-1, 1} : sf::Vector2f{1, 1};
+        sprite.setScale(scale);
+
+        const PlayerTextures& player_textures = textures[state];
+
+        if (curr_state != state) {
+            curr_state = state;
+            time_in_state = 0;
+            curr_sprite_index = 0;
+        }
+
+        time_in_state += deltaTime;
+
+        while (player_textures.getIntervals()[curr_sprite_index] <= time_in_state) {
+            if (curr_sprite_index == player_textures.getTextures().size()) {
+                curr_sprite_index = 0;
+            }
+
+            time_in_state -= player_textures.getIntervals()[curr_sprite_index++];
+        }
+
+        sprite.setTexture(player_textures.getTextures()[curr_sprite_index]);
+    }
+private:
+    PlayerState curr_state = state;
+    float time_in_state = 0;
+    size_t curr_sprite_index = 0;
+
+    std::unordered_map<PlayerState, PlayerTextures> textures;
+};
+
+
+
+#endif //PLAYERSPRITE_H
