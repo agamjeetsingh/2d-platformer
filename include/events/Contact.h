@@ -14,8 +14,8 @@ struct Contact {
     explicit Contact(Collision collision) :
     objectA(collision.objectA),
     objectB(collision.objectB),
-    collidingRectA(collision.collidingRectA),
-    collidingRectB(collision.collidingRectB) {
+    collidingRectA(collision.getCollidingRectA()),
+    collidingRectB(collision.getCollidingRectA()) {
         axis = (collision.axis == CollisionAxis::Down || collision.axis == CollisionAxis::Up) ? ContactAxis::Y : ContactAxis::X;
     }
 

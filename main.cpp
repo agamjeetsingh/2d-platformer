@@ -57,26 +57,6 @@ int main() {
             }
         }
 
-        // if (InputManager::getInstance().isPressed(Key::W)) player.velocity.y = -200;
-        // if (InputManager::getInstance().isPressed(Key::A)) player.velocity.x = -200;
-        // if (InputManager::getInstance().isPressed(Key::S)) player.velocity.y = 200;
-        // if (InputManager::getInstance().isPressed(Key::D)) player.velocity.x = 200;
-
-        // if (InputManager::getInstance().isPressed(Key::W)) player.velocity.y = -200;
-        // if (InputManager::getInstance().isPressed(Key::A)) {
-        //     player.velocity.x = -200;
-        //     player.facing = PlayerFacing::Left;
-        // } else {
-        //     player.velocity.x = 0;
-        // }
-        // if (InputManager::getInstance().isPressed(Key::S)) player.velocity.y = 200;
-        // if (InputManager::getInstance().isPressed(Key::D)) {
-        //     player.velocity.x = 200;
-        //     player.facing = PlayerFacing::Right;
-        // } else if (!InputManager::getInstance().isPressed(Key::A)) {
-        //     player.velocity.x = 0;
-        // }
-
         input_handler.update();
 
         window.clear(sf::Color::White);
@@ -115,9 +95,9 @@ int main() {
         }
 
         auto player_contacts = ContactsHandler::getInstance().allContacts(player);
-        if (!player_contacts.empty()) {
 
-        }
+
+        assert(box.getInvMass() == 0);
 
         window.display();
     }

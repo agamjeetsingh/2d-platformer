@@ -13,17 +13,23 @@ struct IncompleteCollision;
 class CollidableObject;
 
 struct Collision {
-    Collision(CollidableObject& objectA, CollidableObject& objectB, IncompleteCollision incomplete_collision);
+    Collision(CollidableObject& objectA, CollidableObject& objectB, IncompleteCollision incomplete_collision,
+    std::size_t collidingRectAIndex,
+    std::size_t collidingRectBIndex);
 
     CollidableObject& objectA;
     CollidableObject& objectB;
-    sf::FloatRect collidingRectA;
-    sf::FloatRect collidingRectB;
+    std::size_t collidingRectAIndex;
+    std::size_t collidingRectBIndex;
     CollisionAxis axis;
     float deltaTime;
     float collisionTime;
 
     bool operator==(const Collision& other) const;
+
+    sf::FloatRect getCollidingRectA() const;
+
+    sf::FloatRect getCollidingRectB() const;
 };
 
 

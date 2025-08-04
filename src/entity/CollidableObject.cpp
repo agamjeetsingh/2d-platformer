@@ -11,9 +11,15 @@
 CollidableObject::CollidableObject(std::vector<sf::FloatRect> hitbox,
                                    sf::Sprite sprite,
                                    sf::Vector2f position,
-                                   CollidableObjectType type) : PhysicsObject(std::move(sprite), position),
+                                   CollidableObjectType type,
+                                   float mass) : PhysicsObject(std::move(sprite), position),
                                                                 type(type),
+                                                                mass(type == CollidableObjectType::Immovable ? 0 : mass),
                                                                 hitbox({std::move(hitbox), this->getPositionRef()}){
+    assert(mass >= 0);
+    if (type == CollidableObjectType::Movable) {
+        assert(mass != 0);
+    }
     CollisionsHandler::getInstance().addObject(*this);
 }
 

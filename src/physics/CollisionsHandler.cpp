@@ -4,6 +4,8 @@
 
 #include "../../include/physics/CollisionsHandler.h"
 
+#include <ranges>
+
 #include "../../include/events/Collision.h"
 #include "../../include/physics/CollisionResolution.h"
 #include "../../include/physics/ContactResolution.h"
@@ -14,14 +16,14 @@ struct Collision;
 std::size_t CollisionHash::operator()(const Collision& ref) const {
     return std::hash<void*>{}(&ref.objectA) ^
            std::hash<void*>{}(&ref.objectB) ^
-           std::hash<float>{}(ref.collidingRectA.position.x) ^
-           std::hash<float>{}(ref.collidingRectA.position.y) ^
-           std::hash<float>{}(ref.collidingRectA.size.x) ^
-           std::hash<float>{}(ref.collidingRectA.size.y) ^
-           std::hash<float>{}(ref.collidingRectB.position.x) ^
-           std::hash<float>{}(ref.collidingRectB.position.y) ^
-           std::hash<float>{}(ref.collidingRectB.size.x) ^
-           std::hash<float>{}(ref.collidingRectB.size.y) ^
+           std::hash<float>{}(ref.getCollidingRectA().position.x) ^
+           std::hash<float>{}(ref.getCollidingRectA().position.y) ^
+           std::hash<float>{}(ref.getCollidingRectA().size.x) ^
+           std::hash<float>{}(ref.getCollidingRectA().size.y) ^
+           std::hash<float>{}(ref.getCollidingRectB().position.x) ^
+           std::hash<float>{}(ref.getCollidingRectB().position.y) ^
+           std::hash<float>{}(ref.getCollidingRectB().size.x) ^
+           std::hash<float>{}(ref.getCollidingRectB().size.y) ^
            std::hash<int>{}(static_cast<int>(ref.axis)) ^
            std::hash<float>{}(ref.deltaTime) ^
            std::hash<float>{}(ref.collisionTime);
@@ -45,27 +47,113 @@ void CollisionsHandler::removeObject(CollidableObject& body) {
 }
 
 void CollisionsHandler::update(float deltaTime) {
-    update(deltaTime, 0);
-}
+    std::unordered_map<std::pair<CollidableObject*, CollidableObject*>, Collision, CollidableObjectPtrPairHash> contacts;
 
-void CollisionsHandler::update(float deltaTime, int recursionDepth) {
-    if (recursionDepth > 8) {
-        return;  // Prevent infinite recursion
-    }
-
-    std::cout << ContactsHandler::getInstance().getContacts().size() << " contacts right now!!!!!!!!" << std::endl;
-    if (!ContactsHandler::getInstance().getContacts().empty()) {
-
-    }
-    ContactsHandler::getInstance().reset();
-
-    std::unordered_map<Collision, float, CollisionHash> collisions;
     for (auto bodyA: bodies) {
         for (auto bodyB: bodies) {
             // ~O(1) nested for loop, very few rectangles in every hitbox
             std::unordered_map<Collision, float, CollisionHash> body_ab_collisions;
-            for (auto rectA: bodyA.get().getHitbox().getRects()) {
-                for (auto rectB: bodyB.get().getHitbox().getRects()) {
+            for (std::size_t indexA = 0; indexA < bodyA.get().getHitbox().getRects().size(); indexA++) {
+                auto rectA = bodyA.get().getHitbox().getRects()[indexA];
+                for (std::size_t indexB = 0; indexB < bodyB.get().getHitbox().getRects().size(); indexB++) {
+                    auto rectB = bodyB.get().getHitbox().getRects()[indexB];
+                    auto incompleteCollision =
+                        sweptCollision(
+                            rectA,
+                            rectB,
+                            bodyA.get().velocity,
+                            bodyB.get().velocity,
+                            deltaTime);
+                    if (&bodyA.get() > &bodyB.get() && incompleteCollision &&
+                        !(bodyA.get().type == CollidableObjectType::Immovable && bodyB.get().type == CollidableObjectType::Immovable)) {
+                        body_ab_collisions[Collision{bodyA, bodyB, incompleteCollision.value(), indexA, indexB}] = incompleteCollision->collisionTime;
+                    }
+                }
+            }
+            // Sort for earliest collision by time to get the sf::FloatRects and add it to the collisions map
+
+            if (body_ab_collisions.empty()) {
+                continue;
+            }
+
+            auto earliest_ab_it = std::min_element(body_ab_collisions.begin(), body_ab_collisions.end(),
+        [](const auto& a, const auto& b) { return a.second < b.second; });
+
+            auto collision = earliest_ab_it->first;
+            contacts.emplace(std::make_pair(&bodyA.get(), &bodyB.get()), earliest_ab_it->first);
+        }
+    }
+
+    moveImmovables(deltaTime);
+    moveMovables(deltaTime);
+
+    for (int i = 0; i < 10; i++) {
+        for (const auto &key: contacts | std::views::keys) {
+            auto collision = contacts.at(key);
+            auto normal = -axisToVector(collision.axis); // A moving towards B in this normal
+            // Compute Penetration
+            auto penetrationDepth = getPenetration(collision.getCollidingRectA(), collision.getCollidingRectB(), collision.axis);
+            assert(penetrationDepth >= 0);
+
+            auto objectA = key.first;
+            auto objectB = key.second;
+
+            sf::Vector2f relative_velocity = objectA->velocity - objectB->velocity;
+            float relative_velocity_along_normal = dot(relative_velocity, normal);
+            assert(relative_velocity_along_normal >= 0);
+
+            float e = 0; // Zero restitution
+
+            assert(objectA->getInvMass() + objectB->getInvMass() > 0);
+            float j = -(1 + e) * relative_velocity_along_normal / (objectA->getInvMass() + objectB->getInvMass()); // Impulse
+
+            sf::Vector2f impulse = j * normal;
+
+            objectA->velocity += impulse * objectA->getInvMass();
+            objectB->velocity -= impulse * objectB->getInvMass();
+
+            // Positional correction
+            float percent = 0.2;
+            float slop = 0.01;
+            float invMassSum = objectA->getInvMass() + objectB->getInvMass();
+            assert(invMassSum > 0);
+            sf::Vector2f correction = (std::max(penetrationDepth - slop, 0.0f) / invMassSum) * percent * normal;
+            if (objectA->type != CollidableObjectType::Immovable) {
+                objectA->addPosition(-correction * objectA->getInvMass());
+            }
+            if (objectB->type != CollidableObjectType::Immovable) {
+                objectB->addPosition(correction * objectB->getInvMass());
+            }
+        }
+    }
+
+}
+
+
+void CollisionsHandler::moveImmovables(float deltaTime) const {
+
+    if (deltaTime <= 0) {
+        return;
+    }
+
+    // TODO - Make a array keeping track of all immovables as a private member of the class
+    std::vector<std::reference_wrapper<CollidableObject>> immovables;
+    for (auto body: bodies) {
+        if (body.get().type == CollidableObjectType::Immovable) {
+            immovables.push_back(body);
+        }
+    }
+
+    std::unordered_map<Collision, float, CollisionHash> collisions;
+
+    for (auto bodyA: immovables) {
+        for (auto bodyB: immovables) {
+            // ~O(1) nested for loop, very few rectangles in every hitbox
+            std::unordered_map<Collision, float, CollisionHash> body_ab_collisions;
+            for (std::size_t indexA = 0; indexA < bodyA.get().getHitbox().getRects().size(); indexA++) {
+                auto rectA = bodyA.get().getHitbox().getRects()[indexA];
+                for (std::size_t indexB = 0; indexB < bodyB.get().getHitbox().getRects().size(); indexB++) {
+                    auto rectB = bodyB.get().getHitbox().getRects()[indexB];
                     auto incompleteCollision =
                         sweptCollision(
                             rectA,
@@ -74,7 +162,85 @@ void CollisionsHandler::update(float deltaTime, int recursionDepth) {
                             bodyB.get().velocity,
                             deltaTime);
                     if (&bodyA.get() > &bodyB.get() && incompleteCollision) {
-                        body_ab_collisions[Collision{bodyA, bodyB, incompleteCollision.value()}] = incompleteCollision->collisionTime;
+                        body_ab_collisions[Collision{bodyA, bodyB, incompleteCollision.value(), indexA, indexB}] = incompleteCollision->collisionTime;
+                    }
+                }
+            }
+
+            // Sort for earliest collision by time to get the sf::FloatRects and add it to the collisions map
+
+            if (body_ab_collisions.empty()) {
+                continue;
+            }
+
+            auto earliest_ab_it = std::min_element(body_ab_collisions.begin(), body_ab_collisions.end(),
+        [](const auto& a, const auto& b) { return a.second < b.second; });
+
+            collisions[earliest_ab_it->first] = earliest_ab_it->second;
+        }
+    }
+
+    if (collisions.empty()) {
+        for (auto body: immovables) {
+            body.get().velocity += body.get().acceleration * deltaTime;
+            body.get().addPosition(body.get().velocity * deltaTime);
+        }
+        return;
+    }
+
+    auto earliest_it = std::min_element(collisions.begin(), collisions.end(),
+    [](const auto& a, const auto& b) { return a.second < b.second; });
+
+    const Collision& earliest_collision = earliest_it->first;
+
+
+    // Move all objects to earliest_collision.collisionTime
+
+    for (auto body: immovables) {
+        body.get().velocity += body.get().acceleration * earliest_collision.collisionTime;
+        body.get().addPosition(body.get().velocity * earliest_collision.collisionTime);
+    }
+
+    earliest_collision.objectA.velocity = {0, 0};
+    earliest_collision.objectA.acceleration = {0, 0};
+    earliest_collision.objectB.velocity = {0, 0};
+    earliest_collision.objectB.acceleration = {0, 0};
+
+    moveImmovables(deltaTime - earliest_collision.collisionTime);
+}
+
+void CollisionsHandler::moveMovables(float deltaTime) const {
+    for (auto body: bodies) {
+        if (body.get().type == CollidableObjectType::Movable) {
+            body.get().velocity += body.get().acceleration * deltaTime;
+            body.get().addPosition(body.get().velocity * deltaTime);
+        }
+    }
+}
+
+void CollisionsHandler::update(float deltaTime, int recursionDepth) {
+    if (recursionDepth > 8) {
+        return;  // Prevent infinite recursion
+    }
+
+    std::unordered_map<Collision, float, CollisionHash> collisions;
+    for (auto bodyA: bodies) {
+        for (auto bodyB: bodies) {
+            // ~O(1) nested for loop, very few rectangles in every hitbox
+            std::unordered_map<Collision, float, CollisionHash> body_ab_collisions;
+            for (std::size_t indexA = 0; indexA < bodyA.get().getHitbox().getRects().size(); indexA++) {
+                auto rectA = bodyA.get().getHitbox().getRects()[indexA];
+                for (std::size_t indexB = 0; indexB < bodyB.get().getHitbox().getRects().size(); indexB++) {
+                    auto rectB = bodyB.get().getHitbox().getRects()[indexB];
+                    auto incompleteCollision =
+                        sweptCollision(
+                            rectA,
+                            rectB,
+                            bodyA.get().velocity,
+                            bodyB.get().velocity,
+                            deltaTime);
+                    if (&bodyA.get() > &bodyB.get() && incompleteCollision) {
+                        body_ab_collisions[Collision{bodyA, bodyB, incompleteCollision.value(), indexA, indexB}] = incompleteCollision->collisionTime;
                     }
                 }
             }
@@ -90,6 +256,7 @@ void CollisionsHandler::update(float deltaTime, int recursionDepth) {
             collisions[earliest_ab_it->first] = earliest_ab_it->second;
         }
     }
+
     if (collisions.empty()) {
         // No collisions
 

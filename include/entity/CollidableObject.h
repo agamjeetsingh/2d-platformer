@@ -22,9 +22,15 @@ public:
     CollidableObject(std::vector<sf::FloatRect> hitbox,
         sf::Sprite sprite,
         sf::Vector2f position = {0, 0},
-        CollidableObjectType type = CollidableObjectType::Movable);
+        CollidableObjectType type = CollidableObjectType::Movable,
+        float mass = 1);
 
     const CollidableObjectType type;
+    const float mass;
+
+    [[nodiscard]] float getInvMass() const {
+        return (mass == 0) ? 0 : (1.0f / mass);
+    }
 
     /**
  * @brief Gives the hitbox of the collider.

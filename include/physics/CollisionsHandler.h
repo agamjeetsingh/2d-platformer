@@ -35,12 +35,18 @@ struct CollidableObjectRefHash {
     }
 };
 
-/**c
+/**
  * Equality function for \code std::reference_wrapper<Collider>\endcode
  */
 struct CollidableObjectRefEqual {
     bool operator()(const std::reference_wrapper<CollidableObject>& lhs, const std::reference_wrapper<CollidableObject>& rhs) const {
         return lhs.get() == rhs.get();
+    }
+};
+
+struct CollidableObjectPtrPairHash {
+    std::size_t operator()(const std::pair<CollidableObject*, CollidableObject*>& pair) const {
+        return std::hash<CollidableObject*>{}(pair.first) ^ (std::hash<CollidableObject*>{}(pair.second) << 1);
     }
 };
 
@@ -88,6 +94,30 @@ private:
     std::unordered_set<std::reference_wrapper<CollidableObject>, CollidableObjectRefHash, CollidableObjectRefEqual> bodies;
 
     void update(float deltaTime, int recursionDepth);
+
+    static float dot(const sf::Vector2f& first, const sf::Vector2f& second) {
+        return first.x * second.x + first.y * second.y;
+    }
+
+    static float getPenetration(sf::FloatRect rectA, sf::FloatRect rectB, CollisionAxis axis) {
+        if (axis == CollisionAxis::Up || axis == CollisionAxis::Down) {
+            if (auto intersection = rectA.findIntersection(rectB)) {
+                return intersection.value().size.y;
+            }
+        }
+
+        if (axis == CollisionAxis::Left || axis == CollisionAxis::Right) {
+            if (auto intersection = rectA.findIntersection(rectB)) {
+                return intersection.value().size.x;
+            }
+        }
+
+        return 0;
+    }
+
+    void moveImmovables(float deltaTime) const;
+
+    void moveMovables(float deltaTime) const;
 
     static std::optional<IncompleteCollision> sweptCollision( // TODO - Should take in acceleration too with s = ut + 1/2at^2
         sf::FloatRect rectA,
@@ -143,6 +173,12 @@ private:
 
         float entry = std::max(x_entry, y_entry);
         float exit = std::min(x_exit, y_exit);
+
+        if (entry == -std::numeric_limits<float>::infinity() && exit == std::numeric_limits<float>::infinity()) {
+            assert(rectA.findIntersection(rectB));
+            
+        }
+
         if (entry > exit || entry < 0 || entry > deltaTime) {
             return std::nullopt;
         }
