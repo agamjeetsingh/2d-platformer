@@ -7,6 +7,8 @@
 #include <utility>
 
 #include "../../include/events/Collision.h"
+#include "../../include/entity/player/Player.h"
+#include "../../include/physics/CollisionsHandler.h"
 
 CollidableObject::CollidableObject(std::vector<sf::FloatRect> hitbox,
                                    sf::Sprite sprite,
@@ -29,4 +31,8 @@ CollidableObject::CollidableObject(std::vector<sf::FloatRect> hitbox,
 
 bool CollidableObject::operator==(const CollidableObject &other) const {
     return this == &other;
+}
+
+Player* CollidableObject::isPlayer() {
+    return dynamic_cast<Player*>(this);
 }
