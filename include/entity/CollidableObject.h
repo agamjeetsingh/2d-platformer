@@ -2,8 +2,8 @@
 // Created by Agamjeet Singh on 13/07/25.
 //
 
-#ifndef COLLIDABLEENTITY_H
-#define COLLIDABLEENTITY_H
+#ifndef COLLIDABLEOBJECT_H
+#define COLLIDABLEOBJECT_H
 
 #include <iostream>
 
@@ -14,6 +14,7 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include "CollidableObjectType.h"
+class Player;
 
 struct Collision;
 
@@ -46,14 +47,7 @@ public:
      */
     bool operator==(const CollidableObject& other) const;
 
-    /**
-     * @brief Checks whether the object collides with the other object by checking for intersections in their hitboxes.
-     * @param other The other object to check collision with.
-     * @return Returns the intersecting \code sf::FloatRect\endcode if the object's and the other object's hitbox have
-     * a nonzero intersection and returns \code std::nullopt\endcode otherwise. This also means that it returns
-     * \code std::nullopt\endcode if the objects are just touching.
-     */
-    [[nodiscard]] std::optional<Collision> collidesWith(const CollidableObject& other) const;
+    [[nodiscard]] Player* isPlayer();
 
 private:
     Hitbox hitbox;
@@ -61,4 +55,4 @@ private:
 
 
 
-#endif //COLLIDABLEENTITY_H
+#endif //COLLIDABLEOBJECT_H
