@@ -3,6 +3,7 @@
 //
 
 #include "../../include/events/Collision.h"
+#include "../../include/physics/CollisionsHandler.h"
 
 Collision::Collision(CollidableObject& objectA, CollidableObject& objectB, IncompleteCollision incomplete_collision,
     std::size_t collidingRectAIndex,

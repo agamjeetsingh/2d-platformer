@@ -3,6 +3,7 @@
 #include "include/entity/player/Player.h"
 #include "include/entity/player/PlayerInputHandler.h"
 #include "include/physics/CollisionsHandler.h"
+#include "include/physics/ContactsHandler.h"
 #include "include/utility/InputManager.h"
 
 using namespace sf::Keyboard;
@@ -33,8 +34,10 @@ int main() {
     Player player({sf::FloatRect({0, 0}, sf::Vector2<float>(idle_texture.getSize()))}, real_player_sprite, {100, 100});
     Player player2({sf::FloatRect({0, 0}, sf::Vector2<float>(player_texture.getSize()))}, player_sprite, {400, 400});
     sprite.setScale({1, 1});
-    CollidableObject box(hitbox, sprite, {0, 200}, CollidableObjectType::Immovable);
-    box.velocity.x = 50;
+    CollidableObject box(hitbox, sprite, {0, 300}, CollidableObjectType::Immovable);
+    box.velocity.x = 100;
+    CollidableObject box_2(hitbox, sprite, {800, 100}, CollidableObjectType::Immovable);
+    // box_2.velocity.x = -100;
 
     player.acceleration = {0, 800};
 
@@ -42,7 +45,7 @@ int main() {
 
     while (window.isOpen()) {
         sf::Time deltaTime = clock.restart();
-        const float dt = std::min(deltaTime.asSeconds(), 0.01f);
+        const float dt = std::min(deltaTime.asSeconds(), 0.1f);
 
         while (const std::optional<sf::Event> event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
@@ -57,11 +60,11 @@ int main() {
             }
         }
 
-        input_handler.update();
+        // input_handler.update();
 
         window.clear(sf::Color::White);
 
-        CollisionsHandler::getInstance().update(dt);
+        CollisionsHandler::getInstance().update(dt, player);
 
         player.updates(dt);
 

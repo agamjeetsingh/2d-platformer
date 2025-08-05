@@ -5,9 +5,8 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
-#include "../../../../../../opt/homebrew/Cellar/sfml/3.0.1/include/SFML/Graphics/Rect.hpp"
+#include <SFML/Graphics/Rect.hpp>
 #include "../physics/CollisionAxis.h"
-#include "../physics/CollisionsHandler.h"
 
 struct IncompleteCollision;
 class CollidableObject;
@@ -27,9 +26,9 @@ struct Collision {
 
     bool operator==(const Collision& other) const;
 
-    sf::FloatRect getCollidingRectA() const;
+    [[nodiscard]] sf::FloatRect getCollidingRectA() const;
 
-    sf::FloatRect getCollidingRectB() const;
+    [[nodiscard]] sf::FloatRect getCollidingRectB() const;
 };
 
 

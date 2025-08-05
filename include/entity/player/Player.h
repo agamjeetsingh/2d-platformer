@@ -10,9 +10,10 @@
 #include "Facing.h"
 #include "PlayerState.h"
 #include "../CollidableObject.h"
-#include "../../physics/ContactsHandler.h"
 #include "sprites/PlayerSpriteHandler.h"
 #include "../../utility/Scheduler.h"
+
+class ContactsHandler;
 
 class Player final : public CollidableObject {
 public:
@@ -59,16 +60,7 @@ public:
         return dashCapacity;
     }
 
-    void updatePhysicsStates() {
-        // On ground
-        if (onGround == true && !ContactsHandler::getInstance().onLand(*this)) {
-            noLongerOnGround();
-        }
-        onGround = ContactsHandler::getInstance().onLand(*this);
-
-
-        // TODO
-    }
+    void updatePhysicsStates();
 
     [[nodiscard]] std::optional<std::reference_wrapper<CollidableObject>> isClimbing() const {
         return climbing;

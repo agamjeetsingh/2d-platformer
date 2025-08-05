@@ -2,8 +2,8 @@
 // Created by Agamjeet Singh on 13/07/25.
 //
 
-#ifndef ENTITY_H
-#define ENTITY_H
+#ifndef PHYSICSOBJECT_H
+#define PHYSICSOBJECT_H
 
 #include <vector>
 #include <SFML/Graphics/Sprite.hpp>
@@ -43,4 +43,4 @@ private:
     sf::Vector2f position;
 };
 
-#endif //ENTITY_H
+#endif //PHYSICSOBJECT_H

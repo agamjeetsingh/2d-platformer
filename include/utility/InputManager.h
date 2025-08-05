@@ -2,7 +2,8 @@
 // Created by Agamjeet Singh on 12/07/25.
 //
 
-#pragma once
+#ifndef INPUTMANAGER_H
+#define INPUTMANAGER_H
 
 #include <SFML/Window/Keyboard.hpp>
 #include <unordered_map>
@@ -52,3 +53,4 @@ private:
     std::unordered_map<sf::Keyboard::Key, sf::Time> pressedKeys;
     sf::Clock clock;
 };
+#endif //INPUTMANAGER_H

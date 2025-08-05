@@ -6,7 +6,6 @@
 #define CONTACT_H
 
 #include "../physics/CollisionAxis.h"
-#include "../physics/CollisionsHandler.h"
 #include "Collision.h"
 #include "../physics/ContactAxis.h"
 
