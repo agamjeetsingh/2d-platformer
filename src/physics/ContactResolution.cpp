@@ -10,9 +10,9 @@ void ContactResolution::resolve(Collision collision) {
     CollidableObject& object = (collision.objectA.type == CollidableObjectType::Movable) ? collision.objectA : collision.objectB;
 
     if (collision.axis == CollisionAxis::Down || collision.axis == CollisionAxis::Up) {
-        object.velocity.y = 0;
+        object.intrinsic_velocity.y = 0;
     } else {
 
-        object.velocity.x = 0;
+        object.intrinsic_velocity.x = 0;
     }
 }

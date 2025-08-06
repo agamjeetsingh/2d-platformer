@@ -5,6 +5,7 @@
 #ifndef PHYSICSOBJECT_H
 #define PHYSICSOBJECT_H
 
+#include <iostream>
 #include <vector>
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -22,7 +23,13 @@ public:
     const sf::Vector2f& getPositionRef() const { return position; }
 
     // Public to make it easy to update just one of the components
-    sf::Vector2f velocity = {0, 0};
+    sf::Vector2f intrinsic_velocity = {0, 0};
+
+    sf::Vector2f friction_velocity = {0, 0};
+
+    sf::Vector2f impulse_velocity = {0, 0};
+
+    [[nodiscard]] sf::Vector2f getTotalVelocity() const;
 
     sf::Vector2f acceleration = {0, 0};
 
@@ -35,6 +42,12 @@ public:
     void setPosition(sf::Vector2f position);
 
     void addPosition(sf::Vector2f position);
+
+    void printVelocity(const std::string& name) const {
+        std::cout << name << " intrinsic_velocity: x = " << intrinsic_velocity.x << " y = " << intrinsic_velocity.y << std::endl;
+        std::cout << name << " friction_velocity: x = " << friction_velocity.x << " y = " << friction_velocity.y << std::endl;
+        std::cout << name << " impulse_velocity: x = " << impulse_velocity.x << " y = " << impulse_velocity.y << std::endl;
+    }
 
 protected:
     sf::Sprite sprite;

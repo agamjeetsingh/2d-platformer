@@ -49,6 +49,8 @@ public:
 
     [[nodiscard]] Player* isPlayer();
 
+    
+
 private:
     Hitbox hitbox;
 };

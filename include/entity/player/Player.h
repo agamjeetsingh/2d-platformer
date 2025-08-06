@@ -24,6 +24,7 @@ public:
     static constexpr float MAX_STAMINA = 110;
     static constexpr float JUMP_GRACE_TIME = 0.1; // In seconds
     static constexpr float WALK_SPEED = 64;
+    static constexpr float JUMP_SPEED = -105;
 
     PlayerState state = PlayerState::Idle;
     Facing facing = Facing::Right;

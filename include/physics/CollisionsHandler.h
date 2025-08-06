@@ -2,13 +2,14 @@
 // Created by Agamjeet Singh on 13/07/25.
 //
 
-#ifndef COLLIDERBODIES_H
-#define COLLIDERBODIES_H
+#ifndef COLLISIONSHANDLER_H
+#define COLLISIONSHANDLER_H
 #include <unordered_set>
 #include "CollisionAxis.h"
 #include <SFML/Graphics.hpp>
 #include "../entity/CollidableObject.h"
 
+class Player;
 struct Collision;
 
 struct IncompleteCollision {
@@ -76,134 +77,30 @@ public:
      */
     void removeObject(CollidableObject& body);
 
-    void update(float deltaTime);
+    void update(float deltaTime, Player& player);
 
-    void drawHitboxes(sf::RenderWindow& window, sf::Color color = sf::Color::Red) const {
-        color.a = 64;
-        for (const auto& body: bodies) {
-            for (const auto& box: body.get().getHitbox()) {
-                sf::RectangleShape transparentRect(box.size);
-                transparentRect.setPosition(box.position);
-                transparentRect.setFillColor(color);
-                window.draw(transparentRect);
-            }
-        }
-    }
+    void drawHitboxes(sf::RenderWindow& window, sf::Color color = sf::Color::Red) const;
 
 private:
     std::unordered_set<std::reference_wrapper<CollidableObject>, CollidableObjectRefHash, CollidableObjectRefEqual> bodies;
-
-    void update(float deltaTime, int recursionDepth);
 
     static float dot(const sf::Vector2f& first, const sf::Vector2f& second) {
         return first.x * second.x + first.y * second.y;
     }
 
-    static float getPenetration(sf::FloatRect rectA, sf::FloatRect rectB, CollisionAxis axis) {
-        if (axis == CollisionAxis::Up || axis == CollisionAxis::Down) {
-            if (auto intersection = rectA.findIntersection(rectB)) {
-                return intersection.value().size.y;
-            }
-        }
-
-        if (axis == CollisionAxis::Left || axis == CollisionAxis::Right) {
-            if (auto intersection = rectA.findIntersection(rectB)) {
-                return intersection.value().size.x;
-            }
-        }
-
-        return 0;
-    }
+    static float getPenetration(sf::FloatRect rectA, sf::FloatRect rectB, CollisionAxis axis);
 
     void moveImmovables(float deltaTime) const;
 
     void moveMovables(float deltaTime) const;
 
-    static std::optional<IncompleteCollision> sweptCollision( // TODO - Should take in acceleration too with s = ut + 1/2at^2
+    // TODO - Should take in acceleration too with s = ut + 1/2at^2
+    static std::optional<IncompleteCollision> sweptCollision(
         sf::FloatRect rectA,
         sf::FloatRect rectB,
         sf::Vector2f velocityA,
         sf::Vector2f velocityB,
-        float deltaTime) {
-        sf::Vector2f relative_velocity = velocityA - velocityB;
-        float x_entry;
-        float x_exit;
-        float y_entry;
-        float y_exit;
-        CollisionAxis axis;
-        if (abs(relative_velocity.x) < 1e-6f) {
-            // No relative X movement - check if overlapping or aligned on X axis
-            if (rectA.position.x < rectB.position.x + rectB.size.x && 
-                rectA.position.x + rectA.size.x > rectB.position.x) {
-                // Objects overlap or can collide on X axis
-                x_entry = -std::numeric_limits<float>::infinity();  
-                x_exit = std::numeric_limits<float>::infinity();
-            } else {
-                return std::nullopt;  // Will never collide on X axis
-            }
-        } else {
-            if (relative_velocity.x > 0) {
-                x_entry = (rectB.position.x - rectA.position.x - rectA.size.x) / relative_velocity.x;
-                x_exit = x_entry + (rectA.size.x + rectB.size.x) / relative_velocity.x; // Wrong when x_entry < 0 ?
-            } else {
-                x_entry = (rectA.position.x - rectB.position.x - rectB.size.x) / abs(relative_velocity.x);
-                x_exit = x_entry + (rectA.size.x + rectB.size.x) / abs(relative_velocity.x);
-            }
-        }
-
-        if (abs(relative_velocity.y) < 1e-6f) {
-            // No relative Y movement - check if overlapping or aligned on Y axis
-            if (rectA.position.y < rectB.position.y + rectB.size.y && 
-                rectA.position.y + rectA.size.y > rectB.position.y) {
-                // Objects overlap or can collide on Y axis
-                y_entry = -std::numeric_limits<float>::infinity();  
-                y_exit = std::numeric_limits<float>::infinity();
-            } else {
-                return std::nullopt;  // Will never collide on Y axis
-            }
-        } else {
-            if (relative_velocity.y > 0) {
-                y_entry = (rectB.position.y - rectA.position.y - rectA.size.y) / relative_velocity.y;
-                y_exit = y_entry + (rectA.size.y + rectB.size.y) / relative_velocity.y;
-            } else {
-                y_entry = (rectA.position.y - rectB.position.y - rectB.size.y) / abs(relative_velocity.y);
-                y_exit = y_entry + (rectA.size.y + rectB.size.y) / abs(relative_velocity.y);
-            }
-        }
-
-        float entry = std::max(x_entry, y_entry);
-        float exit = std::min(x_exit, y_exit);
-
-        if (entry == -std::numeric_limits<float>::infinity() && exit == std::numeric_limits<float>::infinity()) {
-            assert(rectA.findIntersection(rectB));
-            
-        }
-
-        if (entry > exit || entry < 0 || entry > deltaTime) {
-            return std::nullopt;
-        }
-
-        // Determine collision direction based on which axis collision happens first
-        if (x_entry > y_entry) {
-            // X-axis collision - determine if hitting from left or right
-            if (relative_velocity.x > 0) {
-                axis = CollisionAxis::Left;  // rectA hitting rectB from the left
-            } else {
-                axis = CollisionAxis::Right;   // rectA hitting rectB from the right
-            }
-        } else {
-            // Y-axis collision - determine if hitting from top or bottom
-            if (relative_velocity.y > 0) {
-                axis = CollisionAxis::Up;   // rectA hitting rectB from above
-            } else {
-                axis = CollisionAxis::Down;     // rectA hitting rectB from below
-            }
-        }
-
-        return IncompleteCollision{rectA, rectB, axis, deltaTime, entry};
-    }
-
-    float resolveEarliestCollision(std::unordered_map<Collision, float, CollisionHash> collisions, float timeSpent = 0);
+        float deltaTime);
 };
 
-#endif //COLLIDERBODIES_H
+#endif //COLLISIONSHANDLER_H

@@ -23,13 +23,17 @@ public:
         if (isPressed(moveLeft) && (!isPressed(moveRight) || wasPressedEarlierThan(moveRight, moveLeft))) {
             // Move left
             player.facing = Facing::Left;
-            player.velocity.x = -Player::WALK_SPEED;
+            player.intrinsic_velocity.x = -Player::WALK_SPEED;
         }
 
         if (isPressed(moveRight) && (!isPressed(moveLeft) || wasPressedEarlierThan(moveLeft, moveRight))) {
             // Move right
             player.facing = Facing::Right;
-            player.velocity.x = Player::WALK_SPEED;
+            player.intrinsic_velocity.x = Player::WALK_SPEED;
+        }
+
+        if (!isPressed(moveLeft) && !isPressed(moveRight)) {
+            player.intrinsic_velocity.x = 0;
         }
 
         if (isPressed(jumpKey)) {

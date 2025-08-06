@@ -35,10 +35,11 @@ int main() {
     Player player2({sf::FloatRect({0, 0}, sf::Vector2<float>(player_texture.getSize()))}, player_sprite, {400, 400});
     sprite.setScale({1, 1});
     CollidableObject box(hitbox, sprite, {0, 300}, CollidableObjectType::Immovable);
-    box.velocity.x = 100;
+    box.intrinsic_velocity.x = 100;
     CollidableObject box_2(hitbox, sprite, {800, 100}, CollidableObjectType::Immovable);
-    // box_2.velocity.x = -100;
-
+    box_2.intrinsic_velocity.x = -100;
+    // CollidableObject box_3(hitbox, sprite, {0, -200}, CollidableObjectType::Immovable);
+    // box_3.acceleration = {0, 800};
     player.acceleration = {0, 800};
 
     PlayerInputHandler input_handler =  PlayerInputHandler{player};
@@ -85,8 +86,8 @@ int main() {
         std::cout << "Player 2 x: " << player2.getSprite().getPosition().x << "y: " << player2.getSprite().getPosition().y << std::endl;
         std::cout << "Player 1 Hitbox x: " << player.getHitbox().getRects()[0].position.x << "y: " << player.getHitbox().getRects()[0].position.y << std::endl;
         std::cout << "Player 2 Hitbox x: " << player2.getHitbox().getRects()[0].position.x << "y: " << player2.getHitbox().getRects()[0].position.y << std::endl;
-        std::cout << "Player 1 Velocity x: " << player.velocity.x << "y: " << player.velocity.y << std::endl;
-        std::cout << "Player 2 Velocity x: " << player2.velocity.x << "y: " << player2.velocity.y << std::endl;
+        player.printVelocity("Player 1");
+        player2.printVelocity("Player 2");
         std::cout << "Player 1 Acceleration x: " << player.acceleration.x << "y: " << player.acceleration.y << std::endl;
         std::cout << "Player 2 Acceleration x: " << player2.acceleration.x << "y: " << player2.acceleration.y << std::endl;
         std::cout << CollisionsHandler::getInstance().getBodies().size() << std::endl;
