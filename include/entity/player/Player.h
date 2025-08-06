@@ -10,9 +10,10 @@
 #include "Facing.h"
 #include "PlayerState.h"
 #include "../CollidableObject.h"
-#include "../../physics/ContactsHandler.h"
 #include "sprites/PlayerSpriteHandler.h"
 #include "../../utility/Scheduler.h"
+
+class ContactsHandler;
 
 class Player final : public CollidableObject {
 public:
@@ -23,6 +24,7 @@ public:
     static constexpr float MAX_STAMINA = 110;
     static constexpr float JUMP_GRACE_TIME = 0.1; // In seconds
     static constexpr float WALK_SPEED = 64;
+    static constexpr float JUMP_SPEED = -105;
 
     PlayerState state = PlayerState::Idle;
     Facing facing = Facing::Right;
@@ -59,16 +61,7 @@ public:
         return dashCapacity;
     }
 
-    void updatePhysicsStates() {
-        // On ground
-        if (onGround == true && !ContactsHandler::getInstance().onLand(*this)) {
-            noLongerOnGround();
-        }
-        onGround = ContactsHandler::getInstance().onLand(*this);
-
-
-        // TODO
-    }
+    void updatePhysicsStates();
 
     [[nodiscard]] std::optional<std::reference_wrapper<CollidableObject>> isClimbing() const {
         return climbing;

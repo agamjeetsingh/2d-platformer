@@ -2,8 +2,8 @@
 // Created by Agamjeet Singh on 25/07/25.
 //
 
-#ifndef PLAYERFACING_H
-#define PLAYERFACING_H
+#ifndef FACING_H
+#define FACING_H
 
 
 
@@ -14,4 +14,4 @@ enum class Facing {
 
 
 
-#endif //PLAYERFACING_H
+#endif //FACING_H

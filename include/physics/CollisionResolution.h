@@ -13,16 +13,16 @@ public:
     static void resolve(Collision collision) {
         if (collision.objectA.type == CollidableObjectType::Movable && collision.objectB.type == CollidableObjectType::Immovable) {
             if (collision.axis == CollisionAxis::Down || collision.axis == CollisionAxis::Up) {
-                collision.objectA.velocity.y = 0;
+                collision.objectA.intrinsic_velocity.y = 0;
             } else {
-                collision.objectA.velocity.x = 0;
+                collision.objectA.intrinsic_velocity.x = 0;
             }
         }
         else if (collision.objectA.type == CollidableObjectType::Immovable && collision.objectB.type == CollidableObjectType::Movable) {
             if (collision.axis == CollisionAxis::Down || collision.axis == CollisionAxis::Up) {
-                collision.objectB.velocity.y = 0;
+                collision.objectB.intrinsic_velocity.y = 0;
             } else {
-                collision.objectB.velocity.x = 0;
+                collision.objectB.intrinsic_velocity.x = 0;
             }
         }
     }

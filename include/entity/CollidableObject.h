@@ -2,8 +2,8 @@
 // Created by Agamjeet Singh on 13/07/25.
 //
 
-#ifndef COLLIDABLEENTITY_H
-#define COLLIDABLEENTITY_H
+#ifndef COLLIDABLEOBJECT_H
+#define COLLIDABLEOBJECT_H
 
 #include <iostream>
 
@@ -14,10 +14,8 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include "CollidableObjectType.h"
-#include "../physics/GlobalIsland.h"
+class Player;
 
-class Island;
-class GlobalIsland;
 struct Collision;
 
 class CollidableObject : public PhysicsObject {
@@ -26,9 +24,14 @@ public:
         sf::Sprite sprite,
         sf::Vector2f position = {0, 0},
         CollidableObjectType type = CollidableObjectType::Movable,
-        std::shared_ptr<Island> island = GlobalIsland::getInstance());
+        float mass = 1);
 
     const CollidableObjectType type;
+    const float mass;
+
+    [[nodiscard]] float getInvMass() const {
+        return (mass == 0) ? 0 : (1.0f / mass);
+    }
 
     /**
  * @brief Gives the hitbox of the collider.
@@ -44,46 +47,14 @@ public:
      */
     bool operator==(const CollidableObject& other) const;
 
-    /**
-     * @brief Checks whether the object collides with the other object by checking for intersections in their hitboxes.
-     * @param other The other object to check collision with.
-     * @return Returns the intersecting \code sf::FloatRect\endcode if the object's and the other object's hitbox have
-     * a nonzero intersection and returns \code std::nullopt\endcode otherwise. This also means that it returns
-     * \code std::nullopt\endcode if the objects are just touching.
-     */
-    [[nodiscard]] std::optional<Collision> collidesWith(const CollidableObject& other) const;
+    [[nodiscard]] Player* isPlayer();
 
-    [[nodiscard]] sf::Vector2f getIslandVelocity() const;
-
-    [[nodiscard]] sf::Vector2f getIslandAcceleration() const;
-
-    void joinIsland(std::shared_ptr<Island> new_island);
-
-    void joinIslandAsLeader(std::shared_ptr<Island> new_island);
-
-    void joinIslandIfMovable(std::shared_ptr<Island> new_island);
-
-    [[nodiscard]] std::shared_ptr<Island> getIsland() const;
-
-    static CollidableObject& getPointLeader() {
-        const sf::Texture texture;
-        static auto point_leader = CollidableObject{{}, sf::Sprite{texture}, {0,0}, CollidableObjectType::Immovable, nullptr};
-        return point_leader;
-    }
-
-    [[nodiscard]] sf::Vector2f getAbsoluteVelocity() const {
-        return (type == CollidableObjectType::Movable) ? velocity + island->getLeaderVelocity() : velocity;
-    }
-
-    [[nodiscard]] sf::Vector2f getAbsoluteAcceleration() const {
-        return (type == CollidableObjectType::Movable) ? acceleration + island->getLeaderAcceleration() : acceleration;
-    }
+    
 
 private:
     Hitbox hitbox;
-    std::shared_ptr<Island> island;
 };
 
 
 
-#endif //COLLIDABLEENTITY_H
+#endif //COLLIDABLEOBJECT_H

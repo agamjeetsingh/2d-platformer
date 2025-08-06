@@ -32,3 +32,8 @@ void PhysicsObject::addPosition(sf::Vector2f position) {
     sprite.setPosition(this->position);
 }
 
+sf::Vector2f PhysicsObject::getTotalVelocity() const {
+    return intrinsic_velocity + friction_velocity + impulse_velocity;
+}
+
+

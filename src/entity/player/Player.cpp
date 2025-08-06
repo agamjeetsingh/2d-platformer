@@ -3,6 +3,7 @@
 //
 
 #include "../../../include/entity/player/Player.h"
+#include "../../../include/physics/ContactsHandler.h"
 
 Player::Player(std::vector<sf::FloatRect> hitbox,
                sf::Sprite sprite,
@@ -46,4 +47,15 @@ void Player::noLongerOnGround() {
 
 void Player::justJumped() {
     canJumpDueToGrace = false;
+}
+
+void Player::updatePhysicsStates() {
+    // On ground
+    if (onGround == true && !ContactsHandler::getInstance().onLand(*this)) {
+        noLongerOnGround();
+    }
+    onGround = ContactsHandler::getInstance().onLand(*this);
+
+
+    // TODO
 }

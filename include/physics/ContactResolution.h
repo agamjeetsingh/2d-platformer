@@ -5,6 +5,8 @@
 #ifndef CONTACTRESOLUTION_H
 #define CONTACTRESOLUTION_H
 
+#include "../entity/CollidableObject.h"
+#include "../entity/CollidableObjectType.h"
 #include "../events/Collision.h"
 
 class ContactResolution {

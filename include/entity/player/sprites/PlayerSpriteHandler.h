@@ -2,8 +2,8 @@
 // Created by Agamjeet Singh on 25/07/25.
 //
 
-#ifndef PLAYERSPRITE_H
-#define PLAYERSPRITE_H
+#ifndef PLAYERSPRITEHANDLER_H
+#define PLAYERSPRITEHANDLER_H
 
 #include <unordered_map>
 
@@ -65,4 +65,4 @@ private:
 
 
 
-#endif //PLAYERSPRITE_H
+#endif //PLAYERSPRITEHANDLER_H
