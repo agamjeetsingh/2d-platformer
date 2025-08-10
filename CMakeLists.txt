@@ -21,11 +21,10 @@ add_executable(game main.cpp
         include/events/Collision.h
         include/entity/CollidableObjectType.h
         include/physics/CollisionAxis.h
-        include/physics/CollisionResolution.h
         src/physics/ContactResolution.cpp
         include/physics/ContactResolution.h
-        include/entity/PlayerState.cpp
-        include/entity/player/PlayerState.h
+        include/entity/PlayerSpriteState.cpp
+        include/entity/player/PlayerSpriteState.h
         include/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
         include/entity/player/Facing.h
@@ -40,5 +39,16 @@ add_executable(game main.cpp
         include/physics/ContactAxis.h
         include/physics/ContactsHandler.cpp
         include/physics/ContactsHandler.h
+        include/entity/player/PlayerState.cpp
+        include/entity/player/PlayerState.h
+        include/entity/player/PlayerStateGround.cpp
+        include/entity/player/PlayerStateGround.h
+        include/entity/player/PlayerStateAir.cpp
+        include/entity/player/PlayerStateAir.h
+        include/entity/player/PlayerStateClimbing.cpp
+        include/entity/player/PlayerStateClimbing.h
+        include/entity/player/DashDirection.h
+        include/physics/SpacialHashMap.cpp
+        include/physics/SpacialHashMap.h
 )
 target_link_libraries(game SFML::Graphics SFML::Window SFML::System)
