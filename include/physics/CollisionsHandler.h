@@ -4,9 +4,12 @@
 
 #ifndef COLLISIONSHANDLER_H
 #define COLLISIONSHANDLER_H
+#include <numeric>
 #include <unordered_set>
 #include "CollisionAxis.h"
 #include <SFML/Graphics.hpp>
+
+#include "SpacialHashMap.h"
 #include "../entity/CollidableObject.h"
 
 class Player;
@@ -77,9 +80,21 @@ public:
      */
     void removeObject(CollidableObject& body);
 
+    void reset() {
+        bodies = {};
+    }
+
     void update(float deltaTime, Player& player);
 
     void drawHitboxes(sf::RenderWindow& window, sf::Color color = sf::Color::Red) const;
+
+    [[nodiscard]] float getCellSize(bool update = false) const {
+        static float cellSize = -1;
+        if (cellSize == -1 || update) {
+            cellSize = getNewCellSize();
+        }
+        return cellSize;
+    }
 
 private:
     std::unordered_set<std::reference_wrapper<CollidableObject>, CollidableObjectRefHash, CollidableObjectRefEqual> bodies;
@@ -94,6 +109,10 @@ private:
 
     void moveMovables(float deltaTime) const;
 
+    std::unordered_map<std::pair<CollidableObject*, CollidableObject*>, Collision, CollidableObjectPtrPairHash> buildContacts(float deltaTime);
+
+    std::unordered_map<std::pair<CollidableObject*, CollidableObject*>, Collision, CollidableObjectPtrPairHash> buildContactsFaster(float deltaTime);
+
     // TODO - Should take in acceleration too with s = ut + 1/2at^2
     static std::optional<IncompleteCollision> sweptCollision(
         sf::FloatRect rectA,
@@ -101,6 +120,13 @@ private:
         sf::Vector2f velocityA,
         sf::Vector2f velocityB,
         float deltaTime);
+
+    SpacialHashMap spacial_map;
+
+    void buildSpatialMap();
+
+    [[nodiscard]] float getNewCellSize() const;
+
 };
 
 #endif //COLLISIONSHANDLER_H
