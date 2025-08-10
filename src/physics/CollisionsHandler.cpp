@@ -7,7 +7,6 @@
 #include <ranges>
 
 #include "../../include/events/Collision.h"
-#include "../../include/physics/CollisionResolution.h"
 #include "../../include/physics/ContactResolution.h"
 #include "../../include/physics/ContactsHandler.h"
 #include "../../include/entity/player/PlayerInputHandler.h"
@@ -48,71 +47,24 @@ void CollisionsHandler::removeObject(CollidableObject& body) {
 }
 
 void CollisionsHandler::update(float deltaTime, Player& player) {
-    std::unordered_map<std::pair<CollidableObject*, CollidableObject*>, Collision, CollidableObjectPtrPairHash> contacts;
 
-    // Build Contacts HashMap
-    for (auto bodyA: bodies) {
-        for (auto bodyB: bodies) {
-            // ~O(1) nested for loop, very few rectangles in every hitbox
-            std::unordered_map<Collision, float, CollisionHash> body_ab_collisions;
-            for (std::size_t indexA = 0; indexA < bodyA.get().getHitbox().getRects().size(); indexA++) {
-                auto rectA = bodyA.get().getHitbox().getRects()[indexA];
-                for (std::size_t indexB = 0; indexB < bodyB.get().getHitbox().getRects().size(); indexB++) {
-                    auto rectB = bodyB.get().getHitbox().getRects()[indexB];
-                    if (&bodyA.get() <= &bodyB.get()) {
-                        continue;
-                    }
-                    auto incompleteCollision =
-                        sweptCollision(
-                            rectA,
-                            rectB,
-                            bodyA.get().getTotalVelocity(),
-                            bodyB.get().getTotalVelocity(),
-                            deltaTime);
-                    if (incompleteCollision && !(bodyA.get().type == CollidableObjectType::Immovable && bodyB.get().type == CollidableObjectType::Immovable)) {
-                        body_ab_collisions[Collision{bodyA, bodyB, incompleteCollision.value(), indexA, indexB}] = incompleteCollision->collisionTime;
-                    }
-                }
-            }
-            // Sort for earliest collision by time to get the sf::FloatRects and add it to the collisions map
-
-            if (body_ab_collisions.empty()) {
-                continue;
-            }
-
-            auto earliest_ab_it = std::min_element(body_ab_collisions.begin(), body_ab_collisions.end(),
-        [](const auto& a, const auto& b) { return a.second < b.second; });
-
-            auto collision = earliest_ab_it->first;
-            contacts.emplace(std::make_pair(&bodyA.get(), &bodyB.get()), earliest_ab_it->first);
-        }
-    }
-
-    for (const auto &contact: contacts | std::views::values) {
-        ContactsHandler::getInstance().addContact(Contact(contact));
-    }
+    auto contacts = buildContactsFaster(deltaTime);
 
     moveImmovables(deltaTime);
     moveMovables(deltaTime);
 
-    PlayerInputHandler{player}.update();
 
-    // Need to set all friction velocity to zero as well, somewhere
-    // Also dampen the impulse velocity
-
-    // for (const auto& body: bodies) {
-    //     float lambda = 10;
-    //     body.get().impulse_velocity *= std::exp(-lambda * deltaTime);
-    // }
+    PlayerInputHandler{player}.update(deltaTime);
 
     std::unordered_set<CollidableObject*> friction_set_bodies;
 
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 8; i++) {
         for (const auto& key: contacts | std::views::keys) {
             auto collision = contacts.at(key);
             auto normal = -axisToVector(collision.axis); // A moving towards B in this normal
             // Compute Penetration
-            auto penetrationDepth = getPenetration(collision.getCollidingRectA(), collision.getCollidingRectB(), collision.axis);
+            auto penetrationDepth = getPenetration(collision.getCollidingRectA(), collision.getCollidingRectB(),
+                                                   collision.axis);
             assert(penetrationDepth >= 0);
 
             auto objectA = key.first;
@@ -122,17 +74,23 @@ void CollisionsHandler::update(float deltaTime, Player& player) {
             sf::Vector2f relative_velocity = objectA->getTotalVelocity() - objectB->getTotalVelocity();
             float relative_velocity_along_normal = dot(relative_velocity, normal);
 
+            if (relative_velocity_along_normal < 0) {
+                continue;
+            }
+
             float e = 0; // Zero restitution
 
             assert(objectA->getInvMass() + objectB->getInvMass() > 0);
-            float j = -(1 + e) * relative_velocity_along_normal / (objectA->getInvMass() + objectB->getInvMass()); // Impulse
+            float j = -(1 + e) * relative_velocity_along_normal / (objectA->getInvMass() + objectB->getInvMass());
+            // Impulse
 
             sf::Vector2f impulse = j * normal;
 
             // ==== Friction Impulse ====
-            if (i == 0 && (objectA->type == CollidableObjectType::Immovable || objectB->type == CollidableObjectType::Immovable)) {
-                auto* immovable = objectA->type == CollidableObjectType::Immovable ? objectA : objectB;
-                auto* movable = immovable == objectA ? objectB : objectA;
+            if (i == 0 && (objectA->type == CollidableObjectType::Immovable || objectB->type ==
+                           CollidableObjectType::Immovable)) {
+                auto *immovable = objectA->type == CollidableObjectType::Immovable ? objectA : objectB;
+                auto *movable = immovable == objectA ? objectB : objectA;
                 bool friction_set = false;
                 if (collision.axis == CollisionAxis::Up || collision.axis == CollisionAxis::Down) {
                     if (dot(movable->getTotalVelocity(), normal) > 0) {
@@ -167,17 +125,15 @@ void CollisionsHandler::update(float deltaTime, Player& player) {
         }
     }
 
-    for (const auto& body: bodies) {
+    for (const auto &body: bodies) {
         if (!friction_set_bodies.contains(&body.get())) {
             body.get().friction_velocity = {0, 0};
         }
     }
-
 }
 
 
 void CollisionsHandler::moveImmovables(float deltaTime) const {
-
     if (deltaTime <= 0) {
         return;
     }
@@ -270,6 +226,107 @@ void CollisionsHandler::moveMovables(float deltaTime) const {
         }
     }
 }
+
+std::unordered_map<std::pair<CollidableObject *, CollidableObject *>, Collision, CollidableObjectPtrPairHash> CollisionsHandler::buildContacts(float deltaTime) {
+    std::unordered_map<std::pair<CollidableObject*, CollidableObject*>, Collision, CollidableObjectPtrPairHash> contacts;
+
+    // Build Contacts HashMap
+    for (auto bodyA: bodies) {
+        for (auto bodyB: bodies) {
+            // ~O(1) nested for loop, very few rectangles in every hitbox
+            std::unordered_map<Collision, float, CollisionHash> body_ab_collisions;
+            for (std::size_t indexA = 0; indexA < bodyA.get().getHitbox().getRects().size(); indexA++) {
+                auto rectA = bodyA.get().getHitbox().getRects()[indexA];
+                for (std::size_t indexB = 0; indexB < bodyB.get().getHitbox().getRects().size(); indexB++) {
+                    auto rectB = bodyB.get().getHitbox().getRects()[indexB];
+                    if (&bodyA.get() <= &bodyB.get()) {
+                        continue;
+                    }
+                    auto incompleteCollision =
+                        sweptCollision(
+                            rectA,
+                            rectB,
+                            bodyA.get().getTotalVelocity(),
+                            bodyB.get().getTotalVelocity(),
+                            deltaTime);
+                    if (incompleteCollision && !(bodyA.get().type == CollidableObjectType::Immovable && bodyB.get().type == CollidableObjectType::Immovable)) {
+                        body_ab_collisions[Collision{bodyA, bodyB, incompleteCollision.value(), indexA, indexB}] = incompleteCollision->collisionTime;
+                    }
+                }
+            }
+            // Sort for earliest collision by time to get the sf::FloatRects and add it to the collisions map
+
+            if (body_ab_collisions.empty()) {
+                continue;
+            }
+
+            auto earliest_ab_it = std::min_element(body_ab_collisions.begin(), body_ab_collisions.end(),
+        [](const auto& a, const auto& b) { return a.second < b.second; });
+
+            auto collision = earliest_ab_it->first;
+            contacts.emplace(std::make_pair(&bodyA.get(), &bodyB.get()), earliest_ab_it->first);
+        }
+    }
+
+    ContactsHandler::getInstance().reset();
+
+    for (const auto& contact: contacts | std::views::values) {
+        ContactsHandler::getInstance().addContact(Contact(contact));
+    }
+
+    return contacts;
+}
+
+
+std::unordered_map<std::pair<CollidableObject*, CollidableObject*>, Collision, CollidableObjectPtrPairHash> CollisionsHandler::buildContactsFaster(float deltaTime) {
+    std::unordered_map<std::pair<CollidableObject*, CollidableObject*>, Collision, CollidableObjectPtrPairHash> contacts;
+
+    buildSpatialMap();
+
+    auto pairs = spacial_map.getPairs();
+
+    std::cout << "Bodies: " << bodies.size() << " Pairs: " << pairs.size() << std::endl;
+    for (auto [bodyA, bodyB]: pairs) {
+        float earliestTime = std::numeric_limits<float>::max();
+        std::optional<IncompleteCollision> earliestCollision;
+        std::size_t earliestIndexA = 0, earliestIndexB = 0;
+        
+        for (std::size_t indexA = 0; indexA < bodyA->getHitbox().getRects().size(); indexA++) {
+            auto rectA = bodyA->getHitbox().getRects()[indexA];
+            for (std::size_t indexB = 0; indexB < bodyB->getHitbox().getRects().size(); indexB++) {
+                auto rectB = bodyB->getHitbox().getRects()[indexB];
+                auto incompleteCollision =
+                    sweptCollision(
+                        rectA,
+                        rectB,
+                        bodyA->getTotalVelocity(),
+                        bodyB->getTotalVelocity(),
+                        deltaTime);
+                if (incompleteCollision && !(bodyA->type == CollidableObjectType::Immovable && bodyB->type == CollidableObjectType::Immovable)) {
+                    if (incompleteCollision->collisionTime < earliestTime) {
+                        earliestTime = incompleteCollision->collisionTime;
+                        earliestCollision = incompleteCollision;
+                        earliestIndexA = indexA;
+                        earliestIndexB = indexB;
+                    }
+                }
+            }
+        }
+        
+        if (earliestCollision.has_value()) {
+            contacts.emplace(std::make_pair(bodyA, bodyB), 
+                           Collision{(*bodyA), (*bodyB), earliestCollision.value(), earliestIndexA, earliestIndexB});
+        }
+    }
+
+    ContactsHandler::getInstance().reset();
+    for (const auto& contact: contacts | std::ranges::views::values) {
+        ContactsHandler::getInstance().addContact(Contact(contact));
+    }
+
+    return contacts;
+}
+
 
 float CollisionsHandler::getPenetration(sf::FloatRect rectA, sf::FloatRect rectB, CollisionAxis axis) {
     if (axis == CollisionAxis::Up || axis == CollisionAxis::Down) {
@@ -390,3 +447,26 @@ void CollisionsHandler::drawHitboxes(sf::RenderWindow &window, sf::Color color) 
         }
     }
 }
+
+void CollisionsHandler::buildSpatialMap() {
+    auto updated = getCellSize(true);
+
+    spacial_map = SpacialHashMap{bodies.size()};
+
+    for (const auto& body: bodies) {
+        spacial_map.addObject(&body.get());
+    }
+}
+
+float CollisionsHandler::getNewCellSize() const {
+    std::vector<float> diameters;
+    diameters.reserve(bodies.size());
+    for (auto body: bodies) {
+        sf::Vector2f size = body.get().getHitbox().getBounds().size;
+        diameters.push_back(std::max(size.x, size.y));
+    }
+    return *std::ranges::max_element(diameters);
+    return std::accumulate(diameters.begin(), diameters.end(), 0.f) / static_cast<float>(bodies.size());
+}
+
+
