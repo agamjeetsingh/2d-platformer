@@ -7,7 +7,6 @@
 #include <ranges>
 
 #include "../../include/events/Collision.h"
-#include "../../include/physics/CollisionResolution.h"
 #include "../../include/physics/ContactResolution.h"
 #include "../../include/physics/ContactsHandler.h"
 #include "../../include/entity/player/PlayerInputHandler.h"
@@ -54,15 +53,8 @@ void CollisionsHandler::update(float deltaTime, Player& player) {
     moveImmovables(deltaTime);
     moveMovables(deltaTime);
 
-    PlayerInputHandler{player}.update();
 
-    // Need to set all friction velocity to zero as well, somewhere
-    // Also dampen the impulse velocity
-
-    // for (const auto& body: bodies) {
-    //     float lambda = 10;
-    //     body.get().impulse_velocity *= std::exp(-lambda * deltaTime);
-    // }
+    PlayerInputHandler{player}.update(deltaTime);
 
     std::unordered_set<CollidableObject*> friction_set_bodies;
 

@@ -9,7 +9,7 @@
 
 #include "PlayerIdle.h"
 #include "PlayerTextures.h"
-#include "../PlayerState.h"
+#include "../PlayerSpriteState.h"
 #include "../../../../../../../../opt/homebrew/Cellar/sfml/3.0.1/include/SFML/Graphics/Sprite.hpp"
 #include "../Facing.h"
 
@@ -19,12 +19,12 @@ namespace sf {
 
 class PlayerSpriteHandler {
 public:
-    explicit PlayerSpriteHandler(PlayerState& state, sf::Sprite& sprite, Facing& facing): state(state), sprite(sprite), facing(facing) {
-        textures[PlayerState::Idle] = PlayerIdle::getInstance();
+    explicit PlayerSpriteHandler(PlayerSpriteState& state, sf::Sprite& sprite, Facing& facing): state(state), sprite(sprite), facing(facing) {
+        textures[PlayerSpriteState::Ground] = PlayerIdle::getInstance();
         // Add all types
     }
 
-    PlayerState& state;
+    PlayerSpriteState& state;
     sf::Sprite& sprite;
     Facing& facing;
 
@@ -56,11 +56,11 @@ public:
         sprite.setTexture(player_textures.getTextures()[curr_sprite_index]);
     }
 private:
-    PlayerState curr_state = state;
+    PlayerSpriteState curr_state = state;
     float time_in_state = 0;
     size_t curr_sprite_index = 0;
 
-    std::unordered_map<PlayerState, PlayerTextures> textures;
+    std::unordered_map<PlayerSpriteState, PlayerTextures> textures;
 };
 
 
