@@ -2,8 +2,8 @@
 // Created by Agamjeet Singh on 27/07/25.
 //
 
-#include "ContactsHandler.h"
-#include "../entity/player/Player.h"
+#include "../../include/physics/ContactsHandler.h"
+#include "../../include/entity/player/Player.h"
 
 ContactsHandler &ContactsHandler::getInstance() {
     static ContactsHandler instance;
