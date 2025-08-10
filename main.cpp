@@ -35,9 +35,8 @@ int main() {
     Player player2({sf::FloatRect({0, 0}, sf::Vector2<float>(player_texture.getSize()))}, player_sprite, {400, 400});
     sprite.setScale({1, 1});
     CollidableObject box(hitbox, sprite, {0, 300}, CollidableObjectType::Immovable);
-    box.intrinsic_velocity.x = 100;
+    // box.intrinsic_velocity.x = 100;
     CollidableObject box_2(hitbox, sprite, {800, 100}, CollidableObjectType::Immovable);
-    box_2.intrinsic_velocity.x = -100;
     // CollidableObject box_3(hitbox, sprite, {0, -200}, CollidableObjectType::Immovable);
     // box_3.acceleration = {0, 800};
     player.acceleration = {0, 800};
@@ -67,7 +66,7 @@ int main() {
 
         CollisionsHandler::getInstance().update(dt, player);
 
-        player.updates(dt);
+        player.updateSprite(dt);
 
         std::cout << "About to draw player sprite at position: " << player.getSprite().getPosition().x << ", "
           << player.getSprite().getPosition().y << std::endl;
@@ -94,14 +93,46 @@ int main() {
         std::cout << "--------------------" << std::endl;
 
         auto contacts = ContactsHandler::getInstance().getContacts();
-        if (!contacts.empty()) {
-
-        }
 
         auto player_contacts = ContactsHandler::getInstance().allContacts(player);
 
+        sf::Font font;
+        if (!font.openFromFile("/System/Library/Fonts/Supplemental/arial.ttf")) { // Change path for Linux/Mac
+            std::cerr << "Could not load font!\n";
+            return -1;
+        }
 
-        assert(box.getInvMass() == 0);
+        sf::Text text = font;
+        text.setString("Intrinsic velocity: x = " + std::to_string(player.intrinsic_velocity.x) +
+            ", y = " + std::to_string(player.intrinsic_velocity.y));
+        text.setCharacterSize(25); // in pixels
+        text.setFillColor(sf::Color::Black);
+        text.setPosition({0.f, 0.f});
+
+        sf::Text text2 = font;
+        text2.setString("Friction velocity: x = " + std::to_string(player.friction_velocity.x) + ", y = " +
+            std::to_string(player.friction_velocity.y));
+        text2.setCharacterSize(25);
+        text2.setFillColor(sf::Color::Black);
+        text2.setPosition({0, 30});
+
+        sf::Text text3 = font;
+        text3.setString("Impulse velocity: x = " + std::to_string(player.impulse_velocity.x) + ", y = " +
+            std::to_string(player.impulse_velocity.y));
+        text3.setCharacterSize(25);
+        text3.setFillColor(sf::Color::Black);
+        text3.setPosition({0, 60});
+
+        sf::Text text4 = font;
+        text4.setString("onGround: " + std::to_string(player.isOnGround()));
+        text4.setCharacterSize(25);
+        text4.setFillColor(sf::Color::Black);
+        text4.setPosition({0, 90});
+
+        window.draw(text);
+        window.draw(text2);
+        window.draw(text3);
+        window.draw(text4);
 
         window.display();
     }
