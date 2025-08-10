@@ -2,7 +2,7 @@
 // Created by Agamjeet Singh on 24/07/25.
 //
 
-#include "../../include/physics/ContactResolution.h"
+#include "physics/ContactResolution.h"
 
 void ContactResolution::resolve(Collision collision) {
     // TODO - improve later if needed

@@ -5,6 +5,9 @@ set(CMAKE_CXX_STANDARD 20)
 
 find_package(SFML 3.0.1 COMPONENTS Graphics Window System REQUIRED)
 
+# Set include directories to avoid ../../../ hell
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 add_executable(game main.cpp
         include/utility/InputManager.h
         src/physics/CollisionsHandler.cpp

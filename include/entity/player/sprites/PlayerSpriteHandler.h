@@ -10,7 +10,7 @@
 #include "PlayerIdle.h"
 #include "PlayerTextures.h"
 #include "../PlayerSpriteState.h"
-#include "../../../../../../../../opt/homebrew/Cellar/sfml/3.0.1/include/SFML/Graphics/Sprite.hpp"
+#include <SFML/Graphics/Sprite.hpp>
 #include "../Facing.h"
 
 namespace sf {

@@ -2,14 +2,14 @@
 // Created by Agamjeet Singh on 13/07/25.
 //
 
-#include "../../include/physics/CollisionsHandler.h"
+#include "physics/CollisionsHandler.h"
 
 #include <ranges>
 
-#include "../../include/events/Collision.h"
-#include "../../include/physics/ContactResolution.h"
-#include "../../include/physics/ContactsHandler.h"
-#include "../../include/entity/player/PlayerInputHandler.h"
+#include "events/Collision.h"
+#include "physics/ContactResolution.h"
+#include "physics/ContactsHandler.h"
+#include "entity/player/PlayerInputHandler.h"
 
 struct Collision;
 
