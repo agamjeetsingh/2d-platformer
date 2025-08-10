@@ -14,6 +14,10 @@ public:
         events.emplace_back(std::move(callback), delaySeconds);
     }
 
+    void schedule(ScheduledEvent event) {
+        events.push_back(std::move(event));
+    }
+
     static Scheduler& getInstance() {
         static Scheduler scheduler;
         return scheduler;
@@ -22,16 +26,25 @@ public:
     void update(float dt) {
         for (auto it = events.begin(); it != events.end(); ) {
             it->timeRemaining -= dt;
+            it->spentTime += dt;
             if (it->timeRemaining <= 0.0f) {
                 it->callback();
                 if (it->repeat) {
-                    it->timeRemaining = it->interval;
-                    ++it;
+                    if (it->maxTime != -1 && it->maxTime <= it->spentTime) {
+                        it = events.erase(it);
+                    } else {
+                        it->timeRemaining = it->interval;
+                        ++it;
+                    }
                 } else {
                     it = events.erase(it);
                 }
             } else {
-                ++it;
+                if (it->maxTime != -1 && it->maxTime <= it->spentTime) {
+                    it = events.erase(it);
+                } else {
+                    ++it;
+                }
             }
         }
     }
