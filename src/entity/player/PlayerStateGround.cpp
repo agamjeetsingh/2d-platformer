@@ -2,8 +2,8 @@
 // Created by Agamjeet Singh on 08/08/25.
 //
 
-#include "PlayerStateGround.h"
-#include "Player.h"
+#include "entity/player/PlayerStateGround.h"
+#include "entity/player/Player.h"
 
 PlayerStateGround &PlayerStateGround::getInstance() {
     static PlayerStateGround instance;

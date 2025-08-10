@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include "../entity/CollidableObject.h"
 #include "../events/Contact.h"
+#include "CollisionsHandler.h"
+
 class Player;
 enum class Facing;
 
@@ -28,6 +30,11 @@ class ContactsHandler {
 public:
     static ContactsHandler& getInstance();
 
+    /**
+     * @brief Adds the contact into the contacts hashmap
+     * @warning If the pair of objects in the contact map previously exist, in the same order, then it doesn't add the new contact
+     * @param contact The contact to be added.
+     */
     void addContact(Contact contact);
 
     void removeContact(Contact contact);

@@ -2,11 +2,10 @@
 // Created by Agamjeet Singh on 13/07/25.
 //
 
-#include "../../../include/entity/player/Player.h"
-
-#include "../../../include/entity/player/PlayerStateClimbing.h"
-#include "../../../include/entity/player/PlayerStateAir.h"
-#include "../../../include/physics/ContactsHandler.h"
+#include "entity/player/Player.h"
+#include "entity/player/PlayerStateClimbing.h"
+#include "entity/player/PlayerStateAir.h"
+#include "physics/ContactsHandler.h"
 
 Player::Player(std::vector<sf::FloatRect> hitbox,
                sf::Sprite sprite,

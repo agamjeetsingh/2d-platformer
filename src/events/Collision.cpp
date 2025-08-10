@@ -2,8 +2,8 @@
 // Created by Agamjeet Singh on 18/07/25.
 //
 
-#include "../../include/events/Collision.h"
-#include "../../include/physics/CollisionsHandler.h"
+#include "events/Collision.h"
+#include "physics/CollisionsHandler.h"
 
 Collision::Collision(CollidableObject& objectA, CollidableObject& objectB, IncompleteCollision incomplete_collision,
     std::size_t collidingRectAIndex,

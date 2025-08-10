@@ -2,5 +2,5 @@
 // Created by Agamjeet Singh on 25/07/25.
 //
 
-#include "player/PlayerSpriteState.h"
+#include "entity/player/PlayerSpriteState.h"
 

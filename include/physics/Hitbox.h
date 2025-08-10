@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "../../../../../../opt/homebrew/Cellar/sfml/3.0.1/include/SFML/Graphics/Rect.hpp"
+#include <SFML/Graphics/Rect.hpp>
 
 /**
  * Handles shifting the hitbox with the position of the object.

@@ -2,7 +2,7 @@
 // Created by Agamjeet Singh on 27/07/25.
 //
 
-#include "Contact.h"
+#include "events/Contact.h"
 
 bool Contact::operator==(const Contact &other) const {
     return &objectA == &other.objectA &&

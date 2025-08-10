@@ -2,13 +2,13 @@
 // Created by Agamjeet Singh on 13/07/25.
 //
 
-#include "../../include/entity/CollidableObject.h"
+#include "entity/CollidableObject.h"
 #include <iostream>
 #include <utility>
 
-#include "../../include/events/Collision.h"
-#include "../../include/entity/player/Player.h"
-#include "../../include/physics/CollisionsHandler.h"
+#include "events/Collision.h"
+#include "entity/player/Player.h"
+#include "physics/CollisionsHandler.h"
 
 CollidableObject::CollidableObject(std::vector<sf::FloatRect> hitbox,
                                    sf::Sprite sprite,
