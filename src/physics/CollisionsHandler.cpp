@@ -72,7 +72,7 @@ void CollisionsHandler::update(float deltaTime, Player& player) {
 
             // ==== Normal Impulse ====
             sf::Vector2f relative_velocity = objectA->getTotalVelocity() - objectB->getTotalVelocity();
-            float relative_velocity_along_normal = dot(relative_velocity, normal);
+            float relative_velocity_along_normal = relative_velocity.dot(normal);
 
             if (relative_velocity_along_normal < 0) {
                 continue;
@@ -93,12 +93,12 @@ void CollisionsHandler::update(float deltaTime, Player& player) {
                 auto *movable = immovable == objectA ? objectB : objectA;
                 bool friction_set = false;
                 if (collision.axis == CollisionAxis::Up || collision.axis == CollisionAxis::Down) {
-                    if (dot(movable->getTotalVelocity(), normal) > 0) {
+                    if (movable->getTotalVelocity().dot(normal) > 0) {
                         movable->friction_velocity.x = immovable->getTotalVelocity().x;
                         friction_set = true;
                     }
                 } else {
-                    if (dot(movable->getTotalVelocity(), normal) > 0) {
+                    if (movable->getTotalVelocity().dot(normal) > 0) {
                         movable->friction_velocity.y = immovable->getTotalVelocity().y;
                         friction_set = true;
                     }
@@ -138,7 +138,6 @@ void CollisionsHandler::moveImmovables(float deltaTime) const {
         return;
     }
 
-    // TODO - Make a array keeping track of all immovables as a private member of the class
     std::vector<std::reference_wrapper<CollidableObject>> immovables;
     for (auto body: bodies) {
         if (body.get().type == CollidableObjectType::Immovable) {
@@ -227,8 +226,8 @@ void CollisionsHandler::moveMovables(float deltaTime) const {
     }
 }
 
-std::unordered_map<std::pair<CollidableObject *, CollidableObject *>, Collision, CollidableObjectPtrPairHash> CollisionsHandler::buildContacts(float deltaTime) {
-    std::unordered_map<std::pair<CollidableObject*, CollidableObject*>, Collision, CollidableObjectPtrPairHash> contacts;
+ContactsPtrHashMap CollisionsHandler::buildContacts(float deltaTime) const {
+    ContactsPtrHashMap contacts;
 
     // Build Contacts HashMap
     for (auto bodyA: bodies) {
@@ -278,8 +277,8 @@ std::unordered_map<std::pair<CollidableObject *, CollidableObject *>, Collision,
 }
 
 
-std::unordered_map<std::pair<CollidableObject*, CollidableObject*>, Collision, CollidableObjectPtrPairHash> CollisionsHandler::buildContactsFaster(float deltaTime) {
-    std::unordered_map<std::pair<CollidableObject*, CollidableObject*>, Collision, CollidableObjectPtrPairHash> contacts;
+ContactsPtrHashMap CollisionsHandler::buildContactsFaster(float deltaTime) {
+    ContactsPtrHashMap contacts;
 
     buildSpatialMap();
 
@@ -458,6 +457,15 @@ void CollisionsHandler::buildSpatialMap() {
     }
 }
 
+float CollisionsHandler::getCellSize(bool update) const {
+    static float cellSize = -1;
+    if (cellSize == -1 || update) {
+        cellSize = getNewCellSize();
+    }
+    return cellSize;
+}
+
+
 float CollisionsHandler::getNewCellSize() const {
     std::vector<float> diameters;
     diameters.reserve(bodies.size());
@@ -468,5 +476,3 @@ float CollisionsHandler::getNewCellSize() const {
     return *std::ranges::max_element(diameters);
     return std::accumulate(diameters.begin(), diameters.end(), 0.f) / static_cast<float>(bodies.size());
 }
-
-
