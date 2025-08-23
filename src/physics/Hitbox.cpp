@@ -23,7 +23,7 @@ sf::FloatRect Hitbox::getBounds() const {
     float bottommost_coord = first_hitbox.position.y + first_hitbox.size.y;
     float topmost_coord = first_hitbox.position.y;
 
-    for (auto box: *this) {
+    for (const auto& box: *this) {
         leftmost_coord = std::min(leftmost_coord, box.position.x);
         rightmost_coord = std::max(rightmost_coord, box.position.x + box.size.x);
         bottommost_coord = std::max(bottommost_coord, box.position.y + box.size.y);
@@ -60,3 +60,8 @@ bool Hitbox::Iterator::operator!=(const Iterator& other) const {
 [[nodiscard]] Hitbox::Iterator Hitbox::end() const {
     return Iterator(original_hitbox, original_hitbox.size(), position);
 }
+
+size_t Hitbox::getSize() const {
+    return original_hitbox.size();
+}
+
