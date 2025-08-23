@@ -64,6 +64,8 @@ public:
 
     [[nodiscard]] Player* isPlayer();
 
+    [[nodiscard]] const Player* isPlayer() const;
+
 private:
     Hitbox hitbox;
 };

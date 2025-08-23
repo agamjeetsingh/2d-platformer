@@ -41,3 +41,8 @@ bool CollidableObject::operator==(const CollidableObject &other) const {
 [[nodiscard]] Player* CollidableObject::isPlayer() {
     return dynamic_cast<Player*>(this);
 }
+
+[[nodiscard]] const Player *CollidableObject::isPlayer() const {
+    return dynamic_cast<const Player*>(this);
+}
+
