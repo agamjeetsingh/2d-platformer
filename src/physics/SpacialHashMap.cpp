@@ -36,7 +36,7 @@ std::vector<std::pair<CollidableObject *, CollidableObject *> > SpacialHashMap::
             }
         }
     }
-    return std::move(pairs);
+    return pairs;
 }
 
 std::vector<size_t> SpacialHashMap::getHashes(const CollidableObject *ptr) {
