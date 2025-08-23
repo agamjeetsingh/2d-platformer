@@ -465,7 +465,12 @@ void CollisionsHandler::drawHitboxes(sf::RenderWindow &window, sf::Color color) 
 void CollisionsHandler::buildSpatialMap() {
     auto updated = getCellSize(true);
 
-    spacial_map = SpacialHashMap{bodies.size()};
+    if (bodies.size() != spacial_map.getNumObjects()) {
+        spacial_map = SpacialHashMap{bodies.size()};
+    } else {
+        spacial_map.clear();
+    }
+
 
     for (const auto& body: bodies) {
         spacial_map.addObject(&body.get());
