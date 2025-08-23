@@ -53,6 +53,17 @@ void CollisionsHandler::update(float deltaTime, Player& player) {
     moveImmovables(deltaTime);
     moveMovables(deltaTime);
 
+    for (const auto& body: bodies) {
+        constexpr float lambda = 10;
+        // body.get().impulse_velocity *= std::exp(-lambda * deltaTime);
+        body.get().impulse_velocity *= 0.0f;
+        // if (body.get().impulse_velocity.x < 0.1) {
+        //     body.get().impulse_velocity.x = 0;
+        // }
+        // if (body.get().impulse_velocity.y < 0.1) {
+        //     body.get().impulse_velocity.y = 0;
+        // }
+    }
 
     PlayerInputHandler{player}.update(deltaTime);
 
