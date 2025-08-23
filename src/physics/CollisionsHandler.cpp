@@ -162,10 +162,10 @@ void CollisionsHandler::moveImmovables(float deltaTime) const {
         for (auto bodyB: immovables) {
             // ~O(1) nested for loop, very few rectangles in every hitbox
             std::unordered_map<Collision, float, CollisionHash> body_ab_collisions;
-            for (std::size_t indexA = 0; indexA < bodyA.get().getHitbox().getRects().size(); indexA++) {
-                auto rectA = bodyA.get().getHitbox().getRects()[indexA];
-                for (std::size_t indexB = 0; indexB < bodyB.get().getHitbox().getRects().size(); indexB++) {
-                    auto rectB = bodyB.get().getHitbox().getRects()[indexB];
+            size_t indexA = 0;
+            for (const auto& rectA : bodyA.get().getHitbox()) {
+                size_t indexB = 0;
+                for (const auto& rectB : bodyB.get().getHitbox()) {
                     if (&bodyA.get() <= &bodyB.get()) {
                         continue;
                     }
@@ -179,7 +179,9 @@ void CollisionsHandler::moveImmovables(float deltaTime) const {
                     if (incompleteCollision) {
                         body_ab_collisions[Collision{bodyA, bodyB, incompleteCollision.value(), indexA, indexB}] = incompleteCollision->collisionTime;
                     }
+                    indexB++;
                 }
+                indexA++;
             }
 
             // Sort for earliest collision by time to get the sf::FloatRects and add it to the collisions map
@@ -300,11 +302,11 @@ ContactsPtrHashMap CollisionsHandler::buildContactsFaster(float deltaTime) {
         float earliestTime = std::numeric_limits<float>::max();
         std::optional<IncompleteCollision> earliestCollision;
         std::size_t earliestIndexA = 0, earliestIndexB = 0;
-        
-        for (std::size_t indexA = 0; indexA < bodyA->getHitbox().getRects().size(); indexA++) {
-            auto rectA = bodyA->getHitbox().getRects()[indexA];
-            for (std::size_t indexB = 0; indexB < bodyB->getHitbox().getRects().size(); indexB++) {
-                auto rectB = bodyB->getHitbox().getRects()[indexB];
+
+        size_t indexA = 0;
+        for (const auto& rectA : bodyA->getHitbox()) {
+            size_t indexB = 0;
+            for (const auto& rectB : bodyB->getHitbox()) {
                 auto incompleteCollision =
                     sweptCollision(
                         rectA,
@@ -320,7 +322,9 @@ ContactsPtrHashMap CollisionsHandler::buildContactsFaster(float deltaTime) {
                         earliestIndexB = indexB;
                     }
                 }
+                indexB++;
             }
+            indexA++;
         }
         
         if (earliestCollision.has_value()) {
