@@ -10,12 +10,16 @@
 
 class Scheduler {
 public:
-    void schedule(std::function<void()> callback, float delaySeconds) {
-        events.emplace_back(std::move(callback), delaySeconds);
+    std::shared_ptr<ScheduledEvent> schedule(std::function<void()> callback, float delaySeconds) {
+        const auto event_ptr = std::make_shared<ScheduledEvent>(std::move(callback), delaySeconds);
+        events.push_back(event_ptr);
+        return event_ptr;
     }
 
-    void schedule(ScheduledEvent event) {
-        events.push_back(std::move(event));
+    std::shared_ptr<ScheduledEvent> schedule(ScheduledEvent event) {
+        const auto event_ptr = std::make_shared<ScheduledEvent>(std::move(event));
+        events.push_back(event_ptr);
+        return event_ptr;
     }
 
     static Scheduler& getInstance() {
@@ -25,22 +29,26 @@ public:
 
     void update(float dt) {
         for (auto it = events.begin(); it != events.end(); ) {
-            it->timeRemaining -= dt;
-            it->spentTime += dt;
-            if (it->timeRemaining <= 0.0f) {
-                it->callback();
-                if (it->repeat) {
-                    if (it->maxTime != -1 && it->maxTime <= it->spentTime) {
+            if (it->get()->cancelled) {
+                it = events.erase(it);
+                continue;
+            }
+            it->get()->timeRemaining -= dt;
+            it->get()->spentTime += dt;
+            if (it->get()->timeRemaining <= 0.0f) {
+                it->get()->callback();
+                if (it->get()->repeat) {
+                    if (it->get()->maxTime != -1 && it->get()->maxTime <= it->get()->spentTime) {
                         it = events.erase(it);
                     } else {
-                        it->timeRemaining = it->interval;
+                        it->get()->timeRemaining = it->get()->interval;
                         ++it;
                     }
                 } else {
                     it = events.erase(it);
                 }
             } else {
-                if (it->maxTime != -1 && it->maxTime <= it->spentTime) {
+                if (it->get()->maxTime != -1 && it->get()->maxTime <= it->get()->spentTime) {
                     it = events.erase(it);
                 } else {
                     ++it;
@@ -53,7 +61,7 @@ public:
         events = {};
     }
 private:
-    std::vector<ScheduledEvent> events;
+    std::vector<std::shared_ptr<ScheduledEvent>> events;
 };
 
 
