@@ -29,7 +29,7 @@ std::vector<std::pair<CollidableObject *, CollidableObject *> > SpacialHashMap::
     for (const auto& bucket: buckets) {
         for (auto ptr1: bucket) {
             for (auto ptr2: bucket) {
-                if (&ptr1 <= &ptr2) {
+                if (ptr1 <= ptr2) {
                     continue;
                 }
                 pairs.emplace_back(ptr1, ptr2);
