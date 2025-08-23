@@ -8,21 +8,38 @@
 #include "../entity/CollidableObject.h"
 #include "../events/Contact.h"
 #include "CollisionsHandler.h"
+#include <ranges>
 
 class Player;
 enum class Facing;
 
-struct ContactKeyHash {
-    std::size_t operator()(const std::pair<std::reference_wrapper<CollidableObject>, std::reference_wrapper<CollidableObject>>& key) const {
-        return std::hash<void*>{}(&key.first.get()) ^ std::hash<void*>{}(&key.second.get());
+/**
+ * Hash function for \code std::reference_wrapper<const Collider>\endcode
+ */
+struct CollidableObjectConstRefHash {
+    using is_transparent = void;
+    std::size_t operator()(const std::reference_wrapper<CollidableObject>& ref) const noexcept {
+        return std::hash<const CollidableObject*>{}(&ref.get());
+    }
+
+    std::size_t operator()(const CollidableObject& obj) const noexcept {
+        return std::hash<const CollidableObject*>{}(&obj);
     }
 };
 
-struct ContactKeyEqual {
-    bool operator()(
-        const std::pair<std::reference_wrapper<CollidableObject>, std::reference_wrapper<CollidableObject> > &lhs,
-                   const std::pair<std::reference_wrapper<CollidableObject>, std::reference_wrapper<CollidableObject>>& rhs) const {
-        return &lhs.first.get() == &rhs.first.get() && &lhs.second.get() == &rhs.second.get();
+/**
+ * Equality function for \code std::reference_wrapper<const Collider>\endcode
+ */
+struct CollidableObjectConstRefEqual {
+    using is_transparent = void;
+    bool operator()(const std::reference_wrapper<CollidableObject>& lhs, const std::reference_wrapper<CollidableObject>& rhs) const noexcept {
+        return &lhs.get() == &rhs.get();
+    }
+    bool operator()(const std::reference_wrapper<CollidableObject>& lhs, const CollidableObject& rhs) const noexcept {
+        return &lhs.get() == &rhs;
+    }
+    bool operator()(const CollidableObject& lhs, const std::reference_wrapper<CollidableObject>& rhs) const noexcept {
+        return &lhs == &rhs.get();
     }
 };
 
@@ -37,24 +54,25 @@ public:
      */
     void addContact(Contact contact);
 
-    void removeContact(Contact contact);
-
-    void reset();
-
-    [[nodiscard]] std::optional<Contact> areTouching(CollidableObject& objectA, CollidableObject& objectB) const;
+    void newFrame();
 
     [[nodiscard]] std::vector<Contact> allContacts(const CollidableObject& object) const;
 
-    [[nodiscard]] bool onLand(const CollidableObject& object) const;
+    [[nodiscard]] bool onLand(const CollidableObject& object, bool previous_frame = false) const;
 
-    [[nodiscard]] std::vector<CollidableObject> nextToVerticalSurfaces(const CollidableObject& object) const;
+    [[nodiscard]] std::vector<CollidableObject> nextToVerticalSurfaces(const CollidableObject& object, bool previous_frame = false) const;
 
-    [[nodiscard]] std::vector<Contact> restingOnSurfaces(const CollidableObject& object) const;
+    [[nodiscard]] std::vector<Contact> restingOnSurfaces(const CollidableObject& object, bool previous_frame = false) const;
 
-    [[nodiscard]] const std::unordered_map<std::pair<std::reference_wrapper<CollidableObject>, std::reference_wrapper<CollidableObject>>, Contact, ContactKeyHash, ContactKeyEqual>& getContacts() const;
+    [[nodiscard]] std::vector<Contact> getContacts() const;
+
+    void emitPlayerLeftGroundEvent() const;
 
 private:
-    std::unordered_map<std::pair<std::reference_wrapper<CollidableObject>, std::reference_wrapper<CollidableObject>>, Contact, ContactKeyHash, ContactKeyEqual> contacts;
+    std::unordered_map<std::reference_wrapper<CollidableObject>, std::vector<Contact>, CollidableObjectConstRefHash, CollidableObjectConstRefEqual> contacts;
+    std::unordered_map<std::reference_wrapper<CollidableObject>, std::vector<Contact>, CollidableObjectConstRefHash, CollidableObjectConstRefEqual> previous_frame_contacts;
+
+    std::vector<Contact> contacts_vector;
 };
 
 

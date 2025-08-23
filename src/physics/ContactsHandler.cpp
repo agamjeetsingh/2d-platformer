@@ -4,6 +4,9 @@
 
 #include "physics/ContactsHandler.h"
 #include "entity/player/Player.h"
+#include "events/EventBus.h"
+#include "events/PlayerLeftGround.h"
+#include "events/PlayerOnGround.h"
 
 ContactsHandler &ContactsHandler::getInstance() {
     static ContactsHandler instance;
@@ -11,80 +14,95 @@ ContactsHandler &ContactsHandler::getInstance() {
 }
 
 void ContactsHandler::addContact(Contact contact) {
-    auto key = std::make_pair(std::ref(contact.objectA), std::ref(contact.objectB));
-    contacts.erase(key);
-    contacts.emplace(key, contact);
+    auto keyA = std::ref(contact.objectA);
+    auto keyB = std::ref(contact.objectB);
+    contacts[keyA].push_back(contact);
     if (contact.objectA != contact.objectB) {
-        contacts.erase({contact.objectB, contact.objectA});
+        contacts[keyB].push_back(contact);
     }
-}
+    contacts_vector.push_back(contact);
 
-void ContactsHandler::removeContact(Contact contact) {
-    contacts.erase({std::ref(contact.objectA), std::ref(contact.objectB)});
-    contacts.erase({std::ref(contact.objectB), std::ref(contact.objectA)});
-}
-
-void ContactsHandler::reset() {
-    contacts.clear();
-}
-
-std::optional<Contact> ContactsHandler::areTouching(CollidableObject &objectA, CollidableObject &objectB) const {
-    auto key1 = std::make_pair(std::ref(objectA), std::ref(objectB));
-    auto key2 = std::make_pair(std::ref(objectB), std::ref(objectA));
-
-    if (contacts.contains(key1)) {
-        return contacts.at(key1);
-    } else if (contacts.contains(key2)) {
-        return contacts.at(key2);
-    } else {
-        return std::nullopt;
+    if (contact.objectA.isPlayer() || contact.objectB.isPlayer()) {
+        auto player = contact.objectA.isPlayer() ? contact.objectA.isPlayer() : contact.objectB.isPlayer();
+        player->land(contact);
     }
+    EventBus::getInstance().emit(contact, EventExecuteTime::POST_PHYSICS);
+}
+
+void ContactsHandler::newFrame() {
+    previous_frame_contacts = std::move(contacts);
+    contacts = decltype(contacts){};
+    contacts_vector.clear();
 }
 
 std::vector<Contact> ContactsHandler::allContacts(const CollidableObject &object) const {
-    std::vector<Contact> object_contacts;
-    for (const auto& keyValue: contacts) {
-        const auto [fst, snd] = keyValue.first;
-        if (fst.get() == object || snd.get() == object) {
-            object_contacts.push_back(keyValue.second);
-        }
-    }
-    return object_contacts;
+    const auto it = contacts.find(object);
+    return it == contacts.end() ? std::vector<Contact>{} : it->second;
 }
 
-bool ContactsHandler::onLand(const CollidableObject &object) const {
-    auto all_contacts = allContacts(object);
-    for (const auto& contact: all_contacts) {
-        if (contact.axis == ContactAxis::Y) {
-            return true;
-        }
+
+bool ContactsHandler::onLand(const CollidableObject &object, bool previous_frame) const {
+    auto& contacts = previous_frame ? previous_frame_contacts : this->contacts;
+    if (!contacts.contains(object)) {
+        return false;
     }
-    return false;
+    const auto it = contacts.find(object);
+    if (it == contacts.end()) {
+        return false;
+    }
+    const std::vector<Contact>& all_contacts = it->second;
+
+    return std::ranges::any_of(all_contacts, [object](const Contact &contact) {
+        return contact.axis == ContactAxis::Y && (object == contact.objectA ? contact.collidingRectA.position.y < contact.collidingRectB.position.y : contact.collidingRectB.position.y < contact.collidingRectA.position.y);
+    });
 }
 
-std::vector<CollidableObject> ContactsHandler::nextToVerticalSurfaces(const CollidableObject &object) const {
+std::vector<CollidableObject> ContactsHandler::nextToVerticalSurfaces(const CollidableObject &object, bool previous_frame) const {
+    auto& contacts = previous_frame ? previous_frame_contacts : this->contacts;
     std::vector<CollidableObject> vertical_surfaces;
-    auto all_contacts = allContacts(object);
-    for (const auto& contact: all_contacts) {
-        if (contact.axis == ContactAxis::X) {
-            auto other_object = (contact.objectA == object) ? contact.objectB : contact.objectA;
-            vertical_surfaces.push_back(other_object);
-        }
+    if (!contacts.contains(object)) {
+        return {};
+    }
+    const auto it = contacts.find(object);
+    if (it == contacts.end()) {
+        return {};
+    }
+    const std::vector<Contact>& all_contacts = it->second;
+
+    for (const auto& contact: all_contacts | std::views::filter([](const Contact &contact){ return contact.axis == ContactAxis::X; })) {
+        auto other_object = (contact.objectA == object) ? contact.objectB : contact.objectA;
+        vertical_surfaces.push_back(other_object);
     }
     return vertical_surfaces;
 }
 
-std::vector<Contact> ContactsHandler::restingOnSurfaces(const CollidableObject &object) const {
+std::vector<Contact> ContactsHandler::restingOnSurfaces(const CollidableObject &object, bool previous_frame) const {
+    auto& contacts = previous_frame ? previous_frame_contacts : this->contacts;
     std::vector<Contact> horizontal_contacts;
-    auto all_contacts = allContacts(object);
-    for (const auto& contact: all_contacts) {
-        if (contact.axis == ContactAxis::Y) {
-            horizontal_contacts.push_back(contact);
-        }
+    if (contacts.contains(object)) {
+        return {};
     }
+    const auto it = contacts.find(object);
+    if (it == contacts.end()) {
+        return {};
+    }
+    const std::vector<Contact>& all_contacts = it->second;
+    auto pred = [object](const Contact &contact){ return contact.axis == ContactAxis::X && (object == contact.objectA ? contact.collidingRectA.position.y < contact.collidingRectB.position.y : contact.collidingRectB.position.y < contact.collidingRectA.position.y); };
+    std::ranges::copy_if(all_contacts, std::back_inserter(horizontal_contacts),pred);
     return horizontal_contacts;
 }
 
-[[nodiscard]] const std::unordered_map<std::pair<std::reference_wrapper<CollidableObject>, std::reference_wrapper<CollidableObject>>, Contact, ContactKeyHash, ContactKeyEqual>& ContactsHandler::getContacts() const{
-    return contacts;
+[[nodiscard]] std::vector<Contact> ContactsHandler::getContacts() const{
+    return contacts_vector;
 }
+
+void ContactsHandler::emitPlayerLeftGroundEvent() const {
+    EventBus& instance = EventBus::getInstance();
+    for (const auto& object: std::views::keys(contacts)) {
+        if (object.get().isPlayer() && onLand(object.get(), true) && onLand(object.get())) {
+            Player* player = object.get().isPlayer();
+            player->noLongerOnGround();
+        }
+    }
+}
+
