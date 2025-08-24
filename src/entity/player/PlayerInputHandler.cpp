@@ -5,36 +5,23 @@
 #include "entity/player/PlayerInputHandler.h"
 
 void PlayerInputHandler::update(float deltaTime) {
-    if (&player.getState() == &PlayerStateGround::getInstance()) {
-        updateFromGroundState(deltaTime);
-        return;
-    }
-
-    if (&player.getState() == &PlayerStateAir::getInstance()) {
-        updateFromAirState(deltaTime);
-        return;
-    }
-
-    if (&player.getState() == &PlayerStateClimbing::getInstance()) {
-        updateFromClimbState(deltaTime);
-        return;
-    }
-}
-
-void PlayerInputHandler::updateFromGroundState(float deltaTime) {
-    assert(&player.getState() == &PlayerStateGround::getInstance());
-
     if (isPressed(dashKey)) {
-        if (bool success = player.tryDash(getDashDirection())) return;
+        if (bool success = player.tryDash(getDashDirection()); success) return;
     }
 
     if (isPressed(climbKey)) {
-        if (bool success = player.tryClimb()) return;
+        if (bool success = player.tryClimb(); success) return;
     }
 
     if (isPressed(jumpKey)) {
-        if (bool success = player.tryJump()) return;
+        if (bool success = player.tryJump(); success) return;
     }
+
+    handleLeftRightMovement(deltaTime);
+}
+
+void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
+    float multiplier = player.isOnGround() ? 1 : Player::AIR_MULTIPLIER;
 
     bool moveSomewhere = false;
 
@@ -42,27 +29,19 @@ void PlayerInputHandler::updateFromGroundState(float deltaTime) {
         // Move left
         moveSomewhere = true;
         player.facing = Facing::Left;
-        approach(player.intrinsic_velocity.x, -Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime);
+        approach(player.intrinsic_velocity.x, -Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
     }
 
     if (isPressed(moveRight) && (!isPressed(moveLeft) || wasPressedEarlierThan(moveLeft, moveRight))) {
         // Move right
         moveSomewhere = true;
         player.facing = Facing::Right;
-        approach(player.intrinsic_velocity.x, Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime);
+        approach(player.intrinsic_velocity.x, Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
     }
 
     if (!moveSomewhere) {
-        approach(player.intrinsic_velocity.x, 0, Player::RUN_ACCELERATION * deltaTime);
+        approach(player.intrinsic_velocity.x, 0, Player::RUN_ACCELERATION * deltaTime * multiplier);
     }
-}
-
-void PlayerInputHandler::updateFromAirState(float deltaTime) {
-    assert(&player.getState() == &PlayerStateAir::getInstance());
-}
-
-void PlayerInputHandler::updateFromClimbState(float deltaTime) {
-    assert(&player.getState() == &PlayerStateClimbing::getInstance());
 }
 
 void PlayerInputHandler::approach(float &to_make_approach, float to_approach, float step) {
@@ -73,7 +52,6 @@ void PlayerInputHandler::approach(float &to_make_approach, float to_approach, fl
         to_make_approach = std::min(to_make_approach + step, to_approach);
     }
 }
-
 
 DashDirection PlayerInputHandler::getDashDirection() {
     std::optional<Key> verticalKey;
