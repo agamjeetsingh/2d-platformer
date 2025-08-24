@@ -99,13 +99,13 @@ int main() {
 
 
         std::cout << "Player 1 x: " << player.getSprite().getPosition().x << "y: " << player.getSprite().getPosition().y << std::endl;
-        std::cout << "Player 2 x: " << player2.getSprite().getPosition().x << "y: " << player2.getSprite().getPosition().y << std::endl;
+        // std::cout << "Player 2 x: " << player2.getSprite().getPosition().x << "y: " << player2.getSprite().getPosition().y << std::endl;
         std::cout << "Player 1 Hitbox x: " << player.getHitbox().getRects()[0].position.x << "y: " << player.getHitbox().getRects()[0].position.y << std::endl;
-        std::cout << "Player 2 Hitbox x: " << player2.getHitbox().getRects()[0].position.x << "y: " << player2.getHitbox().getRects()[0].position.y << std::endl;
+        // std::cout << "Player 2 Hitbox x: " << player2.getHitbox().getRects()[0].position.x << "y: " << player2.getHitbox().getRects()[0].position.y << std::endl;
         player.printVelocity("Player 1");
-        player2.printVelocity("Player 2");
-        std::cout << "Player 1 Acceleration x: " << player.acceleration.x << "y: " << player.acceleration.y << std::endl;
-        std::cout << "Player 2 Acceleration x: " << player2.acceleration.x << "y: " << player2.acceleration.y << std::endl;
+        // player2.printVelocity("Player 2");
+        std::cout << "Player 1 Acceleration x: " << player.gravity_acceleration.x << "y: " << player.gravity_acceleration.y << std::endl;
+        // std::cout << "Player 2 Acceleration x: " << player2.gravity_acceleration.x << "y: " << player2.gravity_acceleration.y << std::endl;
         std::cout << CollisionsHandler::getInstance().getBodies().size() << std::endl;
         std::cout << "--------------------" << std::endl;
 

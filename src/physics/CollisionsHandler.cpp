@@ -10,6 +10,7 @@
 #include "physics/ContactResolution.h"
 #include "physics/ContactsHandler.h"
 #include "entity/player/PlayerInputHandler.h"
+#include "events/EventBus.h"
 
 struct Collision;
 
@@ -189,7 +190,7 @@ void CollisionsHandler::moveImmovables(float deltaTime) const {
 
     if (collisions.empty()) {
         for (auto body: immovables) {
-            body.get().impulse_velocity += body.get().acceleration * deltaTime;
+            body.get().addGravityVelocity(body.get().gravity_acceleration * deltaTime);
             body.get().addPosition(body.get().getTotalVelocity() * deltaTime);
         }
         return;
@@ -204,18 +205,18 @@ void CollisionsHandler::moveImmovables(float deltaTime) const {
     // Move all objects to earliest_collision.collisionTime
 
     for (auto body: immovables) {
-        body.get().impulse_velocity += body.get().acceleration * earliest_collision.collisionTime;
+        body.get().addGravityVelocity(body.get().gravity_acceleration * earliest_collision.collisionTime);
         body.get().addPosition(body.get().getTotalVelocity() * earliest_collision.collisionTime);
     }
 
     earliest_collision.objectA.intrinsic_velocity = {0, 0};
     earliest_collision.objectA.impulse_velocity = {0, 0};
     earliest_collision.objectA.friction_velocity = {0, 0};
-    earliest_collision.objectA.acceleration = {0, 0};
+    earliest_collision.objectA.gravity_acceleration = {0, 0};
     earliest_collision.objectB.intrinsic_velocity = {0, 0};
     earliest_collision.objectB.impulse_velocity = {0, 0};
     earliest_collision.objectB.friction_velocity = {0, 0};
-    earliest_collision.objectB.acceleration = {0, 0};
+    earliest_collision.objectB.gravity_acceleration = {0, 0};
 
     moveImmovables(deltaTime - earliest_collision.collisionTime);
 }
@@ -223,7 +224,7 @@ void CollisionsHandler::moveImmovables(float deltaTime) const {
 void CollisionsHandler::moveMovables(float deltaTime) const {
     for (auto body: bodies) {
         if (body.get().type == CollidableObjectType::Movable) {
-            body.get().impulse_velocity += body.get().acceleration * deltaTime;
+            body.get().addGravityVelocity(body.get().gravity_acceleration * deltaTime);
             body.get().addPosition(body.get().getTotalVelocity() * deltaTime);
         }
     }
@@ -270,7 +271,7 @@ ContactsPtrHashMap CollisionsHandler::buildContacts(float deltaTime) const {
         }
     }
 
-    ContactsHandler::getInstance().reset();
+    ContactsHandler::getInstance().newFrame();
 
     for (const auto& contact: contacts | std::views::values) {
         ContactsHandler::getInstance().addContact(Contact(contact));
@@ -323,10 +324,12 @@ ContactsPtrHashMap CollisionsHandler::buildContactsFaster(float deltaTime) {
         }
     }
 
-    ContactsHandler::getInstance().reset();
+    ContactsHandler::getInstance().newFrame();
     for (const auto& contact: contacts | std::ranges::views::values) {
         ContactsHandler::getInstance().addContact(Contact(contact));
     }
+
+    ContactsHandler::getInstance().emitPlayerLeftGroundEvent();
 
     return contacts;
 }
