@@ -99,7 +99,7 @@ public:
      * @param deltaTime The time (in seconds) to update the physics by
      * @param player The player whose inputs are to be handled
      */
-    void update(float deltaTime, Player& player);
+    void update(float deltaTime);
 
     /**
      * @brief Draws the hitbox of each registered body to the given window with the given color with an alpha value of
@@ -156,7 +156,7 @@ private:
      * @return The list of contacts that will be happening in deltaTime.
      */
     [[deprecated("Use buildContactsFaster() instead since it uses spatial hashing")]]
-    ContactsPtrHashMap buildContacts(float deltaTime) const;
+    [[nodiscard]] ContactsPtrHashMap buildContacts(float deltaTime) const;
 
     std::unordered_map<std::pair<CollidableObject*, CollidableObject*>, Collision, CollidableObjectPtrPairHash> buildContactsFaster(float deltaTime);
     ContactsPtrHashMap buildContactsFaster(float deltaTime);

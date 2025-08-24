@@ -52,8 +52,6 @@ void CollisionsHandler::update(float deltaTime) {
         body.get().impulse_velocity *= 0.0f;
     }
 
-    PlayerInputHandler{player}.update(deltaTime);
-
     std::unordered_set<CollidableObject*> friction_set_bodies;
 
     for (int i = 0; i < 8; i++) {
@@ -320,7 +318,7 @@ ContactsPtrHashMap CollisionsHandler::buildContactsFaster(float deltaTime) {
         }
         
         if (earliestCollision.has_value()) {
-            contacts.emplace(std::make_pair(bodyA, bodyB), 
+            contacts.emplace(std::make_pair(bodyA, bodyB),
                            Collision{(*bodyA), (*bodyB), earliestCollision.value(), earliestIndexA, earliestIndexB});
         }
     }

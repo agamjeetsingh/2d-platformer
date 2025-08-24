@@ -63,8 +63,9 @@ int main() {
 
         window.clear(sf::Color::White);
 
-        CollisionsHandler::getInstance().update(dt, player);
         EventBus::getInstance().execute(EventExecuteTime::PRE_INPUT);
+
+        PlayerInputHandler{player}.update(dt);
 
         EventBus::getInstance().execute(EventExecuteTime::PRE_PHYSICS);
 
