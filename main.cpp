@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 
+#include "events/EventBus.h"
 #include "include/entity/player/Player.h"
 #include "include/entity/player/PlayerInputHandler.h"
 #include "include/physics/CollisionsHandler.h"
@@ -32,14 +33,14 @@ int main() {
     player_sprite.setScale({4, 4});
     sprite.setScale({4, 4});
     Player player({sf::FloatRect({0, 0}, sf::Vector2<float>(idle_texture.getSize()))}, real_player_sprite, {100, 100});
-    Player player2({sf::FloatRect({0, 0}, sf::Vector2<float>(player_texture.getSize()))}, player_sprite, {400, 400});
+    // Player player2({sf::FloatRect({0, 0}, sf::Vector2<float>(player_texture.getSize()))}, player_sprite, {400, 400});
     sprite.setScale({1, 1});
     CollidableObject box(hitbox, sprite, {0, 300}, CollidableObjectType::Immovable);
     // box.intrinsic_velocity.x = 100;
     CollidableObject box_2(hitbox, sprite, {800, 100}, CollidableObjectType::Immovable);
+    // box_2.intrinsic_velocity.x = -100;
     // CollidableObject box_3(hitbox, sprite, {0, -200}, CollidableObjectType::Immovable);
     // box_3.acceleration = {0, 800};
-    player.acceleration = {0, 800};
 
     PlayerInputHandler input_handler =  PlayerInputHandler{player};
 
@@ -60,13 +61,29 @@ int main() {
             }
         }
 
-        // input_handler.update();
-
         window.clear(sf::Color::White);
 
         CollisionsHandler::getInstance().update(dt, player);
+        EventBus::getInstance().execute(EventExecuteTime::PRE_INPUT);
+
+        EventBus::getInstance().execute(EventExecuteTime::PRE_PHYSICS);
+
+        CollisionsHandler::getInstance().update(dt);
+
+        EventBus::getInstance().execute(EventExecuteTime::POST_PHYSICS);
 
         player.updateSprite(dt);
+
+        Scheduler::getInstance().update(dt);
+
+        // Rough drawing code
+
+        window.draw(player.getSprite());
+        // window.draw(player2.getSprite());
+        window.draw(box.getSprite());
+
+        CollisionsHandler::getInstance().drawHitboxes(window);
+        // Debug Statements Start
 
         std::cout << "About to draw player sprite at position: " << player.getSprite().getPosition().x << ", "
           << player.getSprite().getPosition().y << std::endl;
@@ -76,10 +93,9 @@ int main() {
 
         std::cout << "Is player on land???? The verdict: " << (ContactsHandler::getInstance().onLand(player) ? "yes" : "no") << std::endl;
 
-        window.draw(player.getSprite());
-        window.draw(player2.getSprite());
-        window.draw(box.getSprite());
-        CollisionsHandler::getInstance().drawHitboxes(window);
+
+
+
 
         std::cout << "Player 1 x: " << player.getSprite().getPosition().x << "y: " << player.getSprite().getPosition().y << std::endl;
         std::cout << "Player 2 x: " << player2.getSprite().getPosition().x << "y: " << player2.getSprite().getPosition().y << std::endl;
@@ -91,10 +107,6 @@ int main() {
         std::cout << "Player 2 Acceleration x: " << player2.acceleration.x << "y: " << player2.acceleration.y << std::endl;
         std::cout << CollisionsHandler::getInstance().getBodies().size() << std::endl;
         std::cout << "--------------------" << std::endl;
-
-        auto contacts = ContactsHandler::getInstance().getContacts();
-
-        auto player_contacts = ContactsHandler::getInstance().allContacts(player);
 
         sf::Font font;
         if (!font.openFromFile("/System/Library/Fonts/Supplemental/arial.ttf")) { // Change path for Linux/Mac
@@ -124,15 +136,35 @@ int main() {
         text3.setPosition({0, 60});
 
         sf::Text text4 = font;
-        text4.setString("onGround: " + std::to_string(player.isOnGround()));
+        text4.setString("Gravity velocity: y = " + std::to_string(player.getGravityVelocity().y));
         text4.setCharacterSize(25);
         text4.setFillColor(sf::Color::Black);
         text4.setPosition({0, 90});
+
+        sf::Text text5 = font;
+        text5.setString("onGround: " + std::to_string(ContactsHandler::getInstance().onLand(player)) + std::to_string(player.isOnGround()) + " (according to onLand, player.onGround)");
+        text5.setCharacterSize(25);
+        text5.setFillColor(sf::Color::Black);
+        text5.setPosition({0, 120});
+
+        std::cout << ContactsHandler::getInstance().onLand(player) << std::endl;
+        // assert(ContactsHandler::getInstance().onLand(player) == player.isOnGround());
+
+
+        sf::Text text6 = font;
+        text6.setString(std::string("Can jump: ") + std::to_string(player.canJump()) + " variable jump: " + std::to_string(player.ability_jump.isPerforming()));
+        text6.setCharacterSize(25);
+        text6.setFillColor(sf::Color::Black);
+        text6.setPosition({0, 150});
 
         window.draw(text);
         window.draw(text2);
         window.draw(text3);
         window.draw(text4);
+        window.draw(text5);
+        window.draw(text6);
+
+        // Debug statements end
 
         window.display();
     }
