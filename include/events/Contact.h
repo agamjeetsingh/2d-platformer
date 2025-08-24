@@ -13,28 +13,32 @@ struct Contact {
     explicit Contact(Collision collision) :
     objectA(collision.objectA),
     objectB(collision.objectB),
-    collidingRectA(collision.getCollidingRectA()),
-    collidingRectB(collision.getCollidingRectA()) {
+    collidingRectAIndex(collision.collidingRectAIndex),
+    collidingRectBIndex(collision.collidingRectBIndex) {
         axis = (collision.axis == CollisionAxis::Down || collision.axis == CollisionAxis::Up) ? ContactAxis::Y : ContactAxis::X;
     }
 
 
     CollidableObject& objectA;
     CollidableObject& objectB;
-    sf::FloatRect collidingRectA;
-    sf::FloatRect collidingRectB;
+    std::size_t collidingRectAIndex;
+    std::size_t collidingRectBIndex;
     ContactAxis axis;
+
+    [[nodiscard]] sf::FloatRect getCollidingRectA() const;
+
+    [[nodiscard]] sf::FloatRect getCollidingRectB() const;
 
     bool operator==(const Contact& other) const;
 
     [[nodiscard]] float contactLength() const {
         if (axis == ContactAxis::Y) {
-            const float left = std::max(collidingRectA.position.x, collidingRectB.position.x);
-            const float right = std::min(collidingRectA.position.x + collidingRectA.size.x, collidingRectB.position.x + collidingRectB.size.x);
+            const float left = std::max(getCollidingRectA().position.x, getCollidingRectB().position.x);
+            const float right = std::min(getCollidingRectA().position.x + getCollidingRectA().size.x, getCollidingRectB().position.x + getCollidingRectB().size.x);
             return (right - left > 0) ? right - left : 0;
         } else {
-            const float top = std::max(collidingRectA.position.y, collidingRectB.position.y);
-            const float bottom = std::min(collidingRectA.position.y + collidingRectA.size.y, collidingRectB.position.y + collidingRectB.size.y);
+            const float top = std::max(getCollidingRectA().position.y, getCollidingRectB().position.y);
+            const float bottom = std::min(getCollidingRectA().position.y + getCollidingRectA().size.y, getCollidingRectB().position.y + getCollidingRectB().size.y);
             return (bottom - top > 0) ? bottom - top : 0;
         }
     }

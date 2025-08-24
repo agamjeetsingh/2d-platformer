@@ -5,15 +5,11 @@
 #ifndef PLAYERINPUTHANDLER_H
 #define PLAYERINPUTHANDLER_H
 
-#include <ranges>
-
 #include "Player.h"
 #include "../../utility/InputManager.h"
 #include <SFML/Graphics.hpp>
 
 #include "DashDirection.h"
-#include "PlayerStateAir.h"
-#include "PlayerStateClimbing.h"
 
 using namespace sf::Keyboard;
 
@@ -21,22 +17,23 @@ class PlayerInputHandler {
 public:
     explicit PlayerInputHandler(Player& player): player(player) {}
 
-    void update(float deltaTime) {
-        if (&player.getState() == &PlayerStateGround::getInstance()) {
-            updateFromGroundState(deltaTime);
-            return;
-        }
+    /**
+     * @brief Updates the player by deltaTime. Routes to the individual update functions for each of the three states.
+     *
+     * May change player's \code velocity\endcode, \code facing\endcode, and \code state\endcode via
+     * \code Player::try*\endcode methods.
+     *
+     * @param deltaTime The time to update the player by according to the input.
+     */
+    void update(float deltaTime);
 
-        if (&player.getState() == &PlayerStateAir::getInstance()) {
-            updateFromAirState(deltaTime);
-            return;
-        }
-
-        if (&player.getState() == &PlayerStateClimbing::getInstance()) {
-            updateFromClimbState(deltaTime);
-            return;
-        }
-    }
+    /**
+     * Gets the dash direction according to the current input. Combines the latest pressed vertical key (if any) and
+     * the latest pressed horizontal key (if any) to get the dash direction. Defaults to
+     * \code Player::DEFAULT_DASH_DIRECTION\endcode no horizontal or vertical key is pressed.
+     * @return The dash direction according to the current input.
+     */
+    static DashDirection getDashDirection();
 
 private:
     Player& player;
@@ -49,123 +46,25 @@ private:
         return InputManager::getInstance().wasPressedEarlierThan(key1, key2);
     }
 
-    void updateFromGroundState(float deltaTime) {
-        assert(&player.getState() == &PlayerStateGround::getInstance());
+    void handleLeftRightMovement(float deltaTime);
 
-        if (isPressed(dashKey)) {
-            if (bool success = player.tryDash(getDashDirection())) return;
-        }
+    /**
+     * @brief Helper math function that makes a variable approach a value from either (positive or negative) direction
+     * by the specified step. Clamps \code to_make_approach\endcode to \code to_approach\endcode if over-stepping.
+     * @param to_make_approach The reference that will approach \code to_approach\endcode by \code step\endcode.
+     * @param to_approach The value \code to_make_approach\endcode will approach.
+     * @param step The rate at which \code to_make_approach\endcode will try to approach \code to_approach\endcode.
+     */
+    static void approach(float& to_make_approach, float to_approach, float step);
 
-        if (isPressed(climbKey)) {
-            if (bool success = player.tryClimb()) return;
-        }
-
-        if (isPressed(jumpKey)) {
-            if (bool success = player.tryJump()) return;
-        }
-
-        bool moveSomewhere = false;
-
-        if (isPressed(moveLeft) && (!isPressed(moveRight) || wasPressedEarlierThan(moveRight, moveLeft))) {
-            // Move left
-            moveSomewhere = true;
-            player.facing = Facing::Left;
-            approach(player.intrinsic_velocity.x, -Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime);
-        }
-
-        if (isPressed(moveRight) && (!isPressed(moveLeft) || wasPressedEarlierThan(moveLeft, moveRight))) {
-            // Move right
-            moveSomewhere = true;
-            player.facing = Facing::Right;
-            approach(player.intrinsic_velocity.x, Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime);
-        }
-
-        if (!moveSomewhere) {
-            approach(player.intrinsic_velocity.x, 0, Player::RUN_ACCELERATION * deltaTime);
-        }
-    }
-
-    void updateFromAirState(float deltaTime) {
-        assert(&player.getState() == &PlayerStateAir::getInstance());
-    }
-
-    void updateFromClimbState(float deltaTime) {
-        assert(&player.getState() == &PlayerStateClimbing::getInstance());
-    }
-
-    static void approach(float& to_make_approach, float to_approach, float step) {
-        assert(step >= 0);
-        if (to_make_approach > to_approach) {
-            to_make_approach = std::max(to_make_approach - step, to_approach);
-        } else if (to_make_approach < to_approach) {
-            to_make_approach = std::min(to_make_approach + step, to_approach);
-        }
-    }
-
-    DashDirection getDashDirection() {
-        std::optional<Key> verticalKey;
-        std::optional<Key> horizontalKey;
-
-        if (isPressed(moveUp)) {
-            if (isPressed(moveDown)) {
-                verticalKey = wasPressedEarlierThan(moveUp, moveDown) ? moveDown : moveUp;
-            } else {
-                verticalKey = moveUp;
-            }
-        } else {
-            if (isPressed(moveDown)) {
-                verticalKey = moveDown;
-            }
-        }
-
-        if (isPressed(moveLeft)) {
-            if (isPressed(moveRight)) {
-                horizontalKey = wasPressedEarlierThan(moveLeft, moveRight) ? moveRight : moveLeft;
-            } else {
-                horizontalKey = moveLeft;
-            }
-        } else {
-            if (isPressed(moveRight)) {
-                horizontalKey = moveRight;
-            }
-        }
-
-        DashDirection direction = Player::DEFAULT_DASH_DIRECTION;
-
-        if (verticalKey) {
-            if (horizontalKey) {
-                if (verticalKey == moveUp && horizontalKey == moveLeft) {
-                    direction = DashDirection::UP_LEFT;
-                }
-                if (verticalKey == moveUp && horizontalKey == moveRight) {
-                    direction = DashDirection::UP_RIGHT;
-                }
-                if (verticalKey == moveDown && horizontalKey == moveLeft) {
-                    direction = DashDirection::DOWN_LEFT;
-                }
-                if (verticalKey == moveDown && horizontalKey == moveRight) {
-                    direction = DashDirection::DOWN_RIGHT;
-                }
-            } else {
-                direction = verticalKey == moveUp ? DashDirection::UP : DashDirection::DOWN;
-            }
-        } else {
-            if (horizontalKey) {
-                direction = horizontalKey == moveLeft ? DashDirection::LEFT : DashDirection::RIGHT;
-            }
-        }
-
-        return direction;
-    }
-
-    Key dashKey = Key::L;
-    Key climbKey = Key::K;
-    Key moveLeft = Key::A;
-    Key moveRight = Key::D;
-    Key moveDown = Key::S;
-    Key moveUp = Key::W;
-    Key crouchKey = Key::S;
-    Key jumpKey = Key::Space;
+    static constexpr Key dashKey = Key::L;
+    static constexpr Key climbKey = Key::K;
+    static constexpr Key moveLeft = Key::A;
+    static constexpr Key moveRight = Key::D;
+    static constexpr Key moveDown = Key::S;
+    static constexpr Key moveUp = Key::W;
+    static constexpr Key crouchKey = Key::S;
+    static constexpr Key jumpKey = Key::Space;
 };
 
 

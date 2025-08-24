@@ -13,6 +13,7 @@ void SpacialHashMap::clear() {
     for (auto &bucket : buckets) {
         bucket.clear();
     }
+    num_objects = 0;
 }
 
 
@@ -20,6 +21,7 @@ void SpacialHashMap::addObject(CollidableObject *ptr) {
     for (size_t hash: getHashes(ptr)) {
         buckets[hash % num_buckets].push_back(ptr);
     }
+    num_objects++;
 }
 
 std::vector<std::pair<CollidableObject *, CollidableObject *> > SpacialHashMap::getPairs() const {
@@ -27,14 +29,14 @@ std::vector<std::pair<CollidableObject *, CollidableObject *> > SpacialHashMap::
     for (const auto& bucket: buckets) {
         for (auto ptr1: bucket) {
             for (auto ptr2: bucket) {
-                if (&ptr1 <= &ptr2) {
+                if (ptr1 <= ptr2) {
                     continue;
                 }
                 pairs.emplace_back(ptr1, ptr2);
             }
         }
     }
-    return std::move(pairs);
+    return pairs;
 }
 
 std::vector<size_t> SpacialHashMap::getHashes(const CollidableObject *ptr) {

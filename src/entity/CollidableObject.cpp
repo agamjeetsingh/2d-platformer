@@ -25,6 +25,11 @@ CollidableObject::CollidableObject(std::vector<sf::FloatRect> hitbox,
     CollisionsHandler::getInstance().addObject(*this);
 }
 
+[[nodiscard]] float CollidableObject::getInvMass() const {
+    return (mass == 0) ? 0 : (1.0f / mass);
+}
+
+
 [[nodiscard]] const Hitbox& CollidableObject::getHitbox() const {
     return hitbox;
 }
@@ -33,6 +38,11 @@ bool CollidableObject::operator==(const CollidableObject &other) const {
     return this == &other;
 }
 
-Player* CollidableObject::isPlayer() {
+[[nodiscard]] Player* CollidableObject::isPlayer() {
     return dynamic_cast<Player*>(this);
 }
+
+[[nodiscard]] const Player *CollidableObject::isPlayer() const {
+    return dynamic_cast<const Player*>(this);
+}
+

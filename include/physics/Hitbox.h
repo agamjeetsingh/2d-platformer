@@ -29,6 +29,8 @@ public:
 
     [[nodiscard]] sf::FloatRect getBounds() const;
 
+    [[nodiscard]] size_t getSize() const;
+
     /**
      * @brief Iterator to iterate over the shifted hitboxes
      */

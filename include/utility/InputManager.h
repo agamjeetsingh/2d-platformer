@@ -5,8 +5,14 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
+#include <cassert>
+#include <SFML/System.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <unordered_map>
+
+namespace sf {
+    class Time;
+}
 
 /**
  * \brief Manages all inputs. Can be used to check whether a key is currently being pressed. A better alternative to

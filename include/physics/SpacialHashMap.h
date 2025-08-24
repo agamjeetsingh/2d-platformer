@@ -15,6 +15,11 @@ public:
     [[nodiscard]] size_t getSize() const {
         return num_buckets;
     }
+
+    [[nodiscard]] size_t getNumObjects() const {
+        return num_objects;
+    }
+
     void clear();
 
     void addObject(CollidableObject* ptr);
@@ -25,6 +30,8 @@ private:
     std::vector<std::vector<CollidableObject*>> buckets;
 
     size_t num_buckets;
+
+    size_t num_objects = 0;
 
     static std::vector<size_t> getHashes(const CollidableObject* ptr);
 

@@ -16,10 +16,18 @@ struct ScheduledEvent {
     float spentTime = 0;
     float maxTime;
 
+    bool cancelled = false;
+
+    // TODO - Overload constructor to make it simpler. Separate constructors for repeating and non-repeating events.
+
     ScheduledEvent(std::function<void()> cb, float time, bool repeat = false, float interval = 0, float maxTime = -1)
-        : timeRemaining(time), callback(std::move(cb)), repeat(repeat), interval(interval), maxTime(maxTime) {
+        : timeRemaining(time), callback([this, cb]() {
+            if (!this->cancelled) {
+                cb();
+            }
+        }), repeat(repeat), interval(interval), maxTime(maxTime) {
         assert(repeat || (maxTime == -1)); // If repeat is false then maxTime must be -1
-        assert(!repeat || (maxTime > 0)); // If repeat is true then maxTime must be positive
+        assert(!repeat || (maxTime > 0 || maxTime == -1)); // If repeat is true then maxTime must be positive or default -1
     }
 };
 
