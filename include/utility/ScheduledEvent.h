@@ -27,7 +27,7 @@ struct ScheduledEvent {
             }
         }), repeat(repeat), interval(interval), maxTime(maxTime) {
         assert(repeat || (maxTime == -1)); // If repeat is false then maxTime must be -1
-        assert(!repeat || (maxTime > 0)); // If repeat is true then maxTime must be positive
+        assert(!repeat || (maxTime > 0 || maxTime == -1)); // If repeat is true then maxTime must be positive or default -1
     }
 };
 
