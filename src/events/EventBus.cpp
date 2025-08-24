@@ -4,6 +4,10 @@
 
 #include "../../include/events/EventBus.h"
 
+#include <cassert>
+
+#include "events/Listener.h"
+
 EventBus &EventBus::getInstance() {
     static EventBus instance;
     return instance;

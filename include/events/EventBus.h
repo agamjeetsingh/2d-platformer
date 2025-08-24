@@ -10,9 +10,11 @@
 #include <unordered_map>
 
 #include "Event.h"
-#include "Listener.h"
-#include "../../../../../../opt/homebrew/Cellar/sfml/3.0.1/include/SFML/Window/Event.hpp"
 #include "events/EventExecuteTime.h"
+
+class Listener;
+
+struct ListenerComparator;
 
 class EventBus {
 public:

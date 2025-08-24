@@ -9,6 +9,7 @@
 
 enum class EventExecuteTime {
     NOW,
+    PRE_INPUT,
     PRE_PHYSICS,
     POST_PHYSICS
 };

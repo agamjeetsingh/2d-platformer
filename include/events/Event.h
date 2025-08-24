@@ -22,8 +22,8 @@ public:
     template <typename EventType>
     [[nodiscard]] const EventType* getIf() const {
         if (type_index != typeid(EventType)) return nullptr;
-        auto ptr = dynamic_cast<GeneralEvent<EventType>*>(&meta_data);
-        return ptr ? &ptr->data : nullptr;
+        auto derived = std::dynamic_pointer_cast<const GeneralEvent<EventType>>(meta_data);
+        return derived ? &derived->data : nullptr;
     }
 
     template <typename EventType>
