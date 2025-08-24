@@ -159,6 +159,7 @@ private:
     ContactsPtrHashMap buildContacts(float deltaTime) const;
 
     std::unordered_map<std::pair<CollidableObject*, CollidableObject*>, Collision, CollidableObjectPtrPairHash> buildContactsFaster(float deltaTime);
+    ContactsPtrHashMap buildContactsFaster(float deltaTime);
 
     // TODO - Should take in acceleration too with s = ut + 1/2at^2
     static std::optional<IncompleteCollision> sweptCollision(
@@ -169,6 +170,8 @@ private:
         float deltaTime);
 
     SpacialHashMap spacial_map;
+
+    ContactsPtrHashMap next_frame_contacts;
 
     void buildSpatialMap();
 

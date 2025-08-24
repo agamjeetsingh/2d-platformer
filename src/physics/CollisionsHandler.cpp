@@ -46,23 +46,10 @@ void CollisionsHandler::removeObject(CollidableObject& body) {
     bodies.erase(std::ref(body));
 }
 
-void CollisionsHandler::update(float deltaTime, Player& player) {
-
-    auto contacts = buildContactsFaster(deltaTime);
-
-    moveImmovables(deltaTime);
-    moveMovables(deltaTime);
+void CollisionsHandler::update(float deltaTime) {
 
     for (const auto& body: bodies) {
-        constexpr float lambda = 10;
-        // body.get().impulse_velocity *= std::exp(-lambda * deltaTime);
         body.get().impulse_velocity *= 0.0f;
-        // if (body.get().impulse_velocity.x < 0.1) {
-        //     body.get().impulse_velocity.x = 0;
-        // }
-        // if (body.get().impulse_velocity.y < 0.1) {
-        //     body.get().impulse_velocity.y = 0;
-        // }
     }
 
     PlayerInputHandler{player}.update(deltaTime);
@@ -70,8 +57,8 @@ void CollisionsHandler::update(float deltaTime, Player& player) {
     std::unordered_set<CollidableObject*> friction_set_bodies;
 
     for (int i = 0; i < 8; i++) {
-        for (const auto& key: contacts | std::views::keys) {
-            auto collision = contacts.at(key);
+        for (const auto& key: next_frame_contacts | std::views::keys) {
+            auto collision = next_frame_contacts.at(key);
             auto normal = -axisToVector(collision.axis); // A moving towards B in this normal
             // Compute Penetration
             auto penetrationDepth = getPenetration(collision.getCollidingRectA(), collision.getCollidingRectB(),
@@ -141,6 +128,11 @@ void CollisionsHandler::update(float deltaTime, Player& player) {
             body.get().friction_velocity = {0, 0};
         }
     }
+
+    next_frame_contacts = buildContactsFaster(deltaTime);
+
+    moveImmovables(deltaTime);
+    moveMovables(deltaTime);
 }
 
 
