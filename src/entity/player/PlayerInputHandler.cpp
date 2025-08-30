@@ -29,18 +29,18 @@ void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
         // Move left
         moveSomewhere = true;
         player.facing = Facing::Left;
-        approach(player.intrinsic_velocity.x, -Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
+        approach(player.base_velocity.x, -Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
     }
 
     if (isPressed(moveRight) && (!isPressed(moveLeft) || wasPressedEarlierThan(moveLeft, moveRight))) {
         // Move right
         moveSomewhere = true;
         player.facing = Facing::Right;
-        approach(player.intrinsic_velocity.x, Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
+        approach(player.base_velocity.x, Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
     }
 
     if (!moveSomewhere) {
-        approach(player.intrinsic_velocity.x, 0, Player::RUN_ACCELERATION * deltaTime * multiplier);
+        approach(player.base_velocity.x, 0, Player::RUN_ACCELERATION * deltaTime * multiplier);
     }
 }
 

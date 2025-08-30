@@ -49,10 +49,6 @@ void CollisionsHandler::removeObject(CollidableObject& body) {
 
 void CollisionsHandler::update(float deltaTime) {
 
-    for (const auto& body: bodies) {
-        body.get().impulse_velocity *= 0.0f;
-    }
-
     std::unordered_set<CollidableObject*> friction_set_bodies;
 
     for (int i = 0; i < 8; i++) {
@@ -105,8 +101,8 @@ void CollisionsHandler::update(float deltaTime) {
                 }
             }
 
-            objectA->impulse_velocity += impulse * objectA->getInvMass();
-            objectB->impulse_velocity -= impulse * objectB->getInvMass();
+            objectA->base_velocity += impulse * objectA->getInvMass();
+            objectB->base_velocity -= impulse * objectB->getInvMass();
 
             float invMassSum = objectA->getInvMass() + objectB->getInvMass();
             float percent = 0.2;
@@ -190,7 +186,7 @@ void CollisionsHandler::moveImmovables(float deltaTime) const {
 
     if (collisions.empty()) {
         for (auto body: immovables) {
-            body.get().addGravityVelocity(body.get().gravity_acceleration * deltaTime);
+            body.get().base_velocity += body.get().gravity_acceleration * deltaTime;
             body.get().addPosition(body.get().getTotalVelocity() * deltaTime);
         }
         return;
@@ -205,16 +201,14 @@ void CollisionsHandler::moveImmovables(float deltaTime) const {
     // Move all objects to earliest_collision.collisionTime
 
     for (auto body: immovables) {
-        body.get().addGravityVelocity(body.get().gravity_acceleration * earliest_collision.collisionTime);
+        body.get().base_velocity += body.get().gravity_acceleration * earliest_collision.collisionTime;
         body.get().addPosition(body.get().getTotalVelocity() * earliest_collision.collisionTime);
     }
 
-    earliest_collision.objectA.intrinsic_velocity = {0, 0};
-    earliest_collision.objectA.impulse_velocity = {0, 0};
+    earliest_collision.objectA.base_velocity = {0, 0};
     earliest_collision.objectA.friction_velocity = {0, 0};
     earliest_collision.objectA.gravity_acceleration = {0, 0};
-    earliest_collision.objectB.intrinsic_velocity = {0, 0};
-    earliest_collision.objectB.impulse_velocity = {0, 0};
+    earliest_collision.objectB.base_velocity = {0, 0};
     earliest_collision.objectB.friction_velocity = {0, 0};
     earliest_collision.objectB.gravity_acceleration = {0, 0};
 
@@ -224,7 +218,7 @@ void CollisionsHandler::moveImmovables(float deltaTime) const {
 void CollisionsHandler::moveMovables(float deltaTime) const {
     for (auto body: bodies) {
         if (body.get().type == CollidableObjectType::Movable) {
-            body.get().addGravityVelocity(body.get().gravity_acceleration * deltaTime);
+            body.get().base_velocity += body.get().gravity_acceleration * deltaTime;
             body.get().addPosition(body.get().getTotalVelocity() * deltaTime);
         }
     }

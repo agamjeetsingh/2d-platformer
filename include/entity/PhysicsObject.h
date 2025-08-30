@@ -35,36 +35,15 @@ public:
 
     // Public to make it easy to update just one of the components
     /**
-     * @brief The intrinsic velocity of the object. It will always try to move with the intrinsic velocity.
+     * @brief The base velocity of the object. It will always try to move with the base velocity.
      */
-    sf::Vector2f intrinsic_velocity = {0, 0};
+    sf::Vector2f base_velocity = {0, 0};
 
     /**
      * @brief The velocity imparted by the surface the object is resting on (if any) or if the object is a player
      * climbing another object.
      */
     sf::Vector2f friction_velocity = {0, 0};
-
-    /**
-     * @brief The velocity imparted by impulse resolution.
-     */
-    sf::Vector2f impulse_velocity = {0, 0};
-
-    /**
-     * @brief Sets the \code gravity_velocity\endcode to the given velocity and clamps it by \code MAX_FALL\endcode.
-     * @param velocity The new gravity velocity of the object.
-     */
-    void setGravityVelocity(sf::Vector2f velocity);
-
-    /**
-     * @brief Adds the given velocity to the object's \code gravity_velocity\endcode and clamps it by \code MAX_FALL\endcode.
-     * @param velocity The velocity to be added to the \code gravity_velocity\endcode.
-     */
-    void addGravityVelocity(sf::Vector2f velocity);
-
-    const sf::Vector2f& getGravityVelocity() const {
-        return gravity_velocity;
-    }
 
     /**
      * @brief Returns the total velocity of the PhysicsObject. This is the object's true overall velocity.

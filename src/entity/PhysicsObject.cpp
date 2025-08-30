@@ -14,18 +14,6 @@ const sf::Vector2f &PhysicsObject::getPositionRef() const {
     return position;
 }
 
-void PhysicsObject::setGravityVelocity(sf::Vector2f velocity) {
-    assert(velocity.x == 0);
-    gravity_velocity = velocity;
-    gravity_velocity.y = std::min(gravity_velocity.y, MAX_FALL);
-}
-
-void PhysicsObject::addGravityVelocity(sf::Vector2f velocity) {
-    assert(velocity.x == 0);
-    gravity_velocity += velocity;
-    gravity_velocity.y = std::min(gravity_velocity.y, MAX_FALL);
-}
-
 const sf::Sprite& PhysicsObject::getSprite() const {
     return sprite;
 }
@@ -45,13 +33,12 @@ void PhysicsObject::addPosition(sf::Vector2f position) {
 }
 
 sf::Vector2f PhysicsObject::getTotalVelocity() const {
-    return intrinsic_velocity + friction_velocity + impulse_velocity + gravity_velocity;
+    return base_velocity + friction_velocity;
 }
 
 void PhysicsObject::printVelocity(const std::string &name) const {
-    std::cout << name << " intrinsic_velocity: x = " << intrinsic_velocity.x << ", y = " << intrinsic_velocity.y << std::endl;
+    std::cout << name << " base_velocity: x = " << base_velocity.x << ", y = " << base_velocity.y << std::endl;
     std::cout << name << " friction_velocity: x = " << friction_velocity.x << ", y = " << friction_velocity.y << std::endl;
-    std::cout << name << " impulse_velocity: x = " << impulse_velocity.x << ", y = " << impulse_velocity.y << std::endl;
 }
 
 void PhysicsObject::printVelocity() const {
