@@ -61,8 +61,30 @@ bool ContactsHandler::onLand(const CollidableObject &object, bool previous_frame
     const std::vector<Contact>& all_contacts = it->second;
 
     return std::ranges::any_of(all_contacts, [&object](const Contact &contact) {
-        return contact.axis == ContactAxis::Y && (object == contact.objectA ? contact.getCollidingRectA().position.y < contact.getCollidingRectB().position.y : contact.getCollidingRectB().position.y < contact.getCollidingRectA().position.y);
+        return contact.axis == ContactAxis::Y && (object == contact.objectA
+                                                      ? contact.getCollidingRectA().position.y < contact.
+                                                        getCollidingRectB().position.y
+                                                      : contact.getCollidingRectB().position.y < contact.
+                                                        getCollidingRectA().position.y);
     });
+}
+
+std::vector<Contact> ContactsHandler::restingOnSurfaces(const CollidableObject &object, bool previous_frame) const {
+    auto& contacts = previous_frame ? previous_frame_contacts : this->contacts;
+    std::vector<Contact> horizontal_contacts;
+    if (!contacts.contains(object)) {
+        return {};
+    }
+    const std::vector<Contact>& all_contacts = contacts.at(object);
+    auto pred = [&object](const Contact &contact) {
+        return contact.axis == ContactAxis::Y && (object == contact.objectA
+                                                      ? contact.getCollidingRectA().position.y < contact.
+                                                        getCollidingRectB().position.y
+                                                      : contact.getCollidingRectB().position.y < contact.
+                                                        getCollidingRectA().position.y);
+    };
+    std::ranges::copy_if(all_contacts, std::back_inserter(horizontal_contacts), pred);
+    return horizontal_contacts;
 }
 
 std::vector<CollidableObject> ContactsHandler::nextToVerticalSurfaces(const CollidableObject &object, bool previous_frame) const {
@@ -77,23 +99,13 @@ std::vector<CollidableObject> ContactsHandler::nextToVerticalSurfaces(const Coll
     }
     const std::vector<Contact>& all_contacts = it->second;
 
-    for (const auto& contact: all_contacts | std::views::filter([](const Contact &contact){ return contact.axis == ContactAxis::X; })) {
+    for (const auto &contact: all_contacts | std::views::filter([](const Contact &contact) {
+        return contact.axis == ContactAxis::X;
+    })) {
         auto other_object = (contact.objectA == object) ? contact.objectB : contact.objectA;
         vertical_surfaces.push_back(other_object);
     }
     return vertical_surfaces;
-}
-
-std::vector<Contact> ContactsHandler::restingOnSurfaces(const CollidableObject &object, bool previous_frame) const {
-    auto& contacts = previous_frame ? previous_frame_contacts : this->contacts;
-    std::vector<Contact> horizontal_contacts;
-    if (!contacts.contains(object)) {
-        return {};
-    }
-    const std::vector<Contact>& all_contacts = contacts.at(object);
-    auto pred = [object](const Contact &contact){ return contact.axis == ContactAxis::X && (object == contact.objectA ? contact.getCollidingRectA().position.y < contact.getCollidingRectB().position.y : contact.getCollidingRectB().position.y < contact.getCollidingRectA().position.y); };
-    std::ranges::copy_if(all_contacts, std::back_inserter(horizontal_contacts),pred);
-    return horizontal_contacts;
 }
 
 [[nodiscard]] std::vector<Contact> ContactsHandler::getContacts() const{
