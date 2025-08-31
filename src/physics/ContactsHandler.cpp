@@ -5,6 +5,7 @@
 #include "physics/ContactsHandler.h"
 #include "entity/player/Player.h"
 #include "events/EventBus.h"
+#include "events/PlayerLanded.h"
 #include "events/PlayerLeftGround.h"
 #include "events/PlayerOnGround.h"
 
@@ -112,11 +113,19 @@ std::vector<CollidableObject> ContactsHandler::nextToVerticalSurfaces(const Coll
     return contacts_vector;
 }
 
-void ContactsHandler::emitPlayerLeftGroundEvent() const {
+void ContactsHandler::emitPlayerEvents() const {
     EventBus& instance = EventBus::getInstance();
     for (const auto& object: std::views::keys(previous_frame_contacts)) {
         if (object.get().isPlayer() && onLand(object.get(), true) && !onLand(object.get())) {
             EventBus::getInstance().emit(PlayerLeftGround{*object.get().isPlayer()}, EventExecuteTime::POST_PHYSICS);
+        }
+    }
+    for (const auto& object: std::views::keys(contacts)) {
+        if (object.get().isPlayer() && !onLand(object.get(), true) && onLand(object.get())) {
+            auto contacts = restingOnSurfaces(object.get());
+            assert(!contacts.empty());
+            EventBus::getInstance().emit(PlayerLanded{*object.get().isPlayer(), contacts[0]},
+                                         EventExecuteTime::POST_PHYSICS);
         }
     }
 }
