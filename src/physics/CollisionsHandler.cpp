@@ -323,7 +323,7 @@ ContactsPtrHashMap CollisionsHandler::buildContactsFaster(float deltaTime) {
         ContactsHandler::getInstance().addContact(Contact(contact));
     }
 
-    ContactsHandler::getInstance().emitPlayerLeftGroundEvent();
+    ContactsHandler::getInstance().emitPlayerEvents();
 
     return contacts;
 }
