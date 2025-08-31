@@ -3,83 +3,59 @@
 //
 
 #include "entity/player/Player.h"
-#include "entity/player/PlayerStateClimbing.h"
-#include "entity/player/PlayerStateAir.h"
+
+#include "entity/player/AbilityDash.h"
+#include "events/PlayerLanded.h"
 #include "physics/ContactsHandler.h"
+#include "events/PlayerOnGround.h"
 
 Player::Player(std::vector<sf::FloatRect> hitbox,
                sf::Sprite sprite,
                sf::Vector2f position) :
-CollidableObject(std::move(hitbox), std::move(sprite), position) {}
-
-void Player::updateSprite(float deltaTime) {
-    sprite_handler.update(deltaTime);
-}
-
-void Player::restoreStamina() {
-    stamina = MAX_STAMINA;
-}
-
-void Player::restoreDash() {
-    dashCapacity = true;
-}
-
-void Player::onLand() {
+CollidableObject(std::move(hitbox), std::move(sprite), position),
+on_ground(Listener::make_listener<PlayerOnGround>([this](const PlayerOnGround& event) {
+    if (event.player != *this) return;
     onGround = true;
-    restoreDash();
+    if (!ability_dash.isPerforming()) {
+        restoreDash();
+    }
     restoreStamina();
-}
-
-void Player::noLongerOnGround() {
+}, ListenerPriority::HIGH)),
+left_ground(Listener::make_listener<PlayerLeftGround>([this](const PlayerLeftGround& event) {
+    if (event.player != *this) return;
     onGround = false;
-    canJumpDueToGrace = true;
+    canJumpDueToCoyoteGrace = true;
     Scheduler& scheduler = Scheduler::getInstance();
-    scheduler.schedule([this] { canJumpDueToGrace = false; }, JUMP_GRACE_COYOTE_TIME);
+    auto discard = scheduler.schedule([this](std::shared_ptr<ScheduledEvent> event, float deltaTime) { canJumpDueToCoyoteGrace = false; }, JUMP_GRACE_COYOTE_TIME);
+}, ListenerPriority::HIGH)),
+landed(Listener::make_listener<PlayerLanded>([this](const PlayerLanded& event) {
+    SoundManager::getInstance().play(SoundEffect::LAND);
+}, ListenerPriority::HIGH)) {
+    gravity_acceleration.y = GRAVITY;
 }
 
-[[nodiscard]] bool Player::canJump() const {
-    return onGround || canJumpDueToGrace;
+void Player::tryJumpInFuture() {
+    auto cb = [this](std::shared_ptr<ScheduledEvent> event, float deltaTime){ tryJump(); };
+    ScheduledEvent event = {std::move(cb), 0, true, 0, JUMP_GRACE_BUFFER_TIME};
+    auto discard = Scheduler::getInstance().schedule(event);
 }
 
-bool Player::canWallJump() const {
-    return isClimbing().has_value();
-}
 
-void Player::justJumped() {
-    canJumpDueToGrace = false;
-}
-
-void Player::changeStateTo(PlayerState& new_state) {
-    state->onExit(*this);
-    state = &new_state;
-    state->onEntry(*this);
-}
-
-void Player::runDuringState() {
-    state->duringState(*this);
-}
-
-PlayerState &Player::getState() const {
-    return *state;
-}
-
-void Player::updateState() {
-    if (state == &PlayerStateClimbing::getInstance()) {
-        return;
+bool Player::tryJump() {
+    if (!ability_jump.canPerform()) {
+        return false;
     }
-    if (state == &PlayerStateGround::getInstance()) {
-        if (ContactsHandler::getInstance().onLand(*this)) {
-            return;
-        } else {
-            changeStateTo(PlayerStateAir::getInstance());
-        }
-    }
-    if (state == &PlayerStateAir::getInstance()) {
-        if (ContactsHandler::getInstance().onLand(*this)) {
-            changeStateTo(PlayerStateGround::getInstance());
-        } else {
-            return;
-        }
-    }
+    ability_jump.perform();
+    return true;
 }
+
+
+bool Player::tryDash() {
+    if (!ability_dash.canPerform()) {
+        return false;
+    }
+    ability_dash.perform();
+    return true;
+}
+
 

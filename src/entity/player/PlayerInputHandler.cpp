@@ -6,7 +6,7 @@
 
 void PlayerInputHandler::update(float deltaTime) {
     if (isPressed(dashKey)) {
-        if (bool success = player.tryDash(getDashDirection()); success) return;
+        if (bool success = player.tryDash(); success) return;
     }
 
     if (isPressed(climbKey)) {
@@ -15,6 +15,7 @@ void PlayerInputHandler::update(float deltaTime) {
 
     if (isPressed(jumpKey)) {
         if (bool success = player.tryJump(); success) return;
+        player.tryJumpInFuture();
     }
 
     handleLeftRightMovement(deltaTime);

@@ -66,7 +66,7 @@ public:
 
     [[nodiscard]] std::vector<Contact> getContacts() const;
 
-    void emitPlayerLeftGroundEvent() const;
+    void emitPlayerEvents() const;
 
 private:
     std::unordered_map<std::reference_wrapper<const CollidableObject>, std::vector<Contact>, CollidableObjectConstRefHash, CollidableObjectConstRefEqual> contacts;
