@@ -3,7 +3,7 @@ project(game)
 
 set(CMAKE_CXX_STANDARD 20)
 
-find_package(SFML 3.0.1 COMPONENTS Graphics Window System REQUIRED)
+find_package(SFML 3.0.1 COMPONENTS Graphics Window System Audio REQUIRED)
 
 # Set include directories to avoid ../../../ hell
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -26,7 +26,6 @@ add_executable(game main.cpp
         include/physics/CollisionAxis.h
         src/physics/ContactResolution.cpp
         include/physics/ContactResolution.h
-        src/entity/player/PlayerSpriteState.cpp
         include/entity/player/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
@@ -53,13 +52,38 @@ add_executable(game main.cpp
         include/entity/player/DashDirection.h
         src/physics/SpacialHashMap.cpp
         include/physics/SpacialHashMap.h
+        include/entity/player/Ability.h
+        src/entity/player/AbilityJump.cpp
+        include/entity/player/AbilityJump.h
+        src/entity/player/AbilityDash.cpp
+        include/entity/player/AbilityDash.h
+        src/events/EventBus.cpp
+        include/events/EventBus.h
+        src/events/Event.cpp
+        include/events/Event.h
+        include/events/EventExecuteTime.h
+        src/entity/player/Ability.cpp
+        include/events/ListenerPriority.h
+        src/events/Listener.cpp
+        include/events/Listener.h
+        src/events/PlayerOnGround.cpp
+        include/events/PlayerOnGround.h
+        src/events/PlayerLeftGround.cpp
+        include/events/PlayerLeftGround.h
+        src/utility/SoundManager.cpp
+        include/utility/SoundManager.h
+        include/utility/SoundEffect.h
+        include/events/PlayerLanded.h
+        src/utility/GameRender.cpp
+        include/utility/GameRender.h
 )
-target_link_libraries(game SFML::Graphics SFML::Window SFML::System)
+target_link_libraries(game SFML::Graphics SFML::Window SFML::System SFML::Audio)
 
-find_package(SFML 3.0.1 COMPONENTS Graphics Window System REQUIRED)
+find_package(SFML 3.0.1 COMPONENTS Graphics Window System Audio REQUIRED)
 
 # Performance test executable
 add_executable(performance_test performance_test.cpp
+        include/utility/InputManager.h
         src/physics/CollisionsHandler.cpp
         include/physics/CollisionsHandler.h
         src/entity/player/Player.cpp
@@ -76,7 +100,6 @@ add_executable(performance_test performance_test.cpp
         include/physics/CollisionAxis.h
         src/physics/ContactResolution.cpp
         include/physics/ContactResolution.h
-        src/entity/player/PlayerSpriteState.cpp
         include/entity/player/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
@@ -103,5 +126,28 @@ add_executable(performance_test performance_test.cpp
         include/entity/player/DashDirection.h
         src/physics/SpacialHashMap.cpp
         include/physics/SpacialHashMap.h
-)
-target_link_libraries(performance_test SFML::Graphics SFML::Window SFML::System)
+        include/entity/player/Ability.h
+        src/entity/player/AbilityJump.cpp
+        include/entity/player/AbilityJump.h
+        src/entity/player/AbilityDash.cpp
+        include/entity/player/AbilityDash.h
+        src/events/EventBus.cpp
+        include/events/EventBus.h
+        src/events/Event.cpp
+        include/events/Event.h
+        include/events/EventExecuteTime.h
+        src/entity/player/Ability.cpp
+        include/events/ListenerPriority.h
+        src/events/Listener.cpp
+        include/events/Listener.h
+        src/events/PlayerOnGround.cpp
+        include/events/PlayerOnGround.h
+        src/events/PlayerLeftGround.cpp
+        include/events/PlayerLeftGround.h
+        src/utility/SoundManager.cpp
+        include/utility/SoundManager.h
+        include/utility/SoundEffect.h
+        include/events/PlayerLanded.h
+        src/utility/GameRender.cpp
+        include/utility/GameRender.h)
+target_link_libraries(performance_test SFML::Graphics SFML::Window SFML::System SFML::Audio)
