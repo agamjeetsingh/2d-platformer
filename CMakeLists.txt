@@ -41,14 +41,6 @@ add_executable(game main.cpp
         include/physics/ContactAxis.h
         src/physics/ContactsHandler.cpp
         include/physics/ContactsHandler.h
-        src/entity/player/PlayerState.cpp
-        include/entity/player/PlayerState.h
-        src/entity/player/PlayerStateGround.cpp
-        include/entity/player/PlayerStateGround.h
-        src/entity/player/PlayerStateAir.cpp
-        include/entity/player/PlayerStateAir.h
-        src/entity/player/PlayerStateClimbing.cpp
-        include/entity/player/PlayerStateClimbing.h
         include/entity/player/DashDirection.h
         src/physics/SpacialHashMap.cpp
         include/physics/SpacialHashMap.h
@@ -115,14 +107,6 @@ add_executable(performance_test performance_test.cpp
         include/physics/ContactAxis.h
         src/physics/ContactsHandler.cpp
         include/physics/ContactsHandler.h
-        src/entity/player/PlayerState.cpp
-        include/entity/player/PlayerState.h
-        src/entity/player/PlayerStateGround.cpp
-        include/entity/player/PlayerStateGround.h
-        src/entity/player/PlayerStateAir.cpp
-        include/entity/player/PlayerStateAir.h
-        src/entity/player/PlayerStateClimbing.cpp
-        include/entity/player/PlayerStateClimbing.h
         include/entity/player/DashDirection.h
         src/physics/SpacialHashMap.cpp
         include/physics/SpacialHashMap.h

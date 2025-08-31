@@ -5,8 +5,6 @@
 #include "entity/player/Player.h"
 
 #include "entity/player/AbilityDash.h"
-#include "entity/player/PlayerStateClimbing.h"
-#include "entity/player/PlayerStateAir.h"
 #include "events/PlayerLanded.h"
 #include "physics/ContactsHandler.h"
 #include "events/PlayerOnGround.h"

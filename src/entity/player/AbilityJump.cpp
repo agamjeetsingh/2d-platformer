@@ -4,7 +4,6 @@
 
 #include "../../../include/entity/player/AbilityJump.h"
 #include "../../../include/entity/player/Player.h"
-#include "../../../include/entity/player/PlayerStateGround.h"
 #include "../../../include/utility/Scheduler.h"
 
 bool AbilityJump::canPerform() const {

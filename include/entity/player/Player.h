@@ -12,7 +12,6 @@
 #include "DashDirection.h"
 #include "Facing.h"
 #include "PlayerSpriteState.h"
-#include "PlayerState.h"
 #include "../CollidableObject.h"
 #include "sprites/PlayerSpriteHandler.h"
 #include "../../utility/Scheduler.h"
