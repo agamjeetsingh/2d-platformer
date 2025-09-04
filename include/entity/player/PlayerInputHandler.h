@@ -33,7 +33,7 @@ public:
      * \code Player::DEFAULT_DASH_DIRECTION\endcode no horizontal or vertical key is pressed.
      * @return The dash direction according to the current input.
      */
-    static DashDirection getDashDirection();
+    static DashDirection getDashDirection(const Player&);
 
 private:
     Player& player;

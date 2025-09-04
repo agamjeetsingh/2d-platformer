@@ -50,7 +50,6 @@ public:
     static constexpr float DASH_RESET_SPEED_HORIZONTAL = 160;
     static constexpr float DASH_RESET_SPEED_UP_DIAGONAL = 160;
     static constexpr float DASH_RESET_SPEED_VERTICAL = 120;
-    static constexpr DashDirection DEFAULT_DASH_DIRECTION = DashDirection::RIGHT;
     static constexpr float DASH_FIRST_SNAPSHOT_TIME = 0.08;
     static constexpr float DASH_SECOND_SNAPSHOT_TIME = 0.15;
     static constexpr float DASH_THIRD_SNAPSHOT_TIME = 0.2;

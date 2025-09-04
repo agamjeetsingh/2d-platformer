@@ -25,7 +25,7 @@ void AbilityDash::perform() {
 
     // TODO - Dash Freeze
 
-    auto direction = PlayerInputHandler::getDashDirection();
+    auto direction = PlayerInputHandler::getDashDirection(player);
 
     auto vector = directionToVector(direction);
     dash_velocity = vector * Player::DASH_SPEED;

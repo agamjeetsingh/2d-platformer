@@ -73,7 +73,7 @@ void PlayerInputHandler::approach(float &to_make_approach, float to_approach, fl
     }
 }
 
-DashDirection PlayerInputHandler::getDashDirection() {
+DashDirection PlayerInputHandler::getDashDirection(const Player& player) {
     std::optional<Key> verticalKey;
     std::optional<Key> horizontalKey;
 
@@ -101,7 +101,7 @@ DashDirection PlayerInputHandler::getDashDirection() {
         }
     }
 
-    DashDirection direction = Player::DEFAULT_DASH_DIRECTION;
+    DashDirection direction = player.facing == Facing::Left ? DashDirection::LEFT : DashDirection::RIGHT;
 
     if (verticalKey) {
         if (horizontalKey) {
