@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31)
-project(game)
+project(2d-platformer)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -8,7 +8,7 @@ find_package(SFML 3.0.1 COMPONENTS Graphics Window System Audio REQUIRED)
 # Set include directories to avoid ../../../ hell
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_executable(game main.cpp
+add_executable(2d-platformer main.cpp
         include/utility/InputManager.h
         src/physics/CollisionsHandler.cpp
         include/physics/CollisionsHandler.h
@@ -24,8 +24,6 @@ add_executable(game main.cpp
         include/events/Collision.h
         include/entity/CollidableObjectType.h
         include/physics/CollisionAxis.h
-        src/physics/ContactResolution.cpp
-        include/physics/ContactResolution.h
         include/entity/player/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
@@ -68,8 +66,11 @@ add_executable(game main.cpp
         include/events/PlayerLanded.h
         src/utility/GameRender.cpp
         include/utility/GameRender.h
+        include/entity/player/sprites/PlayerRun.h
+        include/entity/player/sprites/PlayerDash.h
+        include/entity/player/sprites/PlayerFall.h
 )
-target_link_libraries(game SFML::Graphics SFML::Window SFML::System SFML::Audio)
+target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 
 find_package(SFML 3.0.1 COMPONENTS Graphics Window System Audio REQUIRED)
 
@@ -90,8 +91,6 @@ add_executable(performance_test performance_test.cpp
         include/events/Collision.h
         include/entity/CollidableObjectType.h
         include/physics/CollisionAxis.h
-        src/physics/ContactResolution.cpp
-        include/physics/ContactResolution.h
         include/entity/player/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
