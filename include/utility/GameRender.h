@@ -30,6 +30,8 @@ public:
         render_texture.draw(object->getSprite());
     }
 
+    void drawSimpleDrawable(const sf::Drawable& sprite);
+
     void render(sf::RenderWindow& window);
 
     static GameRender& getInstance();

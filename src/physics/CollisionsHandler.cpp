@@ -7,10 +7,10 @@
 #include <ranges>
 
 #include "events/Collision.h"
-#include "physics/ContactResolution.h"
 #include "physics/ContactsHandler.h"
 #include "entity/player/PlayerInputHandler.h"
 #include "events/EventBus.h"
+#include "utility/GameRender.h"
 
 struct Collision;
 
@@ -437,14 +437,19 @@ std::optional<IncompleteCollision> CollisionsHandler::sweptCollision(
     return IncompleteCollision{rectA, rectB, axis, deltaTime, entry};
 }
 
-void CollisionsHandler::drawHitboxes(sf::RenderWindow &window, sf::Color color) const {
+void CollisionsHandler::drawHitboxes(sf::Color color) const {
     color.a = 64;
     for (const auto& body: bodies) {
         for (const auto& box: body.get().getHitbox()) {
             sf::RectangleShape transparentRect(box.size);
             transparentRect.setPosition(box.position);
             transparentRect.setFillColor(color);
-            window.draw(transparentRect);
+            GameRender::getInstance().drawSimpleDrawable(transparentRect);
+
+            sf::CircleShape transparentCirc(5);
+            transparentCirc.setPosition(body.get().getPosition());
+            transparentCirc.setFillColor(color);
+            GameRender::getInstance().drawSimpleDrawable(transparentCirc);
         }
     }
 }

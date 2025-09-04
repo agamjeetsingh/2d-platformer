@@ -18,6 +18,7 @@ void GameRender::render(sf::RenderWindow &window) {
     render_texture.display();
 
     sf::Sprite sprite(render_texture.getTexture());
+    sprite.setScale({4, 4});
     window.draw(sprite);
     render_texture.clear(sf::Color::White);
 }
@@ -34,5 +35,11 @@ GameRender &GameRender::getInstance() {
     static GameRender instance;
     return instance;
 }
+
+void GameRender::drawSimpleDrawable(const sf::Drawable &sprite) {
+    // No texture should be needed to be alive
+    render_texture.draw(sprite);
+}
+
 
 
