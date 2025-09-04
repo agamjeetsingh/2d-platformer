@@ -22,6 +22,7 @@ void AbilityDash::perform() {
     assert(canPerform());
     performing = true;
     player.dashCapacity = false;
+    call_during = Scheduler::getInstance().schedule({[this](std::shared_ptr<ScheduledEvent> event, float deltaTime){ if (this->isPerforming()) { this->callDuring(); } }, 0, true, 0});
 
     // TODO - Dash Freeze
 
@@ -46,6 +47,7 @@ void AbilityDash::perform() {
             player.base_velocity.y = sign * Player::DASH_RESET_SPEED_VERTICAL;
         }
         performing = false;
+        if (call_during) call_during->cancelled = true;
     };
     dash_reset = Scheduler::getInstance().schedule(std::move(dash_reset_func), Player::DASH_SPEED_TIME);
     SoundManager::getInstance().play(directionToSoundEffect(direction));
@@ -103,6 +105,7 @@ void AbilityDash::perform() {
 void AbilityDash::cancel() {
     performing = false;
     if (dash_reset) dash_reset->cancelled = true;
+    if (call_during) call_during->cancelled = true;
 }
 
 void AbilityDash::startCooldown() {

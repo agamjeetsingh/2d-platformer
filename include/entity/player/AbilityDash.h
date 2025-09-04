@@ -49,6 +49,7 @@ private:
     std::shared_ptr<ScheduledEvent> dash_reset;
     std::shared_ptr<ScheduledEvent> on_cooldown;
     std::shared_ptr<ScheduledEvent> dash_snapshot;
+    std::shared_ptr<ScheduledEvent> call_during;
     std::shared_ptr<DashSnapshot> snapshot_first;
     std::shared_ptr<DashSnapshot> snapshot_second;
     std::shared_ptr<DashSnapshot> snapshot_third;
