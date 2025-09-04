@@ -25,7 +25,7 @@ int main() {
         return -1;
     }
     sf::Texture idle_texture;
-    if (!idle_texture.loadFromFile("../assets/player/idle00.png")) {
+    if (!idle_texture.loadFromFile("../assets/player/idle/idle00.png")) {
         return -1;
     }
 
@@ -40,8 +40,8 @@ int main() {
     ///
 
     sf::Sprite real_player_sprite(idle_texture);
-    real_player_sprite.setColor({0, 255, 255, 100});
-    real_player_sprite.setScale({4, 4});
+    // real_player_sprite.setColor({0, 255, 255, 100});
+    // real_player_sprite.setScale({4, 4});
     std::vector<sf::FloatRect> hitbox = {sf::FloatRect({0, 0}, sf::Vector2<float>(texture.getSize()))};
     sf::Sprite sprite(texture);
     sf::Sprite player_sprite(player_texture);
@@ -50,16 +50,17 @@ int main() {
 
 
     auto player = std::make_shared<Player>(
-        std::vector{ sf::FloatRect({0, 0}, sf::Vector2<float>(idle_texture.getSize())) },
+        std::vector{ sf::FloatRect({0, 0}, {13, 12}) },
         real_player_sprite,
-        sf::Vector2f{100, 100}
+        sf::Vector2f{50, 0}
     );
 
     GameRender::getInstance().registerDrawable(player);
 
     // Player player2({sf::FloatRect({0, 0}, sf::Vector2<float>(player_texture.getSize()))}, player_sprite, {400, 400});
     sprite.setScale({1, 1});
-    auto box = std::make_shared<CollidableObject>(hitbox, sprite, sf::Vector2f{0, 300}, CollidableObjectType::Immovable);
+    auto box = std::make_shared<CollidableObject>(hitbox, sprite, sf::Vector2f{0, 200}, CollidableObjectType::Immovable);
+    // box->base_velocity = {20, 0};
 
     GameRender::getInstance().registerDrawable(box);
 
@@ -105,7 +106,7 @@ int main() {
 
         GameRender::getInstance().render(window);
 
-        window.draw(dash_sprite);
+        // window.draw(dash_sprite);
 
         // Rough drawing code
 
@@ -113,7 +114,7 @@ int main() {
         // window.draw(player2.getSprite());
         // window.draw(box.getSprite());
 
-        CollisionsHandler::getInstance().drawHitboxes(window);
+        CollisionsHandler::getInstance().drawHitboxes();
         // Debug Statements Start
 
         std::cout << "About to draw player sprite at position: " << player->getSprite().getPosition().x << ", "
