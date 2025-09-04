@@ -22,8 +22,6 @@ void PlayerInputHandler::update(float deltaTime) {
 }
 
 void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
-
-
     float multiplier = player.isOnGround() ? 1 : Player::AIR_MULTIPLIER;
 
     bool moveSomewhere = false;
@@ -32,14 +30,18 @@ void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
         // Move left
         moveSomewhere = true;
         player.facing = Facing::Left;
-        approach(player.base_velocity.x, -Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
+        if (!player.ability_dash.isPerforming()) {
+            approach(player.base_velocity.x, -Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
+        }
     }
 
     if (isPressed(moveRight) && (!isPressed(moveLeft) || wasPressedEarlierThan(moveLeft, moveRight))) {
         // Move right
         moveSomewhere = true;
         player.facing = Facing::Right;
-        approach(player.base_velocity.x, Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
+        if (!player.ability_dash.isPerforming()) {
+            approach(player.base_velocity.x, Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
+        }
     }
 
     if (!moveSomewhere && !player.ability_dash.isPerforming()) {
