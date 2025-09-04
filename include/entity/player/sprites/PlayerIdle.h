@@ -13,7 +13,7 @@ public:
     PlayerIdle() {
         for (int i = 0; i < 9; i++) {
             sf::Texture texture;
-            assert(texture.loadFromFile("../assets/player/idle0" + std::to_string(i) + ".png"));
+            assert(texture.loadFromFile("../assets/player/idle/idle0" + std::to_string(i) + ".png"));
             textures.push_back(texture);
         }
 

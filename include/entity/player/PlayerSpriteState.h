@@ -8,9 +8,10 @@
 
 
 enum class PlayerSpriteState {
-    Ground,
-    Climbing,
-    Air
+    GroundIdle,
+    Running,
+    Dashing,
+    Falling,
 };
 
 

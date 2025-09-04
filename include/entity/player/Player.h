@@ -59,7 +59,7 @@ public:
     static constexpr float GRAVITY = 900;
 
     float stamina = MAX_STAMINA;
-    PlayerSpriteState sprite_state = PlayerSpriteState::Ground;
+    PlayerSpriteState sprite_state = PlayerSpriteState::GroundIdle;
     Facing facing = Facing::Right;
 
     void updateSprite(float deltaTime) {

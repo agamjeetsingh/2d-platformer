@@ -22,6 +22,8 @@ void PlayerInputHandler::update(float deltaTime) {
 }
 
 void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
+
+
     float multiplier = player.isOnGround() ? 1 : Player::AIR_MULTIPLIER;
 
     bool moveSomewhere = false;
@@ -40,9 +42,26 @@ void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
         approach(player.base_velocity.x, Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
     }
 
-    if (!moveSomewhere) {
+    if (!moveSomewhere && !player.ability_dash.isPerforming()) {
         approach(player.base_velocity.x, 0, Player::RUN_ACCELERATION * deltaTime * multiplier);
     }
+    // Ad - hoc begin TODO
+    if (player.ability_dash.isPerforming()) {
+        player.sprite_state = PlayerSpriteState::Dashing;
+    } else {
+        if (!player.isOnGround()) {
+            player.sprite_state = PlayerSpriteState::Falling;
+        } else {
+            if (moveSomewhere) {
+                player.sprite_state = PlayerSpriteState::Running;
+            } else {
+                player.sprite_state = PlayerSpriteState::GroundIdle;
+            }
+        }
+    }
+
+    // Ad - hoc end TODO
+
 }
 
 void PlayerInputHandler::approach(float &to_make_approach, float to_approach, float step) {

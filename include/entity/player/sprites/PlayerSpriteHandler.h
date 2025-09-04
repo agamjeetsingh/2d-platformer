@@ -11,6 +11,10 @@
 #include "PlayerTextures.h"
 #include "../PlayerSpriteState.h"
 #include <SFML/Graphics/Sprite.hpp>
+
+#include "PlayerDash.h"
+#include "PlayerFall.h"
+#include "PlayerRun.h"
 #include "../Facing.h"
 
 namespace sf {
@@ -20,7 +24,10 @@ namespace sf {
 class PlayerSpriteHandler {
 public:
     explicit PlayerSpriteHandler(PlayerSpriteState& state, sf::Sprite& sprite, Facing& facing): state(state), sprite(sprite), facing(facing) {
-        textures[PlayerSpriteState::Ground] = PlayerIdle::getInstance();
+        textures[PlayerSpriteState::GroundIdle] = PlayerIdle::getInstance();
+        textures[PlayerSpriteState::Running] = PlayerRun::getInstance();
+        textures[PlayerSpriteState::Dashing] = PlayerDash::getInstance();
+        textures[PlayerSpriteState::Falling] = PlayerFall::getInstance();
         // Add all types
     }
 
@@ -30,7 +37,7 @@ public:
 
     void update(float deltaTime) {
         sf::FloatRect bounds = sprite.getLocalBounds();
-        sprite.setOrigin({bounds.size.x / 2.f, bounds.size.y / 2.f});
+        sprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
 
         auto scale = (facing == Facing::Left) ? sf::Vector2f{-1, 1} : sf::Vector2f{1, 1};
         sprite.setScale(scale);
@@ -54,6 +61,10 @@ public:
         }
 
         sprite.setTexture(player_textures.getTextures()[curr_sprite_index]);
+        sprite.setPosition(sprite.getPosition() + sf::Vector2f{8, 12});
+        if (facing == Facing::Left) {
+            sprite.setPosition(sprite.getPosition() + sf::Vector2f{-3, 0});
+        }
     }
 private:
     PlayerSpriteState curr_state = state;
