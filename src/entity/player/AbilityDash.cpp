@@ -28,7 +28,7 @@ void AbilityDash::perform() {
     auto direction = PlayerInputHandler::getDashDirection();
 
     auto vector = directionToVector(direction);
-    auto dash_velocity = vector * Player::DASH_SPEED;
+    dash_velocity = vector * Player::DASH_SPEED;
     player.base_velocity = (player.base_velocity.length() > dash_velocity.length()) ? player.base_velocity : dash_velocity;
     player.disableGravity();
 
@@ -113,8 +113,15 @@ void AbilityDash::startCooldown() {
     on_cooldown = Scheduler::getInstance().schedule(cooldown_func, Player::DASH_COOLDOWN_TIME);
 }
 
-const sf::Sprite& DashSnapshot::getSprite() {
-    return sprite.value();
+sf::Sprite DashSnapshot::getSprite() const {
+    auto scale = (player.facing == Facing::Left) ? sf::Vector2f{-1, 1} : sf::Vector2f{1, 1};
+    sf::Sprite sprite_with_offset = sprite.value();
+    sprite_with_offset.setScale(scale);
+    sprite_with_offset.setPosition(sprite_with_offset.getPosition() + sf::Vector2f{0, -20});
+    if (player.facing == Facing::Left) {
+        sprite_with_offset.setPosition(sprite_with_offset.getPosition() + sf::Vector2f{-3, 0});
+    }
+    return sprite_with_offset;
 }
 
 DashSnapshot::DashSnapshot(Player &player) : player(player) {
@@ -123,6 +130,8 @@ DashSnapshot::DashSnapshot(Player &player) : player(player) {
     }
     sprite = sf::Sprite{texture};
     std::cout << "Loaded texture size: " << texture.getSize().x << "x" << texture.getSize().y << std::endl;
+    sf::FloatRect bounds = sprite->getLocalBounds();
+    sprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
 }
 
 void DashSnapshot::setAlpha(uint8_t alpha) {
@@ -135,6 +144,11 @@ void DashSnapshot::updatePosition() {
     sf::Vector2f pos = player.getPosition();
     sprite->setPosition(pos);
 }
+
+void AbilityDash::callDuring() {
+    player.base_velocity = (player.base_velocity.length() > dash_velocity.length()) ? player.base_velocity : dash_velocity;
+}
+
 
 
 

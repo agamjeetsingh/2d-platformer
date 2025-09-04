@@ -6,6 +6,8 @@
 #define ABILITYDASH_H
 #include <SFML/Graphics.hpp>
 
+#include "DashDirection.h"
+
 class Player;
 #include "entity/player/Ability.h"
 #include "utility/ScheduledEvent.h"
@@ -17,7 +19,7 @@ class DashSnapshot {
 public:
     explicit DashSnapshot(Player& player);
 
-    const sf::Sprite& getSprite();
+    sf::Sprite getSprite() const;
 
     void updatePosition();
 
@@ -41,7 +43,7 @@ public:
 
     void startCooldown() override;
 
-    void callDuring() override { /** Nothing to do */ }
+    void callDuring() override;
 
 private:
     std::shared_ptr<ScheduledEvent> dash_reset;
@@ -50,6 +52,7 @@ private:
     std::shared_ptr<DashSnapshot> snapshot_first;
     std::shared_ptr<DashSnapshot> snapshot_second;
     std::shared_ptr<DashSnapshot> snapshot_third;
+    sf::Vector2f dash_velocity;
 };
 
 
