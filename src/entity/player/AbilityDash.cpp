@@ -55,45 +55,42 @@ void AbilityDash::perform() {
     auto dash_snapshot_func_first = [this, alpha = static_cast<float>(255)](std::shared_ptr<ScheduledEvent> event, float deltaTime) mutable {
         snapshot_first->setAlpha(static_cast<uint8_t>(alpha));
         if (alpha == 255.0) {
-            snapshot_first->updatePosition();
+            snapshot_first->update();
         }
 
-        GameRender::getInstance().draw(snapshot_first);
+        GameRender::getInstance().draw(snapshot_first, -1);
 
         alpha *= std::exp(-5 * deltaTime);
         if (alpha <= 1) {
             event->cancelled = true;
-            snapshot_first->setAlpha(255);
         }
     };
 
     auto dash_snapshot_func_second = [this, alpha = static_cast<float>(255)](std::shared_ptr<ScheduledEvent> event, float deltaTime) mutable {
         snapshot_second->setAlpha(static_cast<uint8_t>(alpha));
         if (alpha == 255.0) {
-            snapshot_second->updatePosition();
+            snapshot_second->update();
         }
 
-        GameRender::getInstance().draw(snapshot_second);
+        GameRender::getInstance().draw(snapshot_second, -1);
 
         alpha *= std::exp(-5 * deltaTime);
         if (alpha <= 1) {
             event->cancelled = true;
-            snapshot_second->setAlpha(255);
         }
     };
 
     auto dash_snapshot_func_third = [this, alpha = static_cast<float>(255)](std::shared_ptr<ScheduledEvent> event, float deltaTime) mutable {
         snapshot_third->setAlpha(static_cast<uint8_t>(alpha));
         if (alpha == 255.0) {
-            snapshot_third->updatePosition();
+            snapshot_third->update();
         }
 
-        GameRender::getInstance().draw(snapshot_third);
+        GameRender::getInstance().draw(snapshot_third, -1);
 
         alpha *= std::exp(-5 * deltaTime);
         if (alpha <= 1) {
             event->cancelled = true;
-            snapshot_third->setAlpha(255);
         }
     };
 
@@ -116,18 +113,18 @@ void AbilityDash::startCooldown() {
     on_cooldown = Scheduler::getInstance().schedule(cooldown_func, Player::DASH_COOLDOWN_TIME);
 }
 
-sf::Sprite DashSnapshot::getSprite() const {
-    auto scale = (player.facing == Facing::Left) ? sf::Vector2f{-1, 1} : sf::Vector2f{1, 1};
-    sf::Sprite sprite_with_offset = sprite.value();
-    sprite_with_offset.setScale(scale);
-    sprite_with_offset.setPosition(sprite_with_offset.getPosition() + sf::Vector2f{0, -20});
-    if (player.facing == Facing::Left) {
-        sprite_with_offset.setPosition(sprite_with_offset.getPosition() + sf::Vector2f{-3, 0});
+const sf::Sprite* DashSnapshot::getSprite() {
+    auto scale = (facing == Facing::Left) ? sf::Vector2f{-1, 1} : sf::Vector2f{1, 1};
+    sprite_with_offset = sprite.value();
+    sprite_with_offset->setScale(scale);
+    sprite_with_offset->setPosition(sprite_with_offset->getPosition() + sf::Vector2f{7, 12});
+    if (facing == Facing::Left) {
+        sprite_with_offset->setPosition(sprite_with_offset->getPosition() + sf::Vector2f{-3, 0});
     }
-    return sprite_with_offset;
+    return &sprite_with_offset.value();
 }
 
-DashSnapshot::DashSnapshot(Player &player) : player(player) {
+DashSnapshot::DashSnapshot(Player &player) : player(player), facing(player.facing) {
     if (!texture.loadFromFile("../assets/player/dash_transparent00.png")) {
         std::cerr << "Error: Couldn't load from file: " << std::endl;
     }
@@ -135,6 +132,7 @@ DashSnapshot::DashSnapshot(Player &player) : player(player) {
     std::cout << "Loaded texture size: " << texture.getSize().x << "x" << texture.getSize().y << std::endl;
     sf::FloatRect bounds = sprite->getLocalBounds();
     sprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+    sprite_with_offset = sprite.value();
 }
 
 void DashSnapshot::setAlpha(uint8_t alpha) {
@@ -143,9 +141,10 @@ void DashSnapshot::setAlpha(uint8_t alpha) {
     sprite->setColor(color);
 }
 
-void DashSnapshot::updatePosition() {
+void DashSnapshot::update() {
     sf::Vector2f pos = player.getPosition();
     sprite->setPosition(pos);
+    facing = player.facing;
 }
 
 void AbilityDash::callDuring() {

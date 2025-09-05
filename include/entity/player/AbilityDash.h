@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "DashDirection.h"
+#include "Facing.h"
 
 class Player;
 #include "entity/player/Ability.h"
@@ -19,9 +20,9 @@ class DashSnapshot {
 public:
     explicit DashSnapshot(Player& player);
 
-    sf::Sprite getSprite() const;
+    const sf::Sprite* getSprite();
 
-    void updatePosition();
+    void update();
 
     void setAlpha(uint8_t alpha);
 
@@ -29,6 +30,8 @@ private:
     sf::Texture texture;
     Player& player;
     std::optional<sf::Sprite> sprite;
+    std::optional<sf::Sprite> sprite_with_offset;
+    Facing facing;
 };
 
 class AbilityDash final : public Ability {

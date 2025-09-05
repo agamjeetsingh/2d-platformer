@@ -7,8 +7,8 @@
 void GameRender::render(sf::RenderWindow &window) {
     auto it = drawables.begin();
     while (it != drawables.end()) {
-        if (auto sprite = (*it)()) {
-            render_texture.draw(*sprite);
+        if (auto sprite = it->first()) {
+            render_texture.draw(**sprite);
             ++it;
         } else {
             it = drawables.erase(it);
@@ -35,11 +35,5 @@ GameRender &GameRender::getInstance() {
     static GameRender instance;
     return instance;
 }
-
-void GameRender::drawSimpleDrawable(const sf::Drawable &sprite) {
-    // No texture should be needed to be alive
-    render_texture.draw(sprite);
-}
-
 
 

@@ -117,10 +117,10 @@ int main() {
         CollisionsHandler::getInstance().drawHitboxes();
         // Debug Statements Start
 
-        std::cout << "About to draw player sprite at position: " << player->getSprite().getPosition().x << ", "
-          << player->getSprite().getPosition().y << std::endl;
+        std::cout << "About to draw player sprite at position: " << player->getSprite()->getPosition().x << ", "
+          << player->getSprite()->getPosition().y << std::endl;
 
-        sf::FloatRect bounds = player->getSprite().getLocalBounds();
+        sf::FloatRect bounds = player->getSprite()->getLocalBounds();
         std::cout << "Sprite bounds: " << bounds.size.x << "," << bounds.size.y << "x" << bounds.size.x << ", " << bounds.size.y << std::endl;
 
         std::cout << "Is player on land???? The verdict: " << (ContactsHandler::getInstance().onLand(*player) ? "yes" : "no") << std::endl;
@@ -129,7 +129,7 @@ int main() {
 
 
 
-        std::cout << "Player 1 x: " << player->getSprite().getPosition().x << "y: " << player->getSprite().getPosition().y << std::endl;
+        std::cout << "Player 1 x: " << player->getSprite()->getPosition().x << "y: " << player->getSprite()->getPosition().y << std::endl;
         // std::cout << "Player 2 x: " << player2.getSprite().getPosition().x << "y: " << player2.getSprite().getPosition().y << std::endl;
         std::cout << "Player 1 Hitbox x: " << player->getHitbox().getRects()[0].position.x << "y: " << player->getHitbox().getRects()[0].position.y << std::endl;
         // std::cout << "Player 2 Hitbox x: " << player2.getHitbox().getRects()[0].position.x << "y: " << player2.getHitbox().getRects()[0].position.y << std::endl;

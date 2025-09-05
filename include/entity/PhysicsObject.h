@@ -56,7 +56,7 @@ public:
     /**
      * @return A const reference to the sprite of the object.
      */
-    [[nodiscard]] const sf::Sprite& getSprite() const;
+    [[nodiscard]] const sf::Sprite* getSprite() const;
 
     /**
      * @return The position of the object.
