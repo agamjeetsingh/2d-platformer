@@ -38,7 +38,7 @@ public:
     template <Drawable T>
     void draw(std::shared_ptr<T> object, float z = 0) {
         drawables.insert(std::make_pair([weak = std::weak_ptr<T>(object), count = 0]() mutable -> std::optional<const sf::Drawable*> {
-            if (auto shared = weak.lock(); count == 0) {
+            if (auto shared = weak.lock(); (count == 0) && shared) {
                 count++;
                 return shared->getSprite();
             }
