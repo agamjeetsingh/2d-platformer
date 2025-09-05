@@ -4,10 +4,10 @@
 
 #include "../../include/utility/GameRender.h"
 
-void GameRender::render(sf::RenderWindow &window) {
+void GameRender::render(sf::RenderWindow &window, float dt) {
     auto it = drawables.begin();
     while (it != drawables.end()) {
-        if (auto sprite = it->first()) {
+        if (auto sprite = it->first(dt)) {
             render_texture.draw(**sprite);
             ++it;
         } else {

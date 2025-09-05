@@ -100,11 +100,9 @@ int main() {
 
         EventBus::getInstance().execute(EventExecuteTime::POST_PHYSICS);
 
-        player->updateSprite(dt);
-
         Scheduler::getInstance().update(dt);
 
-        GameRender::getInstance().render(window);
+        GameRender::getInstance().render(window, dt);
 
         // window.draw(dash_sprite);
 
