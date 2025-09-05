@@ -65,6 +65,7 @@ add_executable(2d-platformer main.cpp
         include/events/PlayerLanded.h
         src/utility/GameRender.cpp
         include/utility/GameRender.h
+        include/utility/EmptyTextures.h
 )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 

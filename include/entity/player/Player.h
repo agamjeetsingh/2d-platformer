@@ -25,7 +25,6 @@ struct PlayerOnGround;
 class Player final : public CollidableObject {
 public:
     Player(std::vector<sf::FloatRect> hitbox,
-        sf::Sprite sprite,
         sf::Vector2f position = {0, 0});
 
     static constexpr float MAX_STAMINA = 110;

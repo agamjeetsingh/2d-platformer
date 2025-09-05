@@ -8,11 +8,11 @@
 #include "events/PlayerLanded.h"
 #include "physics/ContactsHandler.h"
 #include "events/PlayerOnGround.h"
+#include "utility/EmptyTextures.h"
 
 Player::Player(std::vector<sf::FloatRect> hitbox,
-               sf::Sprite sprite,
                sf::Vector2f position) :
-CollidableObject(std::move(hitbox), std::move(sprite), position),
+CollidableObject(std::move(hitbox), std::move(sf::Sprite{EmptyTextures::getInstance().getEmpty({32, 32})}), position),
 on_ground(Listener::make_listener<PlayerOnGround>([this](const PlayerOnGround& event) {
     if (event.player != *this) return;
     onGround = true;

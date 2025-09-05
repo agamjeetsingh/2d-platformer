@@ -127,10 +127,9 @@ const sf::Sprite* DashSnapshot::getSprite() {
 
 DashSnapshot::DashSnapshot(Player &player) : player(player), facing(player.facing) {
     if (!texture.loadFromFile("../assets/player/dash_transparent00.png")) {
-        std::cerr << "Error: Couldn't load from file: " << std::endl;
+        std::cerr << "Error: Couldn't load from file: " << "../assets/player/dash_transparent00.png" << std::endl;
     }
     sprite = sf::Sprite{texture};
-    std::cout << "Loaded texture size: " << texture.getSize().x << "x" << texture.getSize().y << std::endl;
     sf::FloatRect bounds = sprite->getLocalBounds();
     sprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
     sprite_with_offset = sprite.value();
