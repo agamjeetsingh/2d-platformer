@@ -7,10 +7,10 @@
 #include <SFML/Graphics.hpp>
 
 #include "DashDirection.h"
-#include "Facing.h"
+#include "../sprites/Facing.h"
 
 class Player;
-#include "entity/player/Ability.h"
+#include "Ability.h"
 #include "utility/ScheduledEvent.h"
 #include "utility/SoundManager.h"
 

@@ -7,11 +7,11 @@
 
 #include <unordered_map>
 
-#include "TexturesHolder.h"
+#include "../../sprites/TexturesHolder.h"
 #include "PlayerSpriteState.h"
 #include <SFML/Graphics/Sprite.hpp>
 
-#include "../Facing.h"
+#include "Facing.h"
 
 namespace sf {
     class Sprite;

@@ -2,9 +2,9 @@
 // Created by Agamjeet Singh on 16/08/25.
 //
 
-#include "../../../include/entity/player/AbilityJump.h"
-#include "../../../include/entity/player/Player.h"
-#include "../../../include/utility/Scheduler.h"
+#include "../../../../include/entity/player/ability/AbilityJump.h"
+#include "../../../../include/entity/player/Player.h"
+#include "../../../../include/utility/Scheduler.h"
 
 bool AbilityJump::canPerform() const {
     return !performing && !onCooldown && (player.isOnGround() || player.canJumpDueToCoyoteGrace);

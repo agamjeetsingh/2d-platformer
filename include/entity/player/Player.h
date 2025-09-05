@@ -7,10 +7,10 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "AbilityDash.h"
-#include "AbilityJump.h"
-#include "DashDirection.h"
-#include "Facing.h"
+#include "ability/AbilityDash.h"
+#include "ability/AbilityJump.h"
+#include "ability/DashDirection.h"
+#include "sprites/Facing.h"
 #include "sprites/PlayerSpriteState.h"
 #include "../CollidableObject.h"
 #include "sprites/PlayerSpriteHandler.h"

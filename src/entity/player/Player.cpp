@@ -4,7 +4,7 @@
 
 #include "entity/player/Player.h"
 
-#include "entity/player/AbilityDash.h"
+#include "../../../include/entity/player/ability/AbilityDash.h"
 #include "events/PlayerLanded.h"
 #include "physics/ContactsHandler.h"
 #include "events/PlayerOnGround.h"

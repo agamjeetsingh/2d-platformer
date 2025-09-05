@@ -9,7 +9,7 @@
 #include "../../utility/InputManager.h"
 #include <SFML/Graphics.hpp>
 
-#include "DashDirection.h"
+#include "ability/DashDirection.h"
 
 using namespace sf::Keyboard;
 

@@ -27,8 +27,8 @@ add_executable(2d-platformer main.cpp
         include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
-        include/entity/player/Facing.h
-        include/entity/player/sprites/TexturesHolder.h
+        include/entity/player/sprites/Facing.h
+        include/entity/sprites/TexturesHolder.h
         src/entity/player/PlayerInputHandler.cpp
         include/entity/player/PlayerInputHandler.h
         include/utility/Scheduler.h
@@ -38,20 +38,20 @@ add_executable(2d-platformer main.cpp
         include/physics/ContactAxis.h
         src/physics/ContactsHandler.cpp
         include/physics/ContactsHandler.h
-        include/entity/player/DashDirection.h
+        include/entity/player/ability/DashDirection.h
         src/physics/SpacialHashMap.cpp
         include/physics/SpacialHashMap.h
-        include/entity/player/Ability.h
-        src/entity/player/AbilityJump.cpp
-        include/entity/player/AbilityJump.h
-        src/entity/player/AbilityDash.cpp
-        include/entity/player/AbilityDash.h
+        include/entity/player/ability/Ability.h
+        src/entity/player/ability/AbilityJump.cpp
+        include/entity/player/ability/AbilityJump.h
+        src/entity/player/ability/AbilityDash.cpp
+        include/entity/player/ability/AbilityDash.h
         src/events/EventBus.cpp
         include/events/EventBus.h
         src/events/Event.cpp
         include/events/Event.h
         include/events/EventExecuteTime.h
-        src/entity/player/Ability.cpp
+        src/entity/player/ability/Ability.cpp
         include/events/ListenerPriority.h
         src/events/Listener.cpp
         include/events/Listener.h
@@ -65,7 +65,6 @@ add_executable(2d-platformer main.cpp
         include/events/PlayerLanded.h
         src/utility/GameRender.cpp
         include/utility/GameRender.h
-        include/entity/player/sprites/PlayerDash.h
 )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 
@@ -91,8 +90,8 @@ add_executable(performance_test performance_test.cpp
         include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
-        include/entity/player/Facing.h
-        include/entity/player/sprites/TexturesHolder.h
+        include/entity/player/sprites/Facing.h
+        include/entity/sprites/TexturesHolder.h
         src/entity/player/PlayerInputHandler.cpp
         include/entity/player/PlayerInputHandler.h
         include/utility/Scheduler.h
@@ -102,20 +101,20 @@ add_executable(performance_test performance_test.cpp
         include/physics/ContactAxis.h
         src/physics/ContactsHandler.cpp
         include/physics/ContactsHandler.h
-        include/entity/player/DashDirection.h
+        include/entity/player/ability/DashDirection.h
         src/physics/SpacialHashMap.cpp
         include/physics/SpacialHashMap.h
-        include/entity/player/Ability.h
-        src/entity/player/AbilityJump.cpp
-        include/entity/player/AbilityJump.h
-        src/entity/player/AbilityDash.cpp
-        include/entity/player/AbilityDash.h
+        include/entity/player/ability/Ability.h
+        src/entity/player/ability/AbilityJump.cpp
+        include/entity/player/ability/AbilityJump.h
+        src/entity/player/ability/AbilityDash.cpp
+        include/entity/player/ability/AbilityDash.h
         src/events/EventBus.cpp
         include/events/EventBus.h
         src/events/Event.cpp
         include/events/Event.h
         include/events/EventExecuteTime.h
-        src/entity/player/Ability.cpp
+        src/entity/player/ability/Ability.cpp
         include/events/ListenerPriority.h
         src/events/Listener.cpp
         include/events/Listener.h
