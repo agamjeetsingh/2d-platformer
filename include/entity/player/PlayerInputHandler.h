@@ -42,6 +42,10 @@ private:
         return InputManager::getInstance().isPressed(key);
     }
 
+    static bool tryToUseKey(const Key key) {
+        return InputManager::getInstance().tryToUseKey(key);
+    }
+
     static bool wasPressedEarlierThan(const Key key1, const Key key2) {
         return InputManager::getInstance().wasPressedEarlierThan(key1, key2);
     }

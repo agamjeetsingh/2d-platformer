@@ -35,7 +35,7 @@ public:
      * @brief Marks a key as pressed
      * @param key The keyboard key that was pressed
      */
-    void keyPressed(const sf::Keyboard::Key key) { pressedKeys.insert({key, clock.getElapsedTime()}); }
+    void keyPressed(const sf::Keyboard::Key key) { pressedKeys.insert({key, {clock.getElapsedTime(), false}}); }
 
     /**
      * @brief Marks a key as released
@@ -50,13 +50,22 @@ public:
      */
     [[nodiscard]] bool isPressed(const sf::Keyboard::Key key) const { return pressedKeys.contains(key); }
 
+    bool tryToUseKey(const sf::Keyboard::Key key) {
+        if (!isPressed(key) || pressedKeys[key].second) {
+            return false;
+        }
+        pressedKeys[key].second = true;
+        return true;
+    }
+
     bool wasPressedEarlierThan(sf::Keyboard::Key key1, sf::Keyboard::Key key2) {
         assert(isPressed(key1) && isPressed(key2));
-        return pressedKeys[key1] < pressedKeys[key2];
+        return pressedKeys[key1].first < pressedKeys[key2].first;
     }
 
 private:
-    std::unordered_map<sf::Keyboard::Key, sf::Time> pressedKeys;
+    // pressedKeys[key].second is true if and only if it has been used
+    std::unordered_map<sf::Keyboard::Key, std::pair<sf::Time, bool>> pressedKeys;
     sf::Clock clock;
 };
 #endif //INPUTMANAGER_H

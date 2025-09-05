@@ -5,7 +5,7 @@
 #include "entity/player/PlayerInputHandler.h"
 
 void PlayerInputHandler::update(float deltaTime) {
-    if (isPressed(dashKey)) {
+    if (tryToUseKey(dashKey)) {
         if (bool success = player.tryDash(); success) return;
     }
 
@@ -13,7 +13,7 @@ void PlayerInputHandler::update(float deltaTime) {
         if (bool success = player.tryClimb(); success) return;
     }
 
-    if (isPressed(jumpKey)) {
+    if (tryToUseKey(jumpKey)) {
         if (bool success = player.tryJump(); success) return;
         player.tryJumpInFuture();
     }
