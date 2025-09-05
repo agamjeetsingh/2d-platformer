@@ -78,8 +78,8 @@ public:
     }
 
     void cancelAllEvents() {
-        events = {};
-        eventsBuffer = {};
+        events.clear();
+        eventsBuffer.clear();
     }
 private:
     std::vector<std::shared_ptr<ScheduledEvent>> eventsBuffer;
