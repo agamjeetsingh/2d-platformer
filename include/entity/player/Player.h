@@ -11,7 +11,7 @@
 #include "AbilityJump.h"
 #include "DashDirection.h"
 #include "Facing.h"
-#include "PlayerSpriteState.h"
+#include "sprites/PlayerSpriteState.h"
 #include "../CollidableObject.h"
 #include "sprites/PlayerSpriteHandler.h"
 #include "../../utility/Scheduler.h"

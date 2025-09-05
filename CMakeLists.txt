@@ -24,12 +24,11 @@ add_executable(2d-platformer main.cpp
         include/events/Collision.h
         include/entity/CollidableObjectType.h
         include/physics/CollisionAxis.h
-        include/entity/player/PlayerSpriteState.h
+        include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
         include/entity/player/Facing.h
-        include/entity/player/sprites/PlayerTextures.h
-        include/entity/player/sprites/PlayerIdle.h
+        include/entity/player/sprites/TexturesHolder.h
         src/entity/player/PlayerInputHandler.cpp
         include/entity/player/PlayerInputHandler.h
         include/utility/Scheduler.h
@@ -66,9 +65,7 @@ add_executable(2d-platformer main.cpp
         include/events/PlayerLanded.h
         src/utility/GameRender.cpp
         include/utility/GameRender.h
-        include/entity/player/sprites/PlayerRun.h
         include/entity/player/sprites/PlayerDash.h
-        include/entity/player/sprites/PlayerFall.h
 )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 
@@ -91,12 +88,11 @@ add_executable(performance_test performance_test.cpp
         include/events/Collision.h
         include/entity/CollidableObjectType.h
         include/physics/CollisionAxis.h
-        include/entity/player/PlayerSpriteState.h
+        include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
         include/entity/player/Facing.h
-        include/entity/player/sprites/PlayerTextures.h
-        include/entity/player/sprites/PlayerIdle.h
+        include/entity/player/sprites/TexturesHolder.h
         src/entity/player/PlayerInputHandler.cpp
         include/entity/player/PlayerInputHandler.h
         include/utility/Scheduler.h

@@ -7,14 +7,10 @@
 
 #include <unordered_map>
 
-#include "PlayerIdle.h"
-#include "PlayerTextures.h"
-#include "../PlayerSpriteState.h"
+#include "TexturesHolder.h"
+#include "PlayerSpriteState.h"
 #include <SFML/Graphics/Sprite.hpp>
 
-#include "PlayerDash.h"
-#include "PlayerFall.h"
-#include "PlayerRun.h"
 #include "../Facing.h"
 
 namespace sf {
@@ -24,11 +20,10 @@ namespace sf {
 class PlayerSpriteHandler {
 public:
     explicit PlayerSpriteHandler(PlayerSpriteState& state, sf::Sprite& sprite, Facing& facing): state(state), sprite(sprite), facing(facing) {
-        textures[PlayerSpriteState::GroundIdle] = PlayerIdle();
-        textures[PlayerSpriteState::Running] = PlayerRun();
-        textures[PlayerSpriteState::Dashing] = PlayerDash();
-        textures[PlayerSpriteState::Falling] = PlayerFall();
-        // Add all types
+        textures.emplace(PlayerSpriteState::GroundIdle, TexturesHolder(9, "../assets/player/idle/idle"));
+        textures.emplace(PlayerSpriteState::Running, TexturesHolder(12, "../assets/player/runFast/runFast"));
+        textures.emplace(PlayerSpriteState::Dashing, TexturesHolder(4, "../assets/player/dash/dash"));
+        textures.emplace(PlayerSpriteState::Falling, TexturesHolder(8, "../assets/player/fall/fall"));
     }
 
     PlayerSpriteState& state;
@@ -42,7 +37,10 @@ public:
         auto scale = (facing == Facing::Left) ? sf::Vector2f{-1, 1} : sf::Vector2f{1, 1};
         sprite.setScale(scale);
 
-        const PlayerTextures& player_textures = textures[state];
+        if (!textures.contains(state)) {
+            return;
+        }
+        const TexturesHolder& player_textures = textures.at(state);
 
         if (curr_state != state) {
             curr_state = state;
@@ -71,7 +69,7 @@ private:
     float time_in_state = 0;
     size_t curr_sprite_index = 0;
 
-    std::unordered_map<PlayerSpriteState, PlayerTextures> textures;
+    std::unordered_map<PlayerSpriteState, TexturesHolder> textures;
 };
 
 
