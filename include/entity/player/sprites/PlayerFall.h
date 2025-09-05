@@ -21,11 +21,6 @@ public:
             intervals.push_back(0.1);
         }
     }
-
-    static const PlayerFall& getInstance() {
-        static PlayerFall instance;
-        return instance;
-    }
 };
 
 

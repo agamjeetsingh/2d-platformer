@@ -24,10 +24,10 @@ namespace sf {
 class PlayerSpriteHandler {
 public:
     explicit PlayerSpriteHandler(PlayerSpriteState& state, sf::Sprite& sprite, Facing& facing): state(state), sprite(sprite), facing(facing) {
-        textures[PlayerSpriteState::GroundIdle] = PlayerIdle::getInstance();
-        textures[PlayerSpriteState::Running] = PlayerRun::getInstance();
-        textures[PlayerSpriteState::Dashing] = PlayerDash::getInstance();
-        textures[PlayerSpriteState::Falling] = PlayerFall::getInstance();
+        textures[PlayerSpriteState::GroundIdle] = PlayerIdle();
+        textures[PlayerSpriteState::Running] = PlayerRun();
+        textures[PlayerSpriteState::Dashing] = PlayerDash();
+        textures[PlayerSpriteState::Falling] = PlayerFall();
         // Add all types
     }
 

@@ -20,11 +20,6 @@ public:
             intervals.push_back(0.1);
         }
     }
-
-    static const PlayerDash& getInstance() {
-        static PlayerDash instance;
-        return instance;
-    }
 };
 
 

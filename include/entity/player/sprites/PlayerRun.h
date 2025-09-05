@@ -24,11 +24,6 @@ public:
             intervals.push_back(0.1);
         }
     }
-
-    static const PlayerRun& getInstance() {
-        static PlayerRun instance;
-        return instance;
-    }
 };
 
 

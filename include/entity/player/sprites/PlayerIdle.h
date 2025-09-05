@@ -21,11 +21,6 @@ public:
             intervals.push_back(0.1);
         }
     }
-
-    static const PlayerIdle& getInstance() {
-        static PlayerIdle instance;
-        return instance;
-    }
 };
 
 
