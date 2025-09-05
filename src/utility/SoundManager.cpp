@@ -39,6 +39,10 @@ SoundManager::SoundManager() {
     if (!buffers[SoundEffect::LAND].loadFromFile("../assets/player/audio/land_00_dirt_01.wav")) {
         std::cerr << "Error: Could not load ../assets/player/audio/land_00_dirt_01.wav\n";
     }
+
+    sf::Sound dummy(buffers.begin()->second);
+    dummy.play();
+    dummy.stop();
 }
 
 
