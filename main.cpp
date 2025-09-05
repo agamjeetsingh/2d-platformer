@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 
+#include "entity/objects/TouchSwitch.h"
 #include "events/EventBus.h"
 #include "include/entity/player/Player.h"
 #include "include/entity/player/PlayerInputHandler.h"
@@ -37,12 +38,11 @@ int main() {
 
     GameRender::getInstance().registerDrawable(box);
 
-    CollidableObject box_2(hitbox, sprite, {800, 100}, CollidableObjectType::Immovable);
-    // box_2.intrinsic_velocity.x = -100;
-    // CollidableObject box_3(hitbox, sprite, {0, -200}, CollidableObjectType::Immovable);
-    // box_3.acceleration = {0, 800};
+    auto touch_switches = TouchSwitch::makeTouchSwitches({{100, 100}, {120, 120}});
 
-    PlayerInputHandler input_handler =  PlayerInputHandler{*player};
+    for (auto ptr: touch_switches) {
+        GameRender::getInstance().registerDrawable(ptr, 10);
+    }
 
     while (window.isOpen()) {
         sf::Time deltaTime = clock.restart();

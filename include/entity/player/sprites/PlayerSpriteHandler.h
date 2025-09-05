@@ -19,16 +19,12 @@ namespace sf {
 
 class PlayerSpriteHandler {
 public:
-    explicit PlayerSpriteHandler(PlayerSpriteState& state, sf::Sprite& sprite, Facing& facing): state(state), sprite(sprite), facing(facing) {
+    explicit PlayerSpriteHandler(PlayerSpriteState& state, sf::Sprite& sprite, Facing& facing): facing(facing), sprite(sprite), state(state) {
         textures.emplace(PlayerSpriteState::GroundIdle, TexturesHolder(9, "../assets/player/idle/idle"));
         textures.emplace(PlayerSpriteState::Running, TexturesHolder(12, "../assets/player/runFast/runFast"));
         textures.emplace(PlayerSpriteState::Dashing, TexturesHolder(4, "../assets/player/dash/dash"));
         textures.emplace(PlayerSpriteState::Falling, TexturesHolder(8, "../assets/player/fall/fall"));
     }
-
-    PlayerSpriteState& state;
-    sf::Sprite& sprite;
-    Facing& facing;
 
     void update(float deltaTime) {
         sf::FloatRect bounds = sprite.getLocalBounds();
@@ -64,7 +60,11 @@ public:
             sprite.setPosition(sprite.getPosition() + sf::Vector2f{-3, 0});
         }
     }
+
 private:
+    Facing& facing;
+    sf::Sprite& sprite;
+    PlayerSpriteState& state;
     PlayerSpriteState curr_state = state;
     float time_in_state = 0;
     size_t curr_sprite_index = 0;
