@@ -39,6 +39,12 @@ SoundManager::SoundManager() {
     if (!buffers[SoundEffect::LAND].loadFromFile("../assets/player/audio/land_00_dirt_01.wav")) {
         std::cerr << "Error: Could not load ../assets/player/audio/land_00_dirt_01.wav\n";
     }
+    if (!buffers[SoundEffect::TOUCH_SWITCH_ACTIVATE].loadFromFile("../assets/touchSwitch/touchswitch_any.wav")) {
+        std::cerr << "Error: Could not load ../assets/touchSwitch/touchswitch_any.wav\n";
+    }
+    if (!buffers[SoundEffect::TOUCH_SWITCH_ALL_ACTIVATE].loadFromFile("../assets/touchSwitch/touchswitch_last.wav")) {
+        std::cerr << "Error: Could not load ../assets/touchSwitch/touchswitch_last.wav\n";
+    }
 
     sf::Sound dummy(buffers.begin()->second);
     dummy.play();

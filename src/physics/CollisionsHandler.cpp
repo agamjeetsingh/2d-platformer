@@ -277,12 +277,12 @@ ContactsPtrHashMap CollisionsHandler::buildContacts(float deltaTime) const {
 
 ContactsPtrHashMap CollisionsHandler::buildContactsFaster(float deltaTime) {
     ContactsPtrHashMap contacts;
+    std::vector<Collision> phantom_collisions;
 
     buildSpatialMap();
 
     auto pairs = spacial_map.getPairs();
 
-    std::cout << "Bodies: " << bodies.size() << " Pairs: " << pairs.size() << std::endl;
     for (auto [bodyA, bodyB]: pairs) {
         float earliestTime = std::numeric_limits<float>::max();
         std::optional<IncompleteCollision> earliestCollision;
@@ -313,9 +313,17 @@ ContactsPtrHashMap CollisionsHandler::buildContactsFaster(float deltaTime) {
         }
         
         if (earliestCollision.has_value()) {
-            contacts.emplace(std::make_pair(bodyA, bodyB),
-                           Collision{(*bodyA), (*bodyB), earliestCollision.value(), earliestIndexA, earliestIndexB});
+            Collision collision = Collision{(*bodyA), (*bodyB), earliestCollision.value(), earliestIndexA, earliestIndexB};
+            if (!bodyA->canCollideWith(*bodyB, collision) || !bodyB->canCollideWith(*bodyA, collision)) {
+                phantom_collisions.push_back(collision);
+            } else {
+                contacts.emplace(std::make_pair(bodyA, bodyB), collision);
+            }
         }
+    }
+
+    for (const auto& collision: phantom_collisions) {
+        EventBus::getInstance().emit(collision, EventExecuteTime::POST_PHYSICS);
     }
 
     ContactsHandler::getInstance().newFrame();
@@ -444,12 +452,12 @@ void CollisionsHandler::drawHitboxes(sf::Color color) const {
             sf::RectangleShape transparentRect(box.size);
             transparentRect.setPosition(box.position);
             transparentRect.setFillColor(color);
-            GameRender::getInstance().drawSimpleDrawable(transparentRect);
+            GameRender::getInstance().drawSimpleDrawable(transparentRect, -2);
 
-            sf::CircleShape transparentCirc(5);
-            transparentCirc.setPosition(body.get().getPosition());
-            transparentCirc.setFillColor(color);
-            GameRender::getInstance().drawSimpleDrawable(transparentCirc);
+            // sf::CircleShape transparentCirc(5);
+            // transparentCirc.setPosition(body.get().getPosition());
+            // transparentCirc.setFillColor(color);
+            // GameRender::getInstance().drawSimpleDrawable(transparentCirc, -2);
         }
     }
 }

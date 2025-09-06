@@ -66,6 +66,8 @@ public:
 
     [[nodiscard]] const Player* isPlayer() const;
 
+    [[nodiscard]] virtual bool canCollideWith(const CollidableObject&, Collision collision) const;
+
 private:
     Hitbox hitbox;
 };

@@ -4,13 +4,29 @@
 
 #include "../../../include/entity/objects/TouchSwitch.h"
 
-TouchSwitch::TouchSwitch(sf::Vector2f position): CollidableObject({{{2, 2}, {16, 16}}}, sf::Sprite{{EmptyTextures::getInstance().getEmpty({20, 20})}}, position) {
-    textures.emplace(TouchSwitchState::NOT_ACTIVE, TexturesHolder(6, "../assets/touchSwitch/icon"));
-    assert(container_texture.loadFromFile("../assets/touchSwitch/container.png"));
+#include "utility/SoundManager.h"
+
+TouchSwitch::TouchSwitch(sf::Vector2f position):
+CollidableObject({{{2, 2}, {16, 16}}}, sf::Sprite{{EmptyTextures::getInstance().getEmpty({20, 20})}}, position),
+collision_listener(Listener::make_listener<Collision>([this](const Collision& collision) {
+    if (&collision.objectA != this && &collision.objectB != this) return;
+    CollidableObject& other = &collision.objectA == this ? collision.objectB : collision.objectA;
+    if (!other.isPlayer()) return;
+    setActive(true);
+})),
+leader(this) {
+    textures.emplace(TouchSwitchState::NOT_ACTIVE, TexturesHolder(6, "../assets/touchSwitch/inactive/inactive_icon"));
+    textures.emplace(TouchSwitchState::ACTIVE, TexturesHolder(6, "../assets/touchSwitch/active/active_icon"));
+    textures.emplace(TouchSwitchState::ALL_ACTIVE, TexturesHolder(6, "../assets/touchSwitch/all_active/all_active_icon"));
+    container_textures.emplace(TouchSwitchState::NOT_ACTIVE, "../assets/touchSwitch/inactive/inactive_container.png");
+    container_textures.emplace(TouchSwitchState::ACTIVE, "../assets/touchSwitch/active/active_container.png");
+    container_textures.emplace(TouchSwitchState::ALL_ACTIVE, "../assets/touchSwitch/all_active/all_active_container.png");
     assert(combined_render_texture.resize({sf::VideoMode::getDesktopMode().size}));
 }
 
 void TouchSwitch::updateSprite(float deltaTime) {
+    updateState();
+
     if (!textures.contains(state)) {
         return;
     }
@@ -26,9 +42,8 @@ void TouchSwitch::updateSprite(float deltaTime) {
         sprite.setTexture(touch_switch_textures.getTextures()[curr_sprite_index]);
         time_in_state -= touch_switch_textures.getIntervals()[curr_sprite_index++];
     }
-    std::cout << combined_render_texture.getSize().x << combined_render_texture.getSize().y << std::endl;
     combined_render_texture.clear(sf::Color::Transparent);
-    sf::Sprite container_sprite = sf::Sprite{container_texture};
+    sf::Sprite container_sprite = sf::Sprite{container_textures[state]};
     sf::Sprite front_sprite = sf::Sprite{touch_switch_textures.getTextures()[curr_sprite_index]};
     container_sprite.setPosition(getPosition());
     front_sprite.setPosition(getPosition());
@@ -41,6 +56,9 @@ void TouchSwitch::updateSprite(float deltaTime) {
 
 void TouchSwitch::registerOther(TouchSwitch &other) {
     others.push_back(std::ref(other));
+    if (this < &other) {
+        leader = &other;
+    }
 }
 
 bool TouchSwitch::isActivated() const {
@@ -49,13 +67,6 @@ bool TouchSwitch::isActivated() const {
 
 void TouchSwitch::setActive(bool active) {
     activated = active;
-    if (!activated) {
-        state = TouchSwitchState::NOT_ACTIVE;
-    } else if (!areAllActivated()) {
-        state = TouchSwitchState::ACTIVE;
-    } else {
-        state = TouchSwitchState::ALL_ACTIVE;
-    }
 }
 
 bool TouchSwitch::canCollideWith(const CollidableObject &other, Collision collision) const {
@@ -72,7 +83,7 @@ std::vector<std::shared_ptr<TouchSwitch> > TouchSwitch::makeTouchSwitches(const 
     std::vector<std::shared_ptr<TouchSwitch>> switches;
 
     switches.reserve(positions.size());
-for (auto& pos : positions) {
+    for (auto& pos : positions) {
         switches.push_back(std::make_shared<TouchSwitch>(pos));
     }
 
@@ -87,8 +98,19 @@ for (auto& pos : positions) {
     return switches;
 }
 
-
-
-
-
-
+void TouchSwitch::updateState() {
+    TouchSwitchState prev_state = state;
+    if (!activated) {
+        state = TouchSwitchState::NOT_ACTIVE;
+    } else if (!areAllActivated()) {
+        state = TouchSwitchState::ACTIVE;
+    } else {
+        state = TouchSwitchState::ALL_ACTIVE;
+    }
+    if (prev_state == TouchSwitchState::NOT_ACTIVE && state == TouchSwitchState::ACTIVE) {
+        SoundManager::getInstance().play(SoundEffect::TOUCH_SWITCH_ACTIVATE);
+    }
+    if (prev_state != TouchSwitchState::ALL_ACTIVE && state == TouchSwitchState::ALL_ACTIVE && this == leader) {
+        SoundManager::getInstance().play(SoundEffect::TOUCH_SWITCH_ALL_ACTIVATE);
+    }
+}

@@ -8,6 +8,7 @@
 #include "entity/CollidableObject.h"
 #include "entity/sprites/TexturesHolder.h"
 #include "events/Collision.h"
+#include "events/Listener.h"
 #include "utility/EmptyTextures.h"
 #include "utility/GameRender.h"
 
@@ -39,8 +40,13 @@ private:
     size_t curr_sprite_index = 0;
 
     std::unordered_map<TouchSwitchState, TexturesHolder> textures;
-    sf::Texture container_texture;
+    std::unordered_map<TouchSwitchState, sf::Texture> container_textures;
     sf::RenderTexture combined_render_texture;
+
+    Listener collision_listener;
+    TouchSwitch* leader;
+
+    void updateState();
 };
 
 

@@ -10,7 +10,9 @@
 enum class SoundEffect {
     DASH_LEFT,
     DASH_RIGHT,
-    LAND
+    LAND,
+    TOUCH_SWITCH_ACTIVATE,
+    TOUCH_SWITCH_ALL_ACTIVATE
 };
 
 

@@ -46,3 +46,6 @@ bool CollidableObject::operator==(const CollidableObject &other) const {
     return dynamic_cast<const Player*>(this);
 }
 
+bool CollidableObject::canCollideWith(const CollidableObject& other, Collision collision) const {
+    return true;
+}
