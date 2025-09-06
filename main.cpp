@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 
+#include "entity/objects/OneWayPlatform.h"
 #include "entity/objects/TouchSwitch.h"
 #include "events/EventBus.h"
 #include "include/entity/player/Player.h"
@@ -40,9 +41,13 @@ int main() {
 
     auto touch_switches = TouchSwitch::makeTouchSwitches({{100, 100}, {120, 120}});
 
-    for (auto ptr: touch_switches) {
+    for (const auto& ptr: touch_switches) {
         GameRender::getInstance().registerDrawable(ptr, 10);
     }
+
+    auto one_way_platform = std::make_shared<OneWayPlatform>(sf::Vector2f{50, 150});
+
+    GameRender::getInstance().registerDrawable(one_way_platform);
 
     while (window.isOpen()) {
         sf::Time deltaTime = clock.restart();
