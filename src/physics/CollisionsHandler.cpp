@@ -218,7 +218,12 @@ void CollisionsHandler::moveImmovables(float deltaTime) const {
 void CollisionsHandler::moveMovables(float deltaTime) const {
     for (auto body: bodies) {
         if (body.get().type == CollidableObjectType::Movable) {
-            body.get().base_velocity += body.get().gravity_acceleration * deltaTime;
+            auto player = body.get().isPlayer();
+            if (player && abs(player->base_velocity.y) < Player::HALF_GRAVITY_THRESHOLD) {
+                player->base_velocity += 0.5f * body.get().gravity_acceleration * deltaTime;
+            } else {
+                body.get().base_velocity += body.get().gravity_acceleration * deltaTime;
+            }
             body.get().addPosition(body.get().getTotalVelocity() * deltaTime);
         }
     }
