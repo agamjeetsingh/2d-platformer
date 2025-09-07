@@ -69,9 +69,9 @@ add_executable(2d-platformer main.cpp
         include/entity/objects/TouchSwitch.h
         include/entity/objects/TouchSwitchState.h
         include/utility/EmptyTextures.h
-        include/entity/objects/OneWayPlatform.cpp
+        src/entity/objects/OneWayPlatform.cpp
         include/entity/objects/OneWayPlatform.h
-        include/entity/objects/KillZone.cpp
+        src/entity/objects/KillZone.cpp
         include/entity/objects/KillZone.h
 )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)

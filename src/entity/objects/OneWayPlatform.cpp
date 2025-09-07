@@ -2,7 +2,7 @@
 // Created by Agamjeet Singh on 06/09/25.
 //
 
-#include "OneWayPlatform.h"
+#include "../../../include/entity/objects/OneWayPlatform.h"
 
 OneWayPlatform::OneWayPlatform(sf::Vector2f position): CollidableObject({{{0, 8}, {24, 2}}}, sf::Sprite{{EmptyTextures::getInstance().getEmpty({24, 16})}}, position, CollidableObjectType::Immovable) {
     assert(texture.loadFromFile("../assets/oneWayPlatform/wood_no_support.png"));
