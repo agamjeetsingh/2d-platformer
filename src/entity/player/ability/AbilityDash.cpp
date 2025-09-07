@@ -15,7 +15,7 @@ snapshot_third(std::make_shared<DashSnapshot>(player)) {}
 
 
 bool AbilityDash::canPerform() const {
-    return !performing && !onCooldown && player.dashCapacity;
+    return !performing && !onCooldown && player.dashCapacity && !player.dying;
 }
 
 void AbilityDash::perform() {

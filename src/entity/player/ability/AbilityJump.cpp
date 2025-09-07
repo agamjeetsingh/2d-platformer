@@ -7,7 +7,7 @@
 #include "../../../../include/utility/Scheduler.h"
 
 bool AbilityJump::canPerform() const {
-    return !performing && !onCooldown && (player.isOnGround() || player.canJumpDueToCoyoteGrace);
+    return !performing && !onCooldown && (player.isOnGround() || player.canJumpDueToCoyoteGrace) && !player.dying;
 }
 
 void AbilityJump::perform() {
