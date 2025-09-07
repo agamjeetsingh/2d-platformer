@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 
+#include "entity/objects/KillZone.h"
 #include "entity/objects/OneWayPlatform.h"
 #include "entity/objects/TouchSwitch.h"
 #include "events/EventBus.h"
@@ -48,6 +49,8 @@ int main() {
     auto one_way_platform = std::make_shared<OneWayPlatform>(sf::Vector2f{100, 150});
 
     GameRender::getInstance().registerDrawable(one_way_platform);
+
+    auto kill_zone = std::make_shared<KillZone>(sf::Vector2f{250, 150}, sf::Vector2f{10, 10});
 
     while (window.isOpen()) {
         sf::Time deltaTime = clock.restart();
