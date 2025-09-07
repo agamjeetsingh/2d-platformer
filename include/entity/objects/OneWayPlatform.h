@@ -11,7 +11,7 @@
 
 class OneWayPlatform final : public CollidableObject {
 public:
-    explicit OneWayPlatform(sf::Vector2f position)l
+    explicit OneWayPlatform(sf::Vector2f position);
 
     bool canCollideWith(const CollidableObject&, Collision collision) const override;
 

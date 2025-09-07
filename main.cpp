@@ -39,13 +39,13 @@ int main() {
 
     GameRender::getInstance().registerDrawable(box);
 
-    auto touch_switches = TouchSwitch::makeTouchSwitches({{100, 100}, {120, 120}});
+    auto touch_switches = TouchSwitch::makeTouchSwitches({{100, 75}, {180, 180}});
 
     for (const auto& ptr: touch_switches) {
         GameRender::getInstance().registerDrawable(ptr, 10);
     }
 
-    auto one_way_platform = std::make_shared<OneWayPlatform>(sf::Vector2f{50, 150});
+    auto one_way_platform = std::make_shared<OneWayPlatform>(sf::Vector2f{100, 150});
 
     GameRender::getInstance().registerDrawable(one_way_platform);
 

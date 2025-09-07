@@ -8,6 +8,8 @@ Features include a physics engine, an extensible event bus, a flexible callback 
 
 ## Demo GIF
 
+![Demo](assets/demo.gif)
+
 ## Features
 - **Physics Engine**
     - Swept AABB collision detection, impulse-based resolution,
@@ -50,7 +52,7 @@ Features include a physics engine, an extensible event bus, a flexible callback 
 ## Future Plans
 - Implement a level parser to create a map from a JSON file
 - Saving and loading data, such as custom key-binds
-- Enemies with AI having natural movements
+- Enemies with AI including natural movement
 - Pausing the game, general input buffering, screen shake, freeze frames
 - Other UI elements like a pause menu, particle effects, shaders
 
@@ -93,5 +95,3 @@ cmake ..
 make
 ./2d-platformer
 ```
-
-# License
