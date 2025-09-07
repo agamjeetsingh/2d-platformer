@@ -16,6 +16,15 @@ Hitbox::Hitbox(std::vector<sf::FloatRect> original_hitbox, const sf::Vector2f& p
     return copied_hitbox;
 }
 
+std::vector<sf::FloatRect> Hitbox::getUnshiftedRects() const {
+    return original_hitbox;
+}
+
+
+void Hitbox::setRects(const std::vector<sf::FloatRect>& rects) {
+    original_hitbox = rects;
+}
+
 sf::FloatRect Hitbox::getBounds() const {
     const auto first_hitbox = *begin();
     float leftmost_coord = first_hitbox.position.x;

@@ -68,7 +68,7 @@ public:
 
     [[nodiscard]] virtual bool canCollideWith(const CollidableObject&, Collision collision) const;
 
-private:
+protected:
     Hitbox hitbox;
 };
 

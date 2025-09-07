@@ -131,13 +131,16 @@ public:
         friction_velocity = {0, 0};
         base_velocity = {-10, -10};
         dying = true;
-        auto discard = Scheduler::getInstance().schedule([this](const std::shared_ptr<ScheduledEvent>& event, float dt) {
+        auto copy = hitbox.getUnshiftedRects();
+        hitbox.setRects({{{0, 0}, {0, 0}}});
+        auto discard = Scheduler::getInstance().schedule([this, copy](const std::shared_ptr<ScheduledEvent>& event, float dt) {
             sprite_state = PlayerSpriteState::GroundIdle;
             setPosition(respawn_position);
             enableGravity();
             dying = false;
             restoreDash();
             restoreStamina();
+            hitbox.setRects(copy);
         }, sprite_handler.getAnimationLength(PlayerSpriteState::Dead));
     }
 

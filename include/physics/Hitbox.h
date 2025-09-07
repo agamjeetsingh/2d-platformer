@@ -27,6 +27,10 @@ public:
      */
     [[nodiscard]] std::vector<sf::FloatRect> getRects() const;
 
+    [[nodiscard]] std::vector<sf::FloatRect> getUnshiftedRects() const;
+
+    void setRects(const std::vector<sf::FloatRect> &rects);
+
     [[nodiscard]] sf::FloatRect getBounds() const;
 
     [[nodiscard]] size_t getSize() const;

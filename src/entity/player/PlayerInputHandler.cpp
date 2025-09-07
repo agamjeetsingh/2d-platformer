@@ -26,7 +26,7 @@ void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
 
     bool moveSomewhere = false;
 
-    if (isPressed(moveLeft) && (!isPressed(moveRight) || wasPressedEarlierThan(moveRight, moveLeft))) {
+    if (isPressed(moveLeft) && (!isPressed(moveRight) || wasPressedEarlierThan(moveRight, moveLeft)) && !player.dying) {
         // Move left
         moveSomewhere = true;
         player.facing = Facing::Left;
@@ -35,7 +35,7 @@ void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
         }
     }
 
-    if (isPressed(moveRight) && (!isPressed(moveLeft) || wasPressedEarlierThan(moveLeft, moveRight))) {
+    if (isPressed(moveRight) && (!isPressed(moveLeft) || wasPressedEarlierThan(moveLeft, moveRight)) && !player.dying) {
         // Move right
         moveSomewhere = true;
         player.facing = Facing::Right;
@@ -44,20 +44,23 @@ void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
         }
     }
 
-    if (!moveSomewhere && !player.ability_dash.isPerforming()) {
+    if (!moveSomewhere && !player.ability_dash.isPerforming() && !player.dying) {
         approach(player.base_velocity.x, 0, Player::RUN_ACCELERATION * deltaTime * multiplier);
     }
+    // TODO - Move this to Player Sprite Handler and save `moveSomewhere` somewhere
     // Ad - hoc begin TODO
-    if (player.ability_dash.isPerforming()) {
-        player.sprite_state = PlayerSpriteState::Dashing;
-    } else {
-        if (!player.isOnGround()) {
-            player.sprite_state = PlayerSpriteState::Falling;
+    if (player.sprite_state != PlayerSpriteState::Dead) {
+        if (player.ability_dash.isPerforming()) {
+            player.sprite_state = PlayerSpriteState::Dashing;
         } else {
-            if (moveSomewhere) {
-                player.sprite_state = PlayerSpriteState::Running;
+            if (!player.isOnGround()) {
+                player.sprite_state = PlayerSpriteState::Falling;
             } else {
-                player.sprite_state = PlayerSpriteState::GroundIdle;
+                if (moveSomewhere) {
+                    player.sprite_state = PlayerSpriteState::Running;
+                } else {
+                    player.sprite_state = PlayerSpriteState::GroundIdle;
+                }
             }
         }
     }
