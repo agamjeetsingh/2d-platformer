@@ -12,6 +12,7 @@ enum class PlayerSpriteState {
     Running,
     Dashing,
     Falling,
+    Dead,
 };
 
 

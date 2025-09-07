@@ -45,6 +45,9 @@ SoundManager::SoundManager() {
     if (!buffers[SoundEffect::TOUCH_SWITCH_ALL_ACTIVATE].loadFromFile("../assets/touchSwitch/touchswitch_last.wav")) {
         std::cerr << "Error: Could not load ../assets/touchSwitch/touchswitch_last.wav\n";
     }
+    if (!buffers[SoundEffect::DEATH].loadFromFile("../assets/player/death.wav")) {
+        std::cerr << "Error: Could not load ../assets/player/death.wav\n";
+    }
 
     sf::Sound dummy(buffers.begin()->second);
     dummy.play();

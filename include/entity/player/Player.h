@@ -118,6 +118,29 @@ public:
     bool dashCapacity = true;
     AbilityDash ability_dash{*this};
 
+    // ===== Player Death =====
+
+    sf::Vector2f respawn_position;
+
+    bool dying = false;
+
+    void kill() {
+        SoundManager::getInstance().play(SoundEffect::DEATH);
+        sprite_state = PlayerSpriteState::Dead;
+        disableGravity();
+        friction_velocity = {0, 0};
+        base_velocity = {-10, -10};
+        dying = true;
+        auto discard = Scheduler::getInstance().schedule([this](const std::shared_ptr<ScheduledEvent>& event, float dt) {
+            sprite_state = PlayerSpriteState::GroundIdle;
+            setPosition(respawn_position);
+            enableGravity();
+            dying = false;
+            restoreDash();
+            restoreStamina();
+        }, sprite_handler.getAnimationLength(PlayerSpriteState::Dead));
+    }
+
 private:
     PlayerSpriteHandler sprite_handler = PlayerSpriteHandler(sprite_state, sprite, facing);
 

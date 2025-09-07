@@ -5,6 +5,7 @@
 #ifndef PLAYERSPRITEHANDLER_H
 #define PLAYERSPRITEHANDLER_H
 
+#include <numeric>
 #include <unordered_map>
 
 #include "../../sprites/TexturesHolder.h"
@@ -24,6 +25,13 @@ public:
         textures.emplace(PlayerSpriteState::Running, TexturesHolder(12, "../assets/player/runFast/runFast"));
         textures.emplace(PlayerSpriteState::Dashing, TexturesHolder(4, "../assets/player/dash/dash"));
         textures.emplace(PlayerSpriteState::Falling, TexturesHolder(8, "../assets/player/fall/fall"));
+        textures.emplace(PlayerSpriteState::Dead, TexturesHolder(11, "../assets/player/death/death_h", std::vector(11, 0.03f)));
+    }
+
+    float getAnimationLength(const PlayerSpriteState state) {
+        if (!textures.contains(state)) return 0;
+        auto& intervals = textures.at(state).getIntervals();
+        return std::accumulate(intervals.begin(), intervals.end(), 0.f);
     }
 
     void update(float deltaTime) {
