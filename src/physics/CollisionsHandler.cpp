@@ -86,12 +86,12 @@ void CollisionsHandler::update(float deltaTime) {
                 auto *movable = immovable == objectA ? objectB : objectA;
                 bool friction_set = false;
                 if (collision.axis == CollisionAxis::Up || collision.axis == CollisionAxis::Down) {
-                    if (movable->getTotalVelocity().dot(normal) > 0) {
+                    if (relative_velocity.dot(normal) > 0) {
                         movable->friction_velocity.x = immovable->getTotalVelocity().x;
                         friction_set = true;
                     }
                 } else {
-                    if (movable->getTotalVelocity().dot(normal) > 0) {
+                    if (relative_velocity.dot(normal) > 0) {
                         movable->friction_velocity.y = immovable->getTotalVelocity().y;
                         friction_set = true;
                     }
