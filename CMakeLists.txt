@@ -73,6 +73,9 @@ add_executable(2d-platformer main.cpp
         include/entity/objects/OneWayPlatform.h
         src/entity/objects/KillZone.cpp
         include/entity/objects/KillZone.h
+        src/entity/objects/DashCrystal.cpp
+        include/entity/objects/DashCrystal.h
+        include/entity/objects/DashCrystalState.h
 )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 

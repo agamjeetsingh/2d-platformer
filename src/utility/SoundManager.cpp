@@ -48,6 +48,24 @@ SoundManager::SoundManager() {
     if (!buffers[SoundEffect::DEATH].loadFromFile("../assets/player/death.wav")) {
         std::cerr << "Error: Could not load ../assets/player/death.wav\n";
     }
+    if (!buffers[SoundEffect::DIAMOND_RETURN_01].loadFromFile("../assets/dashRefill/diamond_return_01.wav")) {
+        std::cerr << "Error: Could not load ../assets/dashRefill/diamond_return_01.wav\n";
+    }
+    if (!buffers[SoundEffect::DIAMOND_RETURN_02].loadFromFile("../assets/dashRefill/diamond_return_02.wav")) {
+        std::cerr << "Error: Could not load ../assets/dashRefill/diamond_return_02.wav\n";
+    }
+    if (!buffers[SoundEffect::DIAMOND_RETURN_03].loadFromFile("../assets/dashRefill/diamond_return_03.wav")) {
+        std::cerr << "Error: Could not load ../assets/dashRefill/diamond_return_03.wav\n";
+    }
+    if (!buffers[SoundEffect::DIAMOND_TOUCH_01].loadFromFile("../assets/dashRefill/diamond_touch_01.wav")) {
+        std::cerr << "Error: Could not load ../assets/dashRefill/diamond_touch_01.wav\n";
+    }
+    if (!buffers[SoundEffect::DIAMOND_TOUCH_02].loadFromFile("../assets/dashRefill/diamond_touch_02.wav")) {
+        std::cerr << "Error: Could not load ../assets/dashRefill/diamond_touch_02.wav\n";
+    }
+    if (!buffers[SoundEffect::DIAMOND_TOUCH_03].loadFromFile("../assets/dashRefill/diamond_touch_03.wav")) {
+        std::cerr << "Error: Could not load ../assets/dashRefill/diamond_touch_03.wav\n";
+    }
 
     sf::Sound dummy(buffers.begin()->second);
     dummy.play();
