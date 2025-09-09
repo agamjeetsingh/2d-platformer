@@ -76,6 +76,11 @@ add_executable(2d-platformer main.cpp
         src/entity/objects/DashCrystal.cpp
         include/entity/objects/DashCrystal.h
         include/entity/objects/DashCrystalState.h
+        src/entity/objects/SwapBlock.cpp
+        include/entity/objects/SwapBlock.h
+        include/events/PlayerDashEvent.h
+        src/utility/SoundLoop.cpp
+        include/utility/SoundLoop.h
 )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 

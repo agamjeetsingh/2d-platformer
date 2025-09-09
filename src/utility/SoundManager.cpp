@@ -9,24 +9,17 @@ SoundManager &SoundManager::getInstance() {
     return instance;
 }
 
-void SoundManager::play(SoundEffect sound_effect, float volume) {
+std::shared_ptr<sf::Sound> SoundManager::play(SoundEffect sound_effect, bool loop, float volume) {
     volume = std::clamp(volume, 0.f, 100.f);
 
-    if (!buffers.contains(sound_effect)) return;
+    if (!buffers.contains(sound_effect)) return {};
     const sf::SoundBuffer& buffer = buffers.at(sound_effect);
 
-    for (auto& sound : sounds) {
-        if (sound.getStatus() != sf::Sound::Status::Playing) {
-            sound.setBuffer(buffer);
-            sound.setVolume(volume);
-            sound.play();
-            return;
-        }
-    }
-
-    sounds.emplace_back(buffer);
-    sounds.back().setVolume(volume);
-    sounds.back().play();
+    sounds.push_back(std::make_shared<sf::Sound>(buffer));
+    sounds.back()->setVolume(volume);
+    sounds.back()->setLooping(loop);
+    sounds.back()->play();
+    return sounds.back();
 }
 
 SoundManager::SoundManager() {
