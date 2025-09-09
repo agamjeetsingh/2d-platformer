@@ -34,6 +34,9 @@ void AbilityDash::perform() {
     player.base_velocity = (player.base_velocity.length() > dash_velocity.length()) ? player.base_velocity : dash_velocity;
     player.disableGravity();
 
+    // Screen Shake
+    GameRender::getInstance().shake(vector, 2, 4, 1);
+
     // Dash Reset
     auto dash_reset_func = [this, direction](std::shared_ptr<ScheduledEvent> event, float deltaTime) {
         player.enableGravity();

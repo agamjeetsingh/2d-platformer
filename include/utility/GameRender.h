@@ -63,6 +63,17 @@ public:
 
     void render(sf::RenderWindow& window, float dt);
 
+    void shake(sf::Vector2f direction, float amplitude = 10, float frequency = 8, float damping = 2.f) {
+        const float len = direction.length();
+        assert(len > 0);
+        direction /= len;
+        shake_direction = direction;
+        shake_amplitude = amplitude;
+        shake_frequency = frequency;
+        shake_damping = damping;
+        shaking = true;
+    }
+
     static GameRender& getInstance();
 
 private:
@@ -70,6 +81,13 @@ private:
 
     sf::RenderTexture render_texture;
     std::multiset<std::pair<std::function<std::optional<const sf::Drawable*>(float)>, float>, zComparator> drawables;
+
+    sf::Vector2f shake_direction = {1, 1};
+    bool shaking = false;
+    float shake_time = 0;
+    float shake_amplitude = 0;
+    float shake_frequency = 0;
+    float shake_damping = 0;
 };
 
 
