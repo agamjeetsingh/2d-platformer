@@ -7,11 +7,11 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "AbilityDash.h"
-#include "AbilityJump.h"
-#include "DashDirection.h"
-#include "Facing.h"
-#include "PlayerSpriteState.h"
+#include "ability/AbilityDash.h"
+#include "ability/AbilityJump.h"
+#include "ability/DashDirection.h"
+#include "sprites/Facing.h"
+#include "sprites/PlayerSpriteState.h"
 #include "../CollidableObject.h"
 #include "sprites/PlayerSpriteHandler.h"
 #include "../../utility/Scheduler.h"
@@ -24,8 +24,7 @@ struct PlayerOnGround;
 
 class Player final : public CollidableObject {
 public:
-    Player(std::vector<sf::FloatRect> hitbox,
-        sf::Sprite sprite,
+    explicit Player(std::vector<sf::FloatRect> hitbox,
         sf::Vector2f position = {0, 0});
 
     static constexpr float MAX_STAMINA = 110;
@@ -50,7 +49,6 @@ public:
     static constexpr float DASH_RESET_SPEED_HORIZONTAL = 160;
     static constexpr float DASH_RESET_SPEED_UP_DIAGONAL = 160;
     static constexpr float DASH_RESET_SPEED_VERTICAL = 120;
-    static constexpr DashDirection DEFAULT_DASH_DIRECTION = DashDirection::RIGHT;
     static constexpr float DASH_FIRST_SNAPSHOT_TIME = 0.08;
     static constexpr float DASH_SECOND_SNAPSHOT_TIME = 0.15;
     static constexpr float DASH_THIRD_SNAPSHOT_TIME = 0.2;
@@ -59,7 +57,7 @@ public:
     static constexpr float GRAVITY = 900;
 
     float stamina = MAX_STAMINA;
-    PlayerSpriteState sprite_state = PlayerSpriteState::Ground;
+    PlayerSpriteState sprite_state = PlayerSpriteState::GroundIdle;
     Facing facing = Facing::Right;
 
     void updateSprite(float deltaTime) {
@@ -119,6 +117,32 @@ public:
     // Dash
     bool dashCapacity = true;
     AbilityDash ability_dash{*this};
+
+    // ===== Player Death =====
+
+    sf::Vector2f respawn_position;
+
+    bool dying = false;
+
+    void kill() {
+        SoundManager::getInstance().play(SoundEffect::DEATH);
+        sprite_state = PlayerSpriteState::Dead;
+        disableGravity();
+        friction_velocity = {0, 0};
+        base_velocity = {-10, -10};
+        dying = true;
+        auto copy = hitbox.getUnshiftedRects();
+        hitbox.setRects({{{0, 0}, {0, 0}}});
+        auto discard = Scheduler::getInstance().schedule([this, copy](const std::shared_ptr<ScheduledEvent>& event, float dt) {
+            sprite_state = PlayerSpriteState::GroundIdle;
+            setPosition(respawn_position);
+            enableGravity();
+            dying = false;
+            restoreDash();
+            restoreStamina();
+            hitbox.setRects(copy);
+        }, sprite_handler.getAnimationLength(PlayerSpriteState::Dead));
+    }
 
 private:
     PlayerSpriteHandler sprite_handler = PlayerSpriteHandler(sprite_state, sprite, facing);

@@ -7,10 +7,10 @@
 #include <ranges>
 
 #include "events/Collision.h"
-#include "physics/ContactResolution.h"
 #include "physics/ContactsHandler.h"
 #include "entity/player/PlayerInputHandler.h"
 #include "events/EventBus.h"
+#include "utility/GameRender.h"
 
 struct Collision;
 
@@ -86,12 +86,12 @@ void CollisionsHandler::update(float deltaTime) {
                 auto *movable = immovable == objectA ? objectB : objectA;
                 bool friction_set = false;
                 if (collision.axis == CollisionAxis::Up || collision.axis == CollisionAxis::Down) {
-                    if (movable->getTotalVelocity().dot(normal) > 0) {
+                    if (relative_velocity.dot(normal) > 0) {
                         movable->friction_velocity.x = immovable->getTotalVelocity().x;
                         friction_set = true;
                     }
                 } else {
-                    if (movable->getTotalVelocity().dot(normal) > 0) {
+                    if (relative_velocity.dot(normal) > 0) {
                         movable->friction_velocity.y = immovable->getTotalVelocity().y;
                         friction_set = true;
                     }
@@ -218,7 +218,12 @@ void CollisionsHandler::moveImmovables(float deltaTime) const {
 void CollisionsHandler::moveMovables(float deltaTime) const {
     for (auto body: bodies) {
         if (body.get().type == CollidableObjectType::Movable) {
-            body.get().base_velocity += body.get().gravity_acceleration * deltaTime;
+            auto player = body.get().isPlayer();
+            if (player && abs(player->base_velocity.y) < Player::HALF_GRAVITY_THRESHOLD) {
+                player->base_velocity += 0.5f * body.get().gravity_acceleration * deltaTime;
+            } else {
+                body.get().base_velocity += body.get().gravity_acceleration * deltaTime;
+            }
             body.get().addPosition(body.get().getTotalVelocity() * deltaTime);
         }
     }
@@ -277,12 +282,12 @@ ContactsPtrHashMap CollisionsHandler::buildContacts(float deltaTime) const {
 
 ContactsPtrHashMap CollisionsHandler::buildContactsFaster(float deltaTime) {
     ContactsPtrHashMap contacts;
+    std::vector<Collision> phantom_collisions;
 
     buildSpatialMap();
 
     auto pairs = spacial_map.getPairs();
 
-    std::cout << "Bodies: " << bodies.size() << " Pairs: " << pairs.size() << std::endl;
     for (auto [bodyA, bodyB]: pairs) {
         float earliestTime = std::numeric_limits<float>::max();
         std::optional<IncompleteCollision> earliestCollision;
@@ -313,9 +318,17 @@ ContactsPtrHashMap CollisionsHandler::buildContactsFaster(float deltaTime) {
         }
         
         if (earliestCollision.has_value()) {
-            contacts.emplace(std::make_pair(bodyA, bodyB),
-                           Collision{(*bodyA), (*bodyB), earliestCollision.value(), earliestIndexA, earliestIndexB});
+            Collision collision = Collision{(*bodyA), (*bodyB), earliestCollision.value(), earliestIndexA, earliestIndexB};
+            if (!bodyA->canCollideWith(*bodyB, collision) || !bodyB->canCollideWith(*bodyA, collision)) {
+                phantom_collisions.push_back(collision);
+            } else {
+                contacts.emplace(std::make_pair(bodyA, bodyB), collision);
+            }
         }
+    }
+
+    for (const auto& collision: phantom_collisions) {
+        EventBus::getInstance().emit(collision, EventExecuteTime::POST_PHYSICS);
     }
 
     ContactsHandler::getInstance().newFrame();
@@ -437,14 +450,19 @@ std::optional<IncompleteCollision> CollisionsHandler::sweptCollision(
     return IncompleteCollision{rectA, rectB, axis, deltaTime, entry};
 }
 
-void CollisionsHandler::drawHitboxes(sf::RenderWindow &window, sf::Color color) const {
+void CollisionsHandler::drawHitboxes(sf::Color color) const {
     color.a = 64;
     for (const auto& body: bodies) {
         for (const auto& box: body.get().getHitbox()) {
             sf::RectangleShape transparentRect(box.size);
             transparentRect.setPosition(box.position);
             transparentRect.setFillColor(color);
-            window.draw(transparentRect);
+            GameRender::getInstance().drawSimpleDrawable(transparentRect, -2);
+
+            // sf::CircleShape transparentCirc(5);
+            // transparentCirc.setPosition(body.get().getPosition());
+            // transparentCirc.setFillColor(color);
+            // GameRender::getInstance().drawSimpleDrawable(transparentCirc, -2);
         }
     }
 }

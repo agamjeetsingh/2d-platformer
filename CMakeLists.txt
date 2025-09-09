@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31)
-project(game)
+project(2d-platformer)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -8,7 +8,7 @@ find_package(SFML 3.0.1 COMPONENTS Graphics Window System Audio REQUIRED)
 # Set include directories to avoid ../../../ hell
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_executable(game main.cpp
+add_executable(2d-platformer main.cpp
         include/utility/InputManager.h
         src/physics/CollisionsHandler.cpp
         include/physics/CollisionsHandler.h
@@ -24,14 +24,11 @@ add_executable(game main.cpp
         include/events/Collision.h
         include/entity/CollidableObjectType.h
         include/physics/CollisionAxis.h
-        src/physics/ContactResolution.cpp
-        include/physics/ContactResolution.h
-        include/entity/player/PlayerSpriteState.h
+        include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
-        include/entity/player/Facing.h
-        include/entity/player/sprites/PlayerTextures.h
-        include/entity/player/sprites/PlayerIdle.h
+        include/entity/player/sprites/Facing.h
+        include/entity/sprites/TexturesHolder.h
         src/entity/player/PlayerInputHandler.cpp
         include/entity/player/PlayerInputHandler.h
         include/utility/Scheduler.h
@@ -41,20 +38,20 @@ add_executable(game main.cpp
         include/physics/ContactAxis.h
         src/physics/ContactsHandler.cpp
         include/physics/ContactsHandler.h
-        include/entity/player/DashDirection.h
+        include/entity/player/ability/DashDirection.h
         src/physics/SpacialHashMap.cpp
         include/physics/SpacialHashMap.h
-        include/entity/player/Ability.h
-        src/entity/player/AbilityJump.cpp
-        include/entity/player/AbilityJump.h
-        src/entity/player/AbilityDash.cpp
-        include/entity/player/AbilityDash.h
+        include/entity/player/ability/Ability.h
+        src/entity/player/ability/AbilityJump.cpp
+        include/entity/player/ability/AbilityJump.h
+        src/entity/player/ability/AbilityDash.cpp
+        include/entity/player/ability/AbilityDash.h
         src/events/EventBus.cpp
         include/events/EventBus.h
         src/events/Event.cpp
         include/events/Event.h
         include/events/EventExecuteTime.h
-        src/entity/player/Ability.cpp
+        src/entity/player/ability/Ability.cpp
         include/events/ListenerPriority.h
         src/events/Listener.cpp
         include/events/Listener.h
@@ -68,8 +65,24 @@ add_executable(game main.cpp
         include/events/PlayerLanded.h
         src/utility/GameRender.cpp
         include/utility/GameRender.h
+        src/entity/objects/TouchSwitch.cpp
+        include/entity/objects/TouchSwitch.h
+        include/entity/objects/TouchSwitchState.h
+        include/utility/EmptyTextures.h
+        src/entity/objects/OneWayPlatform.cpp
+        include/entity/objects/OneWayPlatform.h
+        src/entity/objects/KillZone.cpp
+        include/entity/objects/KillZone.h
+        src/entity/objects/DashCrystal.cpp
+        include/entity/objects/DashCrystal.h
+        include/entity/objects/DashCrystalState.h
+        src/entity/objects/SwapBlock.cpp
+        include/entity/objects/SwapBlock.h
+        include/events/PlayerDashEvent.h
+        src/utility/SoundLoop.cpp
+        include/utility/SoundLoop.h
 )
-target_link_libraries(game SFML::Graphics SFML::Window SFML::System SFML::Audio)
+target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 
 find_package(SFML 3.0.1 COMPONENTS Graphics Window System Audio REQUIRED)
 
@@ -90,14 +103,11 @@ add_executable(performance_test performance_test.cpp
         include/events/Collision.h
         include/entity/CollidableObjectType.h
         include/physics/CollisionAxis.h
-        src/physics/ContactResolution.cpp
-        include/physics/ContactResolution.h
-        include/entity/player/PlayerSpriteState.h
+        include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
-        include/entity/player/Facing.h
-        include/entity/player/sprites/PlayerTextures.h
-        include/entity/player/sprites/PlayerIdle.h
+        include/entity/player/sprites/Facing.h
+        include/entity/sprites/TexturesHolder.h
         src/entity/player/PlayerInputHandler.cpp
         include/entity/player/PlayerInputHandler.h
         include/utility/Scheduler.h
@@ -107,20 +117,20 @@ add_executable(performance_test performance_test.cpp
         include/physics/ContactAxis.h
         src/physics/ContactsHandler.cpp
         include/physics/ContactsHandler.h
-        include/entity/player/DashDirection.h
+        include/entity/player/ability/DashDirection.h
         src/physics/SpacialHashMap.cpp
         include/physics/SpacialHashMap.h
-        include/entity/player/Ability.h
-        src/entity/player/AbilityJump.cpp
-        include/entity/player/AbilityJump.h
-        src/entity/player/AbilityDash.cpp
-        include/entity/player/AbilityDash.h
+        include/entity/player/ability/Ability.h
+        src/entity/player/ability/AbilityJump.cpp
+        include/entity/player/ability/AbilityJump.h
+        src/entity/player/ability/AbilityDash.cpp
+        include/entity/player/ability/AbilityDash.h
         src/events/EventBus.cpp
         include/events/EventBus.h
         src/events/Event.cpp
         include/events/Event.h
         include/events/EventExecuteTime.h
-        src/entity/player/Ability.cpp
+        src/entity/player/ability/Ability.cpp
         include/events/ListenerPriority.h
         src/events/Listener.cpp
         include/events/Listener.h

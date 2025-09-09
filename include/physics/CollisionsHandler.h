@@ -102,12 +102,10 @@ public:
     void update(float deltaTime);
 
     /**
-     * @brief Draws the hitbox of each registered body to the given window with the given color with an alpha value of
-     * \code 64\endcode.
-     * @param window The window to draw the hitboxes in.
+     * @brief Draws the hitbox of each registered body with the given color with an alpha value of \code 64\endcode.
      * @param color The color of the hitbox, red by default.
      */
-    void drawHitboxes(sf::RenderWindow& window, sf::Color color = sf::Color::Red) const;
+    void drawHitboxes(sf::Color color = sf::Color::Red) const;
 
     /**
      * @brief Gets the cell size of the spatial hash. Updating the cell size takes O(N) time where N is the number of

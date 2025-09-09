@@ -14,8 +14,8 @@ const sf::Vector2f &PhysicsObject::getPositionRef() const {
     return position;
 }
 
-const sf::Sprite& PhysicsObject::getSprite() const {
-    return sprite;
+const sf::Sprite* PhysicsObject::getSprite() const {
+    return &sprite;
 }
 
 sf::Vector2f PhysicsObject::getPosition() const {

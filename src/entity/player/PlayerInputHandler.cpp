@@ -5,7 +5,7 @@
 #include "entity/player/PlayerInputHandler.h"
 
 void PlayerInputHandler::update(float deltaTime) {
-    if (isPressed(dashKey)) {
+    if (tryToUseKey(dashKey)) {
         if (bool success = player.tryDash(); success) return;
     }
 
@@ -13,7 +13,7 @@ void PlayerInputHandler::update(float deltaTime) {
         if (bool success = player.tryClimb(); success) return;
     }
 
-    if (isPressed(jumpKey)) {
+    if (tryToUseKey(jumpKey)) {
         if (bool success = player.tryJump(); success) return;
         player.tryJumpInFuture();
     }
@@ -26,23 +26,47 @@ void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
 
     bool moveSomewhere = false;
 
-    if (isPressed(moveLeft) && (!isPressed(moveRight) || wasPressedEarlierThan(moveRight, moveLeft))) {
+    if (isPressed(moveLeft) && (!isPressed(moveRight) || wasPressedEarlierThan(moveRight, moveLeft)) && !player.dying) {
         // Move left
         moveSomewhere = true;
         player.facing = Facing::Left;
-        approach(player.base_velocity.x, -Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
+        if (!player.ability_dash.isPerforming()) {
+            approach(player.base_velocity.x, -Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
+        }
     }
 
-    if (isPressed(moveRight) && (!isPressed(moveLeft) || wasPressedEarlierThan(moveLeft, moveRight))) {
+    if (isPressed(moveRight) && (!isPressed(moveLeft) || wasPressedEarlierThan(moveLeft, moveRight)) && !player.dying) {
         // Move right
         moveSomewhere = true;
         player.facing = Facing::Right;
-        approach(player.base_velocity.x, Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
+        if (!player.ability_dash.isPerforming()) {
+            approach(player.base_velocity.x, Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
+        }
     }
 
-    if (!moveSomewhere) {
+    if (!moveSomewhere && !player.ability_dash.isPerforming() && !player.dying) {
         approach(player.base_velocity.x, 0, Player::RUN_ACCELERATION * deltaTime * multiplier);
     }
+    // TODO - Move this to Player Sprite Handler and save `moveSomewhere` somewhere
+    // Ad - hoc begin TODO
+    if (player.sprite_state != PlayerSpriteState::Dead) {
+        if (player.ability_dash.isPerforming()) {
+            player.sprite_state = PlayerSpriteState::Dashing;
+        } else {
+            if (!player.isOnGround()) {
+                player.sprite_state = PlayerSpriteState::Falling;
+            } else {
+                if (moveSomewhere) {
+                    player.sprite_state = PlayerSpriteState::Running;
+                } else {
+                    player.sprite_state = PlayerSpriteState::GroundIdle;
+                }
+            }
+        }
+    }
+
+    // Ad - hoc end TODO
+
 }
 
 void PlayerInputHandler::approach(float &to_make_approach, float to_approach, float step) {
@@ -54,7 +78,7 @@ void PlayerInputHandler::approach(float &to_make_approach, float to_approach, fl
     }
 }
 
-DashDirection PlayerInputHandler::getDashDirection() {
+DashDirection PlayerInputHandler::getDashDirection(const Player& player) {
     std::optional<Key> verticalKey;
     std::optional<Key> horizontalKey;
 
@@ -82,7 +106,7 @@ DashDirection PlayerInputHandler::getDashDirection() {
         }
     }
 
-    DashDirection direction = Player::DEFAULT_DASH_DIRECTION;
+    DashDirection direction = player.facing == Facing::Left ? DashDirection::LEFT : DashDirection::RIGHT;
 
     if (verticalKey) {
         if (horizontalKey) {

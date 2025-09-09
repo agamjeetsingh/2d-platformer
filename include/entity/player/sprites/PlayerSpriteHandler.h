@@ -5,13 +5,14 @@
 #ifndef PLAYERSPRITEHANDLER_H
 #define PLAYERSPRITEHANDLER_H
 
+#include <numeric>
 #include <unordered_map>
 
-#include "PlayerIdle.h"
-#include "PlayerTextures.h"
-#include "../PlayerSpriteState.h"
+#include "../../sprites/TexturesHolder.h"
+#include "PlayerSpriteState.h"
 #include <SFML/Graphics/Sprite.hpp>
-#include "../Facing.h"
+
+#include "Facing.h"
 
 namespace sf {
     class Sprite;
@@ -19,23 +20,31 @@ namespace sf {
 
 class PlayerSpriteHandler {
 public:
-    explicit PlayerSpriteHandler(PlayerSpriteState& state, sf::Sprite& sprite, Facing& facing): state(state), sprite(sprite), facing(facing) {
-        textures[PlayerSpriteState::Ground] = PlayerIdle::getInstance();
-        // Add all types
+    explicit PlayerSpriteHandler(PlayerSpriteState& state, sf::Sprite& sprite, Facing& facing): facing(facing), sprite(sprite), state(state) {
+        textures.emplace(PlayerSpriteState::GroundIdle, TexturesHolder(9, "../assets/player/idle/idle"));
+        textures.emplace(PlayerSpriteState::Running, TexturesHolder(12, "../assets/player/runFast/runFast"));
+        textures.emplace(PlayerSpriteState::Dashing, TexturesHolder(4, "../assets/player/dash/dash"));
+        textures.emplace(PlayerSpriteState::Falling, TexturesHolder(8, "../assets/player/fall/fall"));
+        textures.emplace(PlayerSpriteState::Dead, TexturesHolder(11, "../assets/player/death/death_h", std::vector(11, 0.03f)));
     }
 
-    PlayerSpriteState& state;
-    sf::Sprite& sprite;
-    Facing& facing;
+    float getAnimationLength(const PlayerSpriteState state) {
+        if (!textures.contains(state)) return 0;
+        auto& intervals = textures.at(state).getIntervals();
+        return std::accumulate(intervals.begin(), intervals.end(), 0.f);
+    }
 
     void update(float deltaTime) {
         sf::FloatRect bounds = sprite.getLocalBounds();
-        sprite.setOrigin({bounds.size.x / 2.f, bounds.size.y / 2.f});
+        sprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
 
         auto scale = (facing == Facing::Left) ? sf::Vector2f{-1, 1} : sf::Vector2f{1, 1};
         sprite.setScale(scale);
 
-        const PlayerTextures& player_textures = textures[state];
+        if (!textures.contains(state)) {
+            return;
+        }
+        const TexturesHolder& player_textures = textures.at(state);
 
         if (curr_state != state) {
             curr_state = state;
@@ -54,13 +63,21 @@ public:
         }
 
         sprite.setTexture(player_textures.getTextures()[curr_sprite_index]);
+        sprite.setPosition(sprite.getPosition() + sf::Vector2f{8, 12});
+        if (facing == Facing::Left) {
+            sprite.setPosition(sprite.getPosition() + sf::Vector2f{-3, 0});
+        }
     }
+
 private:
+    Facing& facing;
+    sf::Sprite& sprite;
+    PlayerSpriteState& state;
     PlayerSpriteState curr_state = state;
     float time_in_state = 0;
     size_t curr_sprite_index = 0;
 
-    std::unordered_map<PlayerSpriteState, PlayerTextures> textures;
+    std::unordered_map<PlayerSpriteState, TexturesHolder> textures;
 };
 
 

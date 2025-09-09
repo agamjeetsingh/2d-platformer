@@ -15,12 +15,17 @@ class SoundManager {
 public:
     static SoundManager& getInstance();
 
-    void play(SoundEffect sound_effect, float volume = 100);
+    std::shared_ptr<sf::Sound> play(SoundEffect sound_effect, bool loop = false, float volume = 100);
 
     static void loadBuffers() { getInstance(); }
+
+    float getDuration(SoundEffect sound_effect) {
+        if (!buffers.contains(sound_effect)) return 0;
+        return buffers[sound_effect].getDuration().asSeconds();
+    }
 private:
     std::unordered_map<SoundEffect, sf::SoundBuffer> buffers = {};
-    std::vector<sf::Sound> sounds;
+    std::vector<std::shared_ptr<sf::Sound>> sounds;
     SoundManager();
 };
 

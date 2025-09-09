@@ -9,7 +9,7 @@
 #include "../../utility/InputManager.h"
 #include <SFML/Graphics.hpp>
 
-#include "DashDirection.h"
+#include "ability/DashDirection.h"
 
 using namespace sf::Keyboard;
 
@@ -33,13 +33,17 @@ public:
      * \code Player::DEFAULT_DASH_DIRECTION\endcode no horizontal or vertical key is pressed.
      * @return The dash direction according to the current input.
      */
-    static DashDirection getDashDirection();
+    static DashDirection getDashDirection(const Player&);
 
 private:
     Player& player;
 
     static bool isPressed(const Key key) {
         return InputManager::getInstance().isPressed(key);
+    }
+
+    static bool tryToUseKey(const Key key) {
+        return InputManager::getInstance().tryToUseKey(key);
     }
 
     static bool wasPressedEarlierThan(const Key key1, const Key key2) {
