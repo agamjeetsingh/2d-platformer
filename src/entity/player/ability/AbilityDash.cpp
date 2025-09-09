@@ -5,6 +5,7 @@
 #include "../../../../include/entity/player/ability/AbilityDash.h"
 #include "entity/player/Player.h"
 #include "entity/player/PlayerInputHandler.h"
+#include "events/PlayerDashEvent.h"
 #include "utility/GameRender.h"
 
 AbilityDash::AbilityDash(Player &player):
@@ -97,6 +98,8 @@ void AbilityDash::perform() {
     dash_snapshot = Scheduler::getInstance().schedule({std::move(dash_snapshot_func_first), Player::DASH_FIRST_SNAPSHOT_TIME, true, 0});
     auto discard = Scheduler::getInstance().schedule({std::move(dash_snapshot_func_second), Player::DASH_SECOND_SNAPSHOT_TIME, true, 0});
     discard = Scheduler::getInstance().schedule({std::move(dash_snapshot_func_third), Player::DASH_THIRD_SNAPSHOT_TIME, true, 0});
+
+    EventBus::getInstance().emit(PlayerDashEvent(player), EventExecuteTime::NOW);
 }
 
 void AbilityDash::cancel() {
