@@ -136,6 +136,8 @@ public:
         auto discard = Scheduler::getInstance().schedule([this, copy](const std::shared_ptr<ScheduledEvent>& event, float dt) {
             sprite_state = PlayerSpriteState::GroundIdle;
             setPosition(respawn_position);
+            base_velocity = {0, 0};
+            friction_velocity = {0, 0};
             enableGravity();
             dying = false;
             restoreDash();
