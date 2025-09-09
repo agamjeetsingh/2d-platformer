@@ -1,7 +1,9 @@
 #include <SFML/Graphics.hpp>
 
+#include "entity/objects/DashCrystal.h"
 #include "entity/objects/KillZone.h"
 #include "entity/objects/OneWayPlatform.h"
+#include "entity/objects/SwapBlock.h"
 #include "entity/objects/TouchSwitch.h"
 #include "events/EventBus.h"
 #include "include/entity/player/Player.h"
@@ -51,6 +53,11 @@ int main() {
     GameRender::getInstance().registerDrawable(one_way_platform);
 
     auto kill_zone = std::make_shared<KillZone>(sf::Vector2f{250, 150}, sf::Vector2f{10, 10});
+    auto dash_crystal = std::make_shared<DashCrystal>(sf::Vector2f{50, 150});
+    GameRender::getInstance().registerDrawable(dash_crystal);
+
+    auto swap_block = std::make_shared<SwapBlock>(sf::Vector2f{20, 170}, sf::Vector2f{150, 170});
+    GameRender::getInstance().registerDrawable(swap_block);
 
     while (window.isOpen()) {
         sf::Time deltaTime = clock.restart();

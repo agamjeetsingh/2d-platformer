@@ -59,6 +59,18 @@ SoundManager::SoundManager() {
     if (!buffers[SoundEffect::DIAMOND_TOUCH_03].loadFromFile("../assets/dashRefill/diamond_touch_03.wav")) {
         std::cerr << "Error: Could not load ../assets/dashRefill/diamond_touch_03.wav\n";
     }
+    if (!buffers[SoundEffect::SWAP_BLOCK_MOVE].loadFromFile("../assets/swapBlock/swapblock_move.wav")) {
+        std::cerr << "Error: Could not load ../assets/swapBlock/swapblock_move.wav\n";
+    }
+    if (!buffers[SoundEffect::SWAP_BLOCK_RETURN_LOOP_INTRO].loadFromFile("../assets/swapBlock/swapblock_return_loop_intro.wav")) {
+        std::cerr << "Error: Could not load ../assets/swapBlock/swapblock_return_loop_intro.wav\n";
+    }
+    if (!buffers[SoundEffect::SWAP_BLOCK_RETURN_LOOP].loadFromFile("../assets/swapBlock/swapblock_return_loop.wav")) {
+        std::cerr << "Error: Could not load ../assets/swapBlock/swapblock_return_loop.wav\n";
+    }
+    if (!buffers[SoundEffect::SWAP_BLOCK_RETURN_LOOP_END].loadFromFile("../assets/swapBlock/swapblock_return_loop_end.wav")) {
+        std::cerr << "Error: Could not load ../assets/swapBlock/swapblock_return_loop_end.wav\n";
+    }
 
     sf::Sound dummy(buffers.begin()->second);
     dummy.play();

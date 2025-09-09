@@ -73,7 +73,7 @@ public:
      * @brief Adds the given position to the object's current position. Also updates the position of the \code sprite\endcode.
      * @param position The position to be added to the object's current position.
      */
-    void addPosition(sf::Vector2f position);
+    virtual void addPosition(sf::Vector2f position);
 
     /**
      * @brief Prints the 3 velocities of the object with the given name in the format:
