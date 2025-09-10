@@ -38,8 +38,9 @@ public:
         sf::FloatRect bounds = sprite.getLocalBounds();
         sprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
 
-        auto scale = (facing == Facing::Left) ? sf::Vector2f{-1, 1} : sf::Vector2f{1, 1};
-        sprite.setScale(scale);
+        auto scale = (facing != prev_facing) ? sf::Vector2f{-1, 1} : sf::Vector2f{1, 1};
+        prev_facing = facing;
+        sprite.scale(scale);
 
         if (!textures.contains(state)) {
             return;
@@ -71,6 +72,7 @@ public:
 
 private:
     Facing& facing;
+    Facing prev_facing = facing;
     sf::Sprite& sprite;
     PlayerSpriteState& state;
     PlayerSpriteState curr_state = state;
