@@ -29,7 +29,11 @@ left_ground(Listener::make_listener<PlayerLeftGround>([this](const PlayerLeftGro
     auto discard = scheduler.schedule([this](std::shared_ptr<ScheduledEvent> event, float deltaTime) { canJumpDueToCoyoteGrace = false; }, JUMP_GRACE_COYOTE_TIME);
 }, ListenerPriority::HIGH)),
 landed(Listener::make_listener<PlayerLanded>([this](const PlayerLanded& event) {
+    if (event.player != *this) return;
     SoundManager::getInstance().play(SoundEffect::LAND);
+    if (getTotalVelocity().y >= MAX_FALL) {
+        squeeze({1.2, 0.8}, 0.05, 0.1);
+    }
 }, ListenerPriority::HIGH)) {
     gravity_acceleration.y = GRAVITY;
 }
