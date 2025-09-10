@@ -115,6 +115,12 @@ int main() {
         text2.setFillColor(sf::Color::Black);
         text2.setPosition({0, 30});
 
+        sf::Text text3 = font;
+        text3.setString("FPS: " + std::to_string(10 * (static_cast<int>(1 / dt) / 10)));
+        text3.setCharacterSize(25);
+        text3.setFillColor(sf::Color::Black);
+        text3.setPosition({0, 60});
+
         sf::Text text5 = font;
         text5.setString("onGround: " + std::to_string(ContactsHandler::getInstance().onLand(*player)) + std::to_string(player->isOnGround()) + " (according to onLand, player->onGround)");
         text5.setCharacterSize(25);
@@ -129,6 +135,7 @@ int main() {
 
         window.draw(text);
         window.draw(text2);
+        window.draw(text3);
         window.draw(text5);
         window.draw(text6);
 
