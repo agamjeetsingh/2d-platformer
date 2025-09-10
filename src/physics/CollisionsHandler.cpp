@@ -224,6 +224,9 @@ void CollisionsHandler::moveMovables(float deltaTime) const {
             } else {
                 body.get().base_velocity += body.get().gravity_acceleration * deltaTime;
             }
+            if (player) {
+                player->base_velocity.y = std::min(Player::MAX_FALL, player->base_velocity.y);
+            }
             body.get().addPosition(body.get().getTotalVelocity() * deltaTime);
         }
     }
