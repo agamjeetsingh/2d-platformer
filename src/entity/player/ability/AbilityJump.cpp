@@ -27,6 +27,8 @@ void AbilityJump::perform() {
         direction = -1;
     }
     player.base_velocity.x += direction * Player::JUMP_HORIZONTAL_BOOST;
+
+    player.squeeze({0.7, 1.4}, 0.05, 0.2);
 }
 
 void AbilityJump::cancel() {

@@ -10,6 +10,8 @@
 #include <vector>
 #include <SFML/Graphics/Sprite.hpp>
 
+#include "utility/Scheduler.h"
+
 class PhysicsObject {
 public:
     /**
@@ -89,6 +91,42 @@ public:
      * @brief Prints the 3 velocities of the object with the address of the object as its name.
      */
     void printVelocity() const;
+
+    void squeeze(sf::Vector2f target_squeeze, float time_to_squeeze, float time_to_unsqueeze) {
+        auto discard1 = Scheduler::getInstance().schedule({[total_time = 0.f, time_to_squeeze, target_squeeze, this, time_to_unsqueeze](const std::shared_ptr<ScheduledEvent>& event, float dt) mutable {
+            total_time += dt;
+            float t = std::min(total_time,time_to_squeeze);
+            float alpha = t / time_to_squeeze;
+            alpha = alpha * alpha * (3 - 2 * alpha);
+            sf::Vector2f startScale = {1, 1};
+            sf::Vector2f targetScale = target_squeeze;
+            sf::Vector2f current = startScale * (1 - alpha) + targetScale * alpha;
+            current.x *= sprite.getScale().x > 0 ? 1 : -1;
+            current.y *= sprite.getScale().y > 0 ? 1 : -1;
+            sprite.setScale(current);
+
+            if (t == time_to_squeeze) {
+                event->cancelled = true;
+                // Schedule next one
+                auto discard2 = Scheduler::getInstance().schedule({[total_time = 0.f, target_squeeze, time_to_unsqueeze, this](const std::shared_ptr<ScheduledEvent>& event, float dt) mutable {
+                    total_time += dt;
+                    float t = std::min(total_time,time_to_unsqueeze);
+                    float alpha = t / time_to_unsqueeze;
+                    alpha = alpha * alpha * (3 - 2 * alpha);
+                    sf::Vector2f startScale = target_squeeze;;
+                    sf::Vector2f targetScale = {1, 1};
+                    sf::Vector2f current = startScale * (1 - alpha) + targetScale * alpha;
+                    current.x *= sprite.getScale().x > 0 ? 1 : -1;
+                    current.y *= sprite.getScale().y > 0 ? 1 : -1;
+                    sprite.setScale(current);
+
+                    if (t == time_to_unsqueeze) {
+                        event->cancelled = true;
+                    }
+                }, 0, true, 0});
+            }
+        }, 0, true, 0});
+    }
 
 protected:
     sf::Sprite sprite;
