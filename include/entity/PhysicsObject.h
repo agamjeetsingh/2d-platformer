@@ -27,7 +27,7 @@ public:
      * @brief Maximum velocity of the gravity. This maximum is enforced by \code setGravityVelocity()\endcode and
      * \code addGravityVelocity()\endcode.
      */
-    static constexpr float MAX_FALL = 160;
+    static constexpr float MAX_FALL = 240;
 
     /**
      * @brief Returns a const reference to the position of the object. Useful for hitboxes.
