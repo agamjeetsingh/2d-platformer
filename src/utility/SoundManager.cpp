@@ -10,16 +10,18 @@ SoundManager &SoundManager::getInstance() {
 }
 
 std::shared_ptr<sf::Sound> SoundManager::play(SoundEffect sound_effect, bool loop, float volume) {
+    removeExpiredSounds();
     volume = std::clamp(volume, 0.f, 100.f);
 
     if (!buffers.contains(sound_effect)) return {};
     const sf::SoundBuffer& buffer = buffers.at(sound_effect);
-
-    sounds.push_back(std::make_shared<sf::Sound>(buffer));
-    sounds.back()->setVolume(volume);
-    sounds.back()->setLooping(loop);
-    sounds.back()->play();
-    return sounds.back();
+    float expiration_time = clock.getElapsedTime().asSeconds() + getDuration(sound_effect);
+    auto shared_ptr = std::make_shared<sf::Sound>(buffer);
+    sounds.insert({expiration_time, {shared_ptr, sound_effect}});
+    shared_ptr->setVolume(volume);
+    shared_ptr->setLooping(loop);
+    shared_ptr->play();
+    return shared_ptr;
 }
 
 SoundManager::SoundManager() {
