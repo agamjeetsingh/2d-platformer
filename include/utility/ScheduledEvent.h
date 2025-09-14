@@ -14,12 +14,16 @@ struct ScheduledEvent : std::enable_shared_from_this<ScheduledEvent> {
     float timeRemaining;
     std::function<void(float)> callback;
     float spentTime = 0;
-    bool cancelled = false;
+    // std::shared_ptr<std::atomic_bool> cancelled = std::make_shared<std::atomic_bool>(false);
+
+    // bool cancelled = false;
 
     const std::function<void(std::shared_ptr<ScheduledEvent>, float)> user_callback;
     const bool repeat;
     const float interval; // interval = 0 would mean run once every frame, events run a maximum of once per frame
     const float maxTime;
+
+    // TODO - Remove maxTime, better to implement inside callback
 
     ScheduledEvent(std::function<void(std::shared_ptr<ScheduledEvent>, float)> cb, float time, bool repeat = false, float interval = 0, float maxTime = -1)
         : timeRemaining(time), user_callback(std::move(cb)), repeat(repeat), interval(interval), maxTime(maxTime) {
@@ -34,6 +38,16 @@ struct ScheduledEvent : std::enable_shared_from_this<ScheduledEvent> {
             }
         };
     }
+
+    void cancel() {
+        cancelled.store(true, std::memory_order_release);
+    }
+
+    [[nodiscard]] bool is_cancelled() const {
+        return cancelled.load(std::memory_order_acquire);
+    }
+private:
+    std::atomic_bool cancelled = false;
 };
 
 

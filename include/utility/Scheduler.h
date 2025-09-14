@@ -13,21 +13,28 @@ public:
     [[nodiscard]] std::shared_ptr<ScheduledEvent> schedule(std::function<void(std::shared_ptr<ScheduledEvent>, float)> callback, float delaySeconds) {
         const auto event_ptr = std::make_shared<ScheduledEvent>(std::move(callback), delaySeconds);
         event_ptr->setup_callback();
-        if (updating) {
-            eventsBuffer.push_back(event_ptr);
-        } else {
+        const std::unique_lock lock(update_mtx, std::try_to_lock);
+        if (lock) {
+            std::lock_guard events_lock{events_mtx};
             events.push_back(event_ptr);
+        } else {
+            std::lock_guard events_buffer_lock{events_buffer_mtx};
+            eventsBuffer.push_back(event_ptr);
         }
         return event_ptr;
     }
 
-    [[nodiscard]] std::shared_ptr<ScheduledEvent> schedule(ScheduledEvent event) {
-        const auto event_ptr = std::make_shared<ScheduledEvent>(std::move(event));
+    template<typename... Args>
+    [[nodiscard]] std::shared_ptr<ScheduledEvent> schedule(Args&&... args) {
+        const auto event_ptr = std::make_shared<ScheduledEvent>(std::forward<Args>(args)...);
         event_ptr->setup_callback();
-        if (updating) {
-            eventsBuffer.push_back(event_ptr);
-        } else {
+        const std::unique_lock lock(update_mtx, std::try_to_lock);
+        if (lock) {
+            std::lock_guard events_lock{events_mtx};
             events.push_back(event_ptr);
+        } else {
+            std::lock_guard events_buffer_lock{events_buffer_mtx};
+            eventsBuffer.push_back(event_ptr);
         }
         return event_ptr;
     }
@@ -38,14 +45,12 @@ public:
     }
 
     void update(float dt) {
-        updating = true;
+        std::lock_guard update_lock{update_mtx};
+        std::lock_guard events_lock{events_mtx};
         for (auto it = events.begin(); it != events.end(); ) {
-            if (std::ranges::any_of(events, [](const std::shared_ptr<ScheduledEvent>& event){return !event; })) {
-
-            }
             assert(it->get());
 
-            if (it->get()->cancelled) {
+            if (it->get()->is_cancelled()) {
                 it = events.erase(it);
                 continue;
             }
@@ -71,20 +76,25 @@ public:
                 }
             }
         }
-
-        updating = false;
+        std::lock_guard events_buffer_lock{events_buffer_mtx};
         events.insert(events.end(), eventsBuffer.begin(), eventsBuffer.end());
         eventsBuffer.clear();
     }
 
     void cancelAllEvents() {
+        std::lock_guard update_lock{update_mtx};
+        std::lock_guard events_lock{events_mtx};
+        std::lock_guard events_buffer_lock{events_buffer_mtx};
         events.clear();
         eventsBuffer.clear();
     }
+    mutable std::mutex update_mtx;
+
 private:
     std::vector<std::shared_ptr<ScheduledEvent>> eventsBuffer;
     std::vector<std::shared_ptr<ScheduledEvent>> events;
-    bool updating = false;
+    mutable std::mutex events_buffer_mtx;
+    mutable std::mutex events_mtx;
 };
 
 

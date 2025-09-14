@@ -16,7 +16,7 @@ void AbilityJump::perform() {
     variable_jump = true;
     player.disableGravity();
     variable_jump_timer = Scheduler::getInstance().schedule([this](std::shared_ptr<ScheduledEvent> event, float deltaTime) { endVariableJump(); }, Player::VARIABLE_JUMP_TIME);
-    call_during = Scheduler::getInstance().schedule({[this](std::shared_ptr<ScheduledEvent> event, float deltaTime){ if (this->isPerforming()) { this->callDuring(); } }, 0, true, 0});
+    call_during = Scheduler::getInstance().schedule([this](std::shared_ptr<ScheduledEvent> event, float deltaTime){ if (this->isPerforming()) { this->callDuring(); } }, 0, true, 0);
 
     player.base_velocity.y = Player::JUMP_SPEED;
     float direction = 0;
@@ -33,8 +33,8 @@ void AbilityJump::perform() {
 
 void AbilityJump::cancel() {
     endVariableJump();
-    if (variable_jump_timer) variable_jump_timer->cancelled = true;
-    if (call_during) call_during->cancelled = true;
+    if (variable_jump_timer) variable_jump_timer->cancel();
+    if (call_during) call_during->cancel();
 }
 
 void AbilityJump::callDuring() {
@@ -42,8 +42,8 @@ void AbilityJump::callDuring() {
 
     if (!InputManager::getInstance().isPressed(jumpKey)) {
         endVariableJump();
-        if (variable_jump_timer) variable_jump_timer->cancelled = true;
-        if (call_during) call_during->cancelled = true;
+        if (variable_jump_timer) variable_jump_timer->cancel();
+        if (call_during) call_during->cancel();
     } else {
         player.base_velocity.y = Player::JUMP_SPEED;
     }
