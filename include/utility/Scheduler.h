@@ -88,13 +88,13 @@ public:
         events.clear();
         eventsBuffer.clear();
     }
-    mutable std::mutex update_mtx;
 
 private:
     std::vector<std::shared_ptr<ScheduledEvent>> eventsBuffer;
     std::vector<std::shared_ptr<ScheduledEvent>> events;
     mutable std::mutex events_buffer_mtx;
     mutable std::mutex events_mtx;
+    mutable std::mutex update_mtx;
 };
 
 
