@@ -3,6 +3,8 @@
 //
 
 #include "../../../../include/entity/player/ability/AbilityDash.h"
+
+#include "entity/PointParticles.h"
 #include "entity/player/Player.h"
 #include "entity/player/PlayerInputHandler.h"
 #include "events/PlayerDashEvent.h"
@@ -103,6 +105,9 @@ void AbilityDash::perform() {
     discard = Scheduler::getInstance().schedule({std::move(dash_snapshot_func_third), Player::DASH_THIRD_SNAPSHOT_TIME, true, 0});
 
     EventBus::getInstance().emit(PlayerDashEvent(player), EventExecuteTime::NOW);
+
+    particles = std::make_shared<PointParticles>(6, PointParticles::FadingColor(sf::Color::Blue), PointParticles::ExpDampedVelocity(10.f * dash_velocity.normalized(), 1), Random::Vector2fRange(player.getPosition() - sf::Vector2f{5, 5}, player.getPosition() + sf::Vector2f{5, 5}), Random::FloatRange(0.5, 1.2));
+    GameRender::getInstance().registerDrawable(particles);
 }
 
 void AbilityDash::cancel() {

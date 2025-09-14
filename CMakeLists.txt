@@ -81,6 +81,9 @@ add_executable(2d-platformer main.cpp
         include/events/PlayerDashEvent.h
         src/utility/SoundLoop.cpp
         include/utility/SoundLoop.h
+        include/entity/PointParticles.h
+        src/entity/PointParticles.cpp
+        include/utility/Random.h
 )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 

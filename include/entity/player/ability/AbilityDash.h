@@ -8,6 +8,7 @@
 
 #include "DashDirection.h"
 #include "../sprites/Facing.h"
+#include "entity/PointParticles.h"
 
 class Player;
 #include "Ability.h"
@@ -56,6 +57,7 @@ private:
     std::shared_ptr<DashSnapshot> snapshot_first;
     std::shared_ptr<DashSnapshot> snapshot_second;
     std::shared_ptr<DashSnapshot> snapshot_third;
+    std::shared_ptr<PointParticles> particles; // TODO - Fix, this will cause only one set of particles to exist right now
     sf::Vector2f dash_velocity;
 };
 

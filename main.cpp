@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 
+#include "entity/PointParticles.h"
 #include "entity/objects/DashCrystal.h"
 #include "entity/objects/KillZone.h"
 #include "entity/objects/OneWayPlatform.h"
@@ -59,6 +60,14 @@ int main() {
     auto swap_block = std::make_shared<SwapBlock>(sf::Vector2f{20, 170}, sf::Vector2f{150, 170});
     GameRender::getInstance().registerDrawable(swap_block);
 
+    auto particles = std::make_shared<PointParticles>(1, PointParticles::FadingColor(sf::Color::Black), PointParticles::ExpDampedVelocity({10, 10}, 1), std::vector{sf::Vector2f{10, 100}}, std::vector{15.f});
+    GameRender::getInstance().registerDrawable(particles);
+
+    auto more_particles = std::make_shared<PointParticles>(6, PointParticles::FadingColor(sf::Color::Blue), PointParticles::ExpDampedVelocity({10, 10}, 1), Random::Vector2fRange({20, 100}, {30, 110}), Random::FloatRange(0.5, 1.2));
+    GameRender::getInstance().registerDrawable(more_particles);
+
+    auto snow_particles = std::make_shared<PointParticles>(600, PointParticles::ConstantColor(sf::Color::Black), PointParticles::RandomSinWaveVelocity(Random::FloatRange(100, 180), Random::FloatRange(4, 10), Random::FloatRange(0.02, 0.03), Random::FloatRange(0, 1)), Random::Vector2fRange({-6.f * sf::VideoMode::getDesktopMode().size.x, 0}, {0,200}), Random::FloatRange(100, 100));
+    GameRender::getInstance().registerDrawable(snow_particles);
     while (window.isOpen()) {
         sf::Time deltaTime = clock.restart();
         const float dt = std::min(deltaTime.asSeconds(), 0.033f);
