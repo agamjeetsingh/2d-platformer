@@ -28,7 +28,7 @@ public:
         textures.emplace(PlayerSpriteState::Dead, TexturesHolder(11, "../assets/player/death/death_h", std::vector(11, 0.03f)));
     }
 
-    float getAnimationLength(const PlayerSpriteState state) {
+    [[nodiscard]] float getAnimationLength(const PlayerSpriteState state) const {
         if (!textures.contains(state)) return 0;
         auto& intervals = textures.at(state).getIntervals();
         return std::accumulate(intervals.begin(), intervals.end(), 0.f);
@@ -45,25 +45,16 @@ public:
         if (!textures.contains(state)) {
             return;
         }
-        const TexturesHolder& player_textures = textures.at(state);
+        TexturesHolder& player_textures = textures.at(state);
 
         if (curr_state != state) {
             curr_state = state;
-            time_in_state = 0;
-            curr_sprite_index = 0;
+            player_textures.reset();
         }
 
-        time_in_state += deltaTime;
+        player_textures.update(deltaTime);
 
-        while (player_textures.getIntervals()[curr_sprite_index] <= time_in_state) {
-            if (curr_sprite_index == player_textures.getTextures().size()) {
-                curr_sprite_index = 0;
-            }
-
-            time_in_state -= player_textures.getIntervals()[curr_sprite_index++];
-        }
-
-        sprite.setTexture(player_textures.getTextures()[curr_sprite_index]);
+        sprite.setTexture(player_textures.getCurrentTexture());
         sprite.setPosition(sprite.getPosition() + sf::Vector2f{8, 12});
         if (facing == Facing::Left) {
             sprite.setPosition(sprite.getPosition() + sf::Vector2f{-3, 0});
@@ -76,8 +67,6 @@ private:
     sf::Sprite& sprite;
     PlayerSpriteState& state;
     PlayerSpriteState curr_state = state;
-    float time_in_state = 0;
-    size_t curr_sprite_index = 0;
 
     std::unordered_map<PlayerSpriteState, TexturesHolder> textures;
 };
