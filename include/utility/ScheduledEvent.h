@@ -13,15 +13,13 @@
 struct ScheduledEvent : std::enable_shared_from_this<ScheduledEvent> {
     float timeRemaining;
     std::function<void(float)> callback;
-    std::function<void(std::shared_ptr<ScheduledEvent>, float)> user_callback;
-    bool repeat;
-    float interval; // interval = 0 would mean run once every frame, events run a maximum of once per frame
     float spentTime = 0;
-    float maxTime;
-
     bool cancelled = false;
 
-    // TODO - Overload constructor to make it simpler. Separate constructors for repeating and non-repeating events.
+    const std::function<void(std::shared_ptr<ScheduledEvent>, float)> user_callback;
+    const bool repeat;
+    const float interval; // interval = 0 would mean run once every frame, events run a maximum of once per frame
+    const float maxTime;
 
     ScheduledEvent(std::function<void(std::shared_ptr<ScheduledEvent>, float)> cb, float time, bool repeat = false, float interval = 0, float maxTime = -1)
         : timeRemaining(time), user_callback(std::move(cb)), repeat(repeat), interval(interval), maxTime(maxTime) {
