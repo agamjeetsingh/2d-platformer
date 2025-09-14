@@ -23,7 +23,21 @@ concept OptionalDrawable = requires(T t) {
         std::optional<typename std::remove_cvref_t<decltype(t.getSprite())>::value_type>
     >;
 
-    // The inside type must be convertible to sf::Drawable*
+    requires std::convertible_to<
+        typename std::remove_cvref_t<decltype(t.getSprite())>::value_type,
+        sf::Drawable*
+    >;
+};
+
+template <typename T>
+concept VectorDrawable = requires(T t) {
+    typename std::remove_cvref_t<decltype(t.getSprite())>::value_type;
+
+    requires std::same_as<
+        std::remove_cvref_t<decltype(t.getSprite())>,
+        std::vector<typename std::remove_cvref_t<decltype(t.getSprite())>::value_type>
+    >;
+
     requires std::convertible_to<
         typename std::remove_cvref_t<decltype(t.getSprite())>::value_type,
         sf::Drawable*
@@ -34,7 +48,7 @@ template <typename T>
 concept DrawableLike = std::is_base_of_v<sf::Drawable, T>;
 
 struct zComparator {
-    bool operator()(const std::pair<std::function<std::optional<const sf::Drawable*>(float)>, float>& p1, const std::pair<std::function<std::optional<const sf::Drawable*>(float)>, float>& p2) const {
+    bool operator()(const std::pair<std::function<std::vector<const sf::Drawable*>(float)>, float>& p1, const std::pair<std::function<std::vector<const sf::Drawable*>(float)>, float>& p2) const {
         return p1.second < p2.second;
     }
 };
@@ -43,50 +57,72 @@ class GameRender {
 public:
     template <Drawable T>
     void registerDrawable(std::shared_ptr<T> object, float z = 0) {
-        drawables.insert(std::make_pair([weak = std::weak_ptr<T>(object)](float dt) -> std::optional<const sf::Drawable*> {
+        drawables.insert(std::make_pair([weak = std::weak_ptr<T>(object)](float dt) -> std::vector<const sf::Drawable*> {
             if (auto shared = weak.lock()) {
                 if constexpr (requires(T x) { x.updateSprite(dt); }) {
                     shared->updateSprite(dt);
                 }
-                return shared->getSprite();
+                std::optional<const sf::Drawable*> sprite = shared->getSprite();
+                if (!sprite) return {};
+                return {sprite.value()};
             }
-            return std::nullopt;
+            return {};
         }, z));
     }
 
     template <OptionalDrawable T>
     void registerDrawable(std::shared_ptr<T> object, float z = 0) {
-        drawables.insert(std::make_pair([weak = std::weak_ptr<T>(object)](float dt) -> std::optional<const sf::Drawable*> {
+        drawables.insert(std::make_pair([weak = std::weak_ptr<T>(object)](float dt) -> std::vector<const sf::Drawable*> {
             if (auto shared = weak.lock()) {
                 if constexpr (requires(T x) { x.updateSprite(dt); }) {
                     shared->updateSprite(dt);
                 }
-                return shared->getSprite();
+                std::optional<const sf::Drawable*> sprite = shared->getSprite();
+                if (!sprite) return {};
+                return {sprite.value()};
             }
-            return std::nullopt;
+            return {};
+        }, z));
+    }
+
+    template <VectorDrawable T>
+    void registerDrawable(std::shared_ptr<T> object, float z = 0) {
+        drawables.insert(std::make_pair([weak = std::weak_ptr<T>(object)](float dt) -> std::vector<const sf::Drawable*> {
+            if (auto shared = weak.lock()) {
+                if constexpr (requires (T x) { x.updateSprite(dt); }) {
+                    shared->updateSprite(dt);
+                }
+                auto sprites = shared->getSprite(); // To avoid const issues
+                std::vector<const sf::Drawable*> return_sprites;
+                for (const auto& sprite: sprites) return_sprites.push_back(sprite);
+                return return_sprites;
+            }
+            return {};
         }, z));
     }
 
     template <Drawable T>
     void draw(std::shared_ptr<T> object, float z = 0) {
-        drawables.insert(std::make_pair([weak = std::weak_ptr<T>(object), count = 0](float dt) mutable -> std::optional<const sf::Drawable*> {
+        drawables.insert(std::make_pair([weak = std::weak_ptr<T>(object), count = 0](float dt) mutable -> std::vector<const sf::Drawable*> {
             if (auto shared = weak.lock(); (count == 0) && shared) {
                 count++;
-                return shared->getSprite();
+                std::optional<const sf::Drawable*> sprite = shared->getSprite();
+                if (!sprite) return {};
+                return {sprite.value()};
             }
-            return std::nullopt;
+            return {};
         }, z));
     }
 
     template <DrawableLike T>
     void drawSimpleDrawable(T drawable, float z = 0) {
         // No texture should be needed to be alive
-        drawables.insert(std::make_pair([sprite=std::move(drawable), count = 0](float dt) mutable -> std::optional<const sf::Drawable*> {
+        drawables.insert(std::make_pair([sprite=std::move(drawable), count = 0](float dt) mutable -> std::vector<const sf::Drawable*> {
             if (count == 0) {
                 count++;
-                return &sprite;
+                return {&sprite};
             }
-            return std::nullopt;
+            return {};
         }, z));
     }
 
@@ -109,7 +145,7 @@ private:
     GameRender();
 
     sf::RenderTexture render_texture;
-    std::multiset<std::pair<std::function<std::optional<const sf::Drawable*>(float)>, float>, zComparator> drawables;
+    std::multiset<std::pair<std::function<std::vector<const sf::Drawable*>(float)>, float>, zComparator> drawables;
 
     sf::Vector2f shake_direction = {1, 1};
     bool shaking = false;
