@@ -51,8 +51,6 @@ private:
 
     std::vector<SoundEffect> crystal_touch_sound_effects = {SoundEffect::DIAMOND_TOUCH_01, SoundEffect::DIAMOND_TOUCH_02, SoundEffect::DIAMOND_TOUCH_03};
     std::vector<SoundEffect> crystal_return_sound_effects = {SoundEffect::DIAMOND_RETURN_01, SoundEffect::DIAMOND_RETURN_02, SoundEffect::DIAMOND_RETURN_03};
-
-    static int getRandomInt(int min, int max);
 };
 
 

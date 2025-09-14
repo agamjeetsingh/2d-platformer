@@ -4,29 +4,31 @@
 
 #include "../../../include/entity/objects/DashCrystal.h"
 
+#include "entity/PointParticles.h"
+
 DashCrystal::DashCrystal(sf::Vector2f position): CollidableObject({{{3, 3}, {10, 10}}}, sf::Sprite{EmptyTextures::getInstance().getEmpty({16, 16})}, position),
-    collision_listener(Listener::make_listener<Collision>([this](const Collision& collision) {
-        if (&collision.objectA != this && &collision.objectB != this) return;
-        CollidableObject& other = &collision.objectA == this ? collision.objectB : collision.objectA;
-        if (!other.isPlayer()) return;
-        if (state == DashCrystalState::EMPTY) return;
-        Player* player = other.isPlayer();
-        player->dashCapacity = true;
-        player->stamina = Player::MAX_STAMINA;
-        state = DashCrystalState::EMPTY;
-        time_in_state = 0;
-        curr_sprite_index = 0;
-        SoundManager::getInstance().play(crystal_touch_sound_effects[getRandomInt(0, 2)]);
-        GameRender::getInstance().shake(axisToVector(collision.axis), 3, 6, 1);
-        auto discard = Scheduler::getInstance().schedule([this](std::shared_ptr<ScheduledEvent> event, float dt) {
-            state = DashCrystalState::FULL;
-            SoundManager::getInstance().play(crystal_return_sound_effects[getRandomInt(0, 2)]);
-        }, RESPAWN_TIME);
-    })),
-    state(DashCrystalState::FULL), full_crystal_texture_holder(5, "../assets/dashRefill/idle", std::vector<float>(5, 0.2f)),
-    main_sprite(EmptyTextures::getInstance().getEmpty({16, 16})),
-    flash_textures_holder(6, "../assets/dashRefill/flash", {TIME_FLASH, 0.05, 0.05, 0.05, 0.05, 0.05}),
-    flash_sprite(EmptyTextures::getInstance().getEmpty({16, 16})) {
+                                                 collision_listener(Listener::make_listener<Collision>([this](const Collision& collision) {
+                                                     if (&collision.objectA != this && &collision.objectB != this) return;
+                                                     CollidableObject& other = &collision.objectA == this ? collision.objectB : collision.objectA;
+                                                     if (!other.isPlayer()) return;
+                                                     if (state == DashCrystalState::EMPTY) return;
+                                                     Player* player = other.isPlayer();
+                                                     player->dashCapacity = true;
+                                                     player->stamina = Player::MAX_STAMINA;
+                                                     state = DashCrystalState::EMPTY;
+                                                     time_in_state = 0;
+                                                     curr_sprite_index = 0;
+                                                     SoundManager::getInstance().play(crystal_touch_sound_effects[Random::getInstance().getInt(0, 2)]);
+                                                     GameRender::getInstance().shake(axisToVector(collision.axis), 3, 6, 1);
+                                                     auto discard = Scheduler::getInstance().schedule([this](std::shared_ptr<ScheduledEvent> event, float dt) {
+                                                         state = DashCrystalState::FULL;
+                                                         SoundManager::getInstance().play(crystal_return_sound_effects[Random::getInstance().getInt(0, 2)]);
+                                                     }, RESPAWN_TIME);
+                                                 })),
+                                                 state(DashCrystalState::FULL), full_crystal_texture_holder(5, "../assets/dashRefill/idle", std::vector<float>(5, 0.2f)),
+                                                 main_sprite(EmptyTextures::getInstance().getEmpty({16, 16})),
+                                                 flash_textures_holder(6, "../assets/dashRefill/flash", {TIME_FLASH, 0.05, 0.05, 0.05, 0.05, 0.05}),
+                                                 flash_sprite(EmptyTextures::getInstance().getEmpty({16, 16})) {
     assert(empty_crystal_texture.loadFromFile("../assets/dashRefill/outline.png"));
     assert(combined_render_texture.resize({sf::VideoMode::getDesktopMode().size}));
 }
@@ -90,14 +92,6 @@ void DashCrystal::updateSprite(float deltaTime) {
     combined_render_texture.display();
     const sf::Sprite combined(combined_render_texture.getTexture());
     sprite = combined;
-}
-
-int DashCrystal::getRandomInt(const int min, const int max) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-
-    std::uniform_int_distribution<> dist(min, max);
-    return dist(gen);
 }
 
 
