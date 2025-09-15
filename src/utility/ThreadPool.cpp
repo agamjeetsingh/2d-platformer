@@ -2,7 +2,7 @@
 // Created by Agamjeet Singh on 14/09/25.
 //
 
-#include "ThreadPool.h"
+#include "utility/ThreadPool.h"
 
 ThreadPool::ThreadPool(size_t thread_count, size_t capacity): capacity(capacity) {
     for (int i = 0; i < thread_count; i++) {
