@@ -54,6 +54,9 @@ public:
      * Events are wrapped into type-erased Event objects and queued for execution
      * at the specified time. If execute_time is NOW, the event is dispatched immediately.
      * If no listeners are registered for this event type, the event is discarded.
+     *
+     * @note If an event is called with EventExecuteTime::NOW, then the listeners lock would be acquired. Otherwise,
+     * the events lock is acquired via a `executeNow` call.
      * 
      * @tparam T The event type (any class can be used as an event).
      * @param event The event instance to emit.
@@ -65,16 +68,12 @@ public:
     }
 
     /**
-     * @brief Execute an event immediately, bypassing the queue.
-     * @param event The event to execute now.
-     */
-    void executeNow(Event event) const;
-
-    /**
      * @brief Execute all queued events for the specified execution time.
      * 
      * Events are processed in FIFO order. For each event, listeners are called
      * according to their ListenerPriority: LOWEST → LOW → NORMAL → HIGH → HIGHEST → MONITOR.
+     *
+     * @note Acquires event and listener locks. But doesn't hold any locks when a listener is called.
      * 
      * @param time The execution time for which to process events.
      */
@@ -89,6 +88,12 @@ public:
      */
     void registerListener(Listener listener);
 
+    /**
+     * @brief Clears all events in the queue and unregisters all listeners.
+     * @warning This function should NOT be called from inside a listener as it will lead to a deadlock.
+     */
+    void clear();
+
 private:
     /** @brief Events queued by execution time. */
     std::unordered_map<EventExecuteTime, std::queue<Event>> events_by_execution;
@@ -96,11 +101,20 @@ private:
     /** @brief Listeners organized by event type and sorted by priority. */
     std::unordered_map<std::type_index, std::multiset<Listener, ListenerComparator>> listeners;
 
+    std::mutex events_mtx;
+    std::mutex listeners_mtx;
+
     /**
      * @brief Internal method to emit a pre-constructed Event object.
      * @param event The event to emit.
      */
     void emit(Event event);
+
+    /**
+     * @brief Execute an event immediately, bypassing the queue.
+     * @param event The event to execute now.
+     */
+    void executeNow(Event event);
 };
 
 
