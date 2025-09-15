@@ -22,7 +22,7 @@ public:
         }
         sf::Texture empty_texture;
         assert(empty_texture.resize(size));
-        emptyTextures.emplace(size, empty_texture);
+        emptyTextures.emplace(size, std::move(empty_texture));
         return emptyTextures[size];
     }
 
