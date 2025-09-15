@@ -16,8 +16,8 @@ DashCrystal::DashCrystal(sf::Vector2f position): CollidableObject({{{3, 3}, {10,
                                                      player->dashCapacity = true;
                                                      player->stamina = Player::MAX_STAMINA;
                                                      state = DashCrystalState::EMPTY;
-                                                     time_in_state = 0;
-                                                     curr_sprite_index = 0;
+                                                     flash_textures_holder.reset();
+                                                     full_crystal_texture_holder.reset();
                                                      SoundManager::getInstance().play(crystal_touch_sound_effects[Random::getInstance().getInt(0, 2)]);
                                                      GameRender::getInstance().shake(axisToVector(collision.axis), 3, 6, 1);
                                                      auto discard = Scheduler::getInstance().schedule([this](std::shared_ptr<ScheduledEvent> event, float dt) {
@@ -65,24 +65,12 @@ void DashCrystal::updateSprite(float deltaTime) {
         sprite.setTexture(empty_crystal_texture);
         return;
     }
-    time_in_state += deltaTime;
-    time_in_state_flash += deltaTime;
 
-    while (full_crystal_texture_holder.getIntervals()[curr_sprite_index] <= time_in_state) {
-        if (curr_sprite_index == full_crystal_texture_holder.getTextures().size()) {
-            curr_sprite_index = 0;
-        }
-        main_sprite.setTexture(full_crystal_texture_holder.getTextures()[curr_sprite_index]);
-        time_in_state -= full_crystal_texture_holder.getIntervals()[curr_sprite_index++];
-    }
+    full_crystal_texture_holder.update(deltaTime);
+    flash_textures_holder.update(deltaTime);
 
-    while (flash_textures_holder.getIntervals()[curr_flash_sprite_index] <= time_in_state_flash) {
-        if (curr_flash_sprite_index == flash_textures_holder.getTextures().size()) {
-            curr_flash_sprite_index = 0;
-        }
-        flash_sprite.setTexture(flash_textures_holder.getTextures()[curr_flash_sprite_index]);
-        time_in_state_flash -= flash_textures_holder.getIntervals()[curr_flash_sprite_index++];
-    }
+    main_sprite.setTexture(full_crystal_texture_holder.getCurrentTexture());
+    flash_sprite.setTexture(flash_textures_holder.getCurrentTexture());
 
     combined_render_texture.clear(sf::Color::Transparent);
     main_sprite.setPosition(getPosition());

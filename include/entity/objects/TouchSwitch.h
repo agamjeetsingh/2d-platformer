@@ -36,8 +36,6 @@ private:
     std::vector<std::reference_wrapper<TouchSwitch>> others;
 
     TouchSwitchState state = TouchSwitchState::NOT_ACTIVE;
-    float time_in_state = 0;
-    size_t curr_sprite_index = 0;
 
     std::unordered_map<TouchSwitchState, TexturesHolder> textures;
     std::unordered_map<TouchSwitchState, sf::Texture> container_textures;

@@ -35,17 +35,12 @@ private:
 
     DashCrystalState state;
 
-    float time_in_state = 0;
-    float time_in_state_flash = 0;
-
     sf::Texture empty_crystal_texture;
     sf::RenderTexture combined_render_texture;
 
-    size_t curr_sprite_index = 0;
     TexturesHolder full_crystal_texture_holder;
     sf::Sprite main_sprite;
 
-    size_t curr_flash_sprite_index = 0;
     TexturesHolder flash_textures_holder;
     sf::Sprite flash_sprite;
 

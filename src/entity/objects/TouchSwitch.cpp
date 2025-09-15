@@ -31,20 +31,13 @@ void TouchSwitch::updateSprite(float deltaTime) {
         return;
     }
 
-    const TexturesHolder& touch_switch_textures = textures.at(state);
+    TexturesHolder& touch_switch_textures = textures.at(state);
 
-    time_in_state += deltaTime;
+    touch_switch_textures.update(deltaTime);
 
-    while (touch_switch_textures.getIntervals()[curr_sprite_index] <= time_in_state) {
-        if (curr_sprite_index == touch_switch_textures.getTextures().size()) {
-            curr_sprite_index = 0;
-        }
-        sprite.setTexture(touch_switch_textures.getTextures()[curr_sprite_index]);
-        time_in_state -= touch_switch_textures.getIntervals()[curr_sprite_index++];
-    }
     combined_render_texture.clear(sf::Color::Transparent);
     sf::Sprite container_sprite = sf::Sprite{container_textures[state]};
-    sf::Sprite front_sprite = sf::Sprite{touch_switch_textures.getTextures()[curr_sprite_index]};
+    sf::Sprite front_sprite = sf::Sprite{touch_switch_textures.getCurrentTexture()};
     container_sprite.setPosition(getPosition());
     front_sprite.setPosition(getPosition());
     combined_render_texture.draw(container_sprite);
