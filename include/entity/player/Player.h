@@ -128,6 +128,8 @@ public:
 
     void kill();
 
+    void crouch();
+
 private:
     PlayerSpriteHandler sprite_handler = PlayerSpriteHandler(sprite_state, sprite, facing);
 
