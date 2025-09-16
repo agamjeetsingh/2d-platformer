@@ -94,7 +94,7 @@ void SoundManager::removeExpiredSounds() {
     for (auto it = sounds.begin(); it != sounds.end();) {
         if (curr_time > it->first) {
             const auto& [sound_ptr, sound_effect] = it->second;
-            if (sound_ptr->getStatus() == sf::Sound::Status::Stopped) {
+            if (!sound_ptr || sound_ptr->getStatus() == sf::Sound::Status::Stopped) {
                 it = sounds.erase(it);
             } else {
                 it = sounds.erase(it);
