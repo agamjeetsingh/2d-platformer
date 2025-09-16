@@ -41,10 +41,10 @@ public:
         time_in_state += dt;
 
         while (intervals[texture_index] <= time_in_state) {
+            time_in_state -= intervals[texture_index++];
             if (texture_index == textures.size()) {
                 texture_index = 0;
             }
-            time_in_state -= intervals[texture_index++];
         }
     }
 
