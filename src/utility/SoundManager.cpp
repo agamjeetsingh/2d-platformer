@@ -82,9 +82,9 @@ SoundManager::SoundManager() {
     dummy.stop();
 }
 
-float SoundManager::getDuration(SoundEffect sound_effect) {
+float SoundManager::getDuration(SoundEffect sound_effect) const {
     if (!buffers.contains(sound_effect)) return 0;
-    return buffers[sound_effect].getDuration().asSeconds();
+    return buffers.at(sound_effect).getDuration().asSeconds();
 }
 
 
@@ -93,7 +93,7 @@ void SoundManager::removeExpiredSounds() {
     std::lock_guard lock{sound_mutex};
     for (auto it = sounds.begin(); it != sounds.end();) {
         if (curr_time > it->first) {
-            const auto& [sound_ptr, sound_effect] = it->second;
+            const auto [sound_ptr, sound_effect] = it->second;
             if (!sound_ptr || sound_ptr->getStatus() == sf::Sound::Status::Stopped) {
                 it = sounds.erase(it);
             } else {

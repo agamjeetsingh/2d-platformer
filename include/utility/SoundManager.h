@@ -20,7 +20,7 @@ public:
 
     static void loadBuffers() { getInstance(); }
 
-    float getDuration(SoundEffect sound_effect);
+    float getDuration(SoundEffect sound_effect) const;
 
     void removeExpiredSounds();
 
