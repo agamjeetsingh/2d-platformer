@@ -114,14 +114,13 @@ std::vector<CollidableObject> ContactsHandler::nextToVerticalSurfaces(const Coll
 }
 
 void ContactsHandler::emitPlayerEvents() const {
-    EventBus& instance = EventBus::getInstance();
     for (const auto& object: std::views::keys(previous_frame_contacts)) {
         if (object.get().isPlayer() && onLand(object.get(), true) && !onLand(object.get())) {
             EventBus::getInstance().emit(PlayerLeftGround{*object.get().isPlayer()}, EventExecuteTime::POST_PHYSICS);
         }
     }
     for (const auto& object: std::views::keys(contacts)) {
-        if (object.get().isPlayer() && !onLand(object.get(), true) && onLand(object.get())) {
+        if (object.get().isPlayer() && !onLand(object.get(), true) && onLand(object.get()) && object.get().getTotalVelocity().y >= 0) {
             auto contacts = restingOnSurfaces(object.get());
             assert(!contacts.empty());
             EventBus::getInstance().emit(PlayerLanded{*object.get().isPlayer(), contacts[0]},
