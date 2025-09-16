@@ -24,7 +24,7 @@ struct PlayerOnGround;
 
 class Player final : public CollidableObject {
 public:
-    explicit Player(std::vector<sf::FloatRect> hitbox,
+    explicit Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox,
         sf::Vector2f position = {0, 0});
 
     static constexpr float MAX_STAMINA = 110;
@@ -130,6 +130,12 @@ public:
 
     void crouch();
 
+    void uncrouch();
+
+    bool isCrouching() {
+        return crouching;
+    }
+
 private:
     PlayerSpriteHandler sprite_handler = PlayerSpriteHandler(sprite_state, sprite, facing);
 
@@ -139,7 +145,11 @@ private:
 
     Listener landed;
 
+    std::vector<sf::FloatRect> uncrouched_hitbox;
+    std::vector<sf::FloatRect> crouched_hitbox;
+
     bool onGround = false;
+    bool crouching = false;
 
     // Also need to store information about which direction climbing which I guess is stored in facing
     std::optional<std::reference_wrapper<CollidableObject>> climbing = std::nullopt;

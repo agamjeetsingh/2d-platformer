@@ -4,7 +4,17 @@
 
 #include "entity/player/PlayerInputHandler.h"
 
-void PlayerInputHandler::update(float deltaTime) {
+void PlayerInputHandler::update(float deltaTime) const {
+    if (tryToUseKey(moveDown)) {
+        player.crouch();
+    } else if (!isPressed(moveDown) && player.isCrouching()) {
+        player.uncrouch();
+    }
+
+    if (isPressed(Key::P) && !player.dying) {
+        player.kill();
+    }
+
     if (tryToUseKey(dashKey)) {
         if (bool success = player.tryDash(); success) return;
     }
@@ -21,7 +31,7 @@ void PlayerInputHandler::update(float deltaTime) {
     handleLeftRightMovement(deltaTime);
 }
 
-void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
+void PlayerInputHandler::handleLeftRightMovement(float deltaTime) const {
     float multiplier = player.isOnGround() ? 1 : Player::AIR_MULTIPLIER;
 
     bool moveSomewhere = false;
@@ -30,7 +40,7 @@ void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
         // Move left
         moveSomewhere = true;
         player.facing = Facing::Left;
-        if (!player.ability_dash.isPerforming()) {
+        if (!player.ability_dash.isPerforming() && !player.isCrouching()) {
             approach(player.base_velocity.x, -Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
         }
     }
@@ -39,7 +49,7 @@ void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
         // Move right
         moveSomewhere = true;
         player.facing = Facing::Right;
-        if (!player.ability_dash.isPerforming()) {
+        if (!player.ability_dash.isPerforming() && !player.isCrouching()) {
             approach(player.base_velocity.x, Player::WALK_SPEED, Player::RUN_ACCELERATION * deltaTime * multiplier);
         }
     }
@@ -49,7 +59,7 @@ void PlayerInputHandler::handleLeftRightMovement(float deltaTime) {
     }
     // TODO - Move this to Player Sprite Handler and save `moveSomewhere` somewhere
     // Ad - hoc begin TODO
-    if (player.sprite_state != PlayerSpriteState::Dead) {
+    if (player.sprite_state != PlayerSpriteState::Dead && !player.isCrouching()) {
         if (player.ability_dash.isPerforming()) {
             player.sprite_state = PlayerSpriteState::Dashing;
         } else {

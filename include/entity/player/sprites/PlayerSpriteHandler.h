@@ -26,6 +26,7 @@ public:
         textures.emplace(PlayerSpriteState::Dashing, TexturesHolder(4, "../assets/player/dash/dash"));
         textures.emplace(PlayerSpriteState::Falling, TexturesHolder(8, "../assets/player/fall/fall"));
         textures.emplace(PlayerSpriteState::Dead, TexturesHolder(11, "../assets/player/death/death_h", std::vector(11, 0.03f)));
+        textures.emplace(PlayerSpriteState::Ducking, TexturesHolder(1, "../assets/player/duck"));
     }
 
     [[nodiscard]] float getAnimationLength(const PlayerSpriteState state) const {

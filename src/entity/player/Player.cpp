@@ -4,15 +4,17 @@
 
 #include "entity/player/Player.h"
 
+#include <utility>
+
 #include "../../../include/entity/player/ability/AbilityDash.h"
 #include "events/PlayerLanded.h"
 #include "physics/ContactsHandler.h"
 #include "events/PlayerOnGround.h"
 #include "utility/EmptyTextures.h"
 
-Player::Player(std::vector<sf::FloatRect> hitbox,
+Player::Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox,
                sf::Vector2f position) :
-CollidableObject(std::move(hitbox), std::move(sf::Sprite{EmptyTextures::getInstance().getEmpty({32, 32})}), position),
+CollidableObject(uncrouched_hitbox, std::move(sf::Sprite{EmptyTextures::getInstance().getEmpty({32, 32})}), position),
 on_ground(Listener::make_listener<PlayerOnGround>([this](const PlayerOnGround& event) {
     if (event.player != *this) return;
     onGround = true;
@@ -34,7 +36,7 @@ landed(Listener::make_listener<PlayerLanded>([this](const PlayerLanded& event) {
     if (getTotalVelocity().y >= MAX_FALL) {
         squeeze({1.2, 0.8}, 0.05, 0.1);
     }
-}, ListenerPriority::HIGH)) {
+}, ListenerPriority::HIGH)), uncrouched_hitbox(std::move(uncrouched_hitbox)), crouched_hitbox(std::move(crouched_hitbox)) {
     gravity_acceleration.y = GRAVITY;
 }
 
@@ -88,8 +90,20 @@ bool Player::canCollideWith(const CollidableObject &, Collision collision) const
 }
 
 void Player::crouch() {
+    if (crouching) return;
     sprite_state = PlayerSpriteState::Ducking;
+    crouching = true;
+    hitbox.setRects(crouched_hitbox);
+    squeeze({1.4, 0.7}, 0.03, 0.05);
 }
+
+void Player::uncrouch() {
+    if (!crouching) return;
+    crouching = false;
+    hitbox.setRects(uncrouched_hitbox);
+    squeeze({0.8, 1.2}, 0.015, 0.05);
+}
+
 
 
 
