@@ -84,6 +84,8 @@ add_executable(2d-platformer main.cpp
         include/entity/PointParticles.h
         src/entity/PointParticles.cpp
         include/utility/Random.h
+        src/utility/ThreadPool.cpp
+        include/utility/ThreadPool.h
 )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 
