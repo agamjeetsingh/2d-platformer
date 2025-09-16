@@ -62,3 +62,35 @@ bool Player::tryDash() {
 }
 
 
+void Player::kill() {
+    if (dying) return;
+    SoundManager::getInstance().play(SoundEffect::DEATH);
+    sprite_state = PlayerSpriteState::Dead;
+    disableGravity();
+    friction_velocity = {0, 0};
+    base_velocity = {-10, -10};
+    dying = true;
+    auto discard = Scheduler::getInstance().schedule([this](const std::shared_ptr<ScheduledEvent>& event, float dt) {
+        sprite_state = PlayerSpriteState::GroundIdle;
+        setPosition(respawn_position);
+        base_velocity = {0, 0};
+        friction_velocity = {0, 0};
+        enableGravity();
+        dying = false;
+        restoreDash();
+        restoreStamina();
+    }, sprite_handler.getAnimationLength(PlayerSpriteState::Dead));
+}
+
+
+bool Player::canCollideWith(const CollidableObject &, Collision collision) const {
+    return !dying;
+}
+
+void Player::crouch() {
+    sprite_state = PlayerSpriteState::Ducking;
+}
+
+
+
+

@@ -124,27 +124,9 @@ public:
 
     bool dying = false;
 
-    void kill() {
-        SoundManager::getInstance().play(SoundEffect::DEATH);
-        sprite_state = PlayerSpriteState::Dead;
-        disableGravity();
-        friction_velocity = {0, 0};
-        base_velocity = {-10, -10};
-        dying = true;
-        auto copy = hitbox.getUnshiftedRects();
-        hitbox.setRects({{{0, 0}, {0, 0}}});
-        auto discard = Scheduler::getInstance().schedule([this, copy](const std::shared_ptr<ScheduledEvent>& event, float dt) {
-            sprite_state = PlayerSpriteState::GroundIdle;
-            setPosition(respawn_position);
-            base_velocity = {0, 0};
-            friction_velocity = {0, 0};
-            enableGravity();
-            dying = false;
-            restoreDash();
-            restoreStamina();
-            hitbox.setRects(copy);
-        }, sprite_handler.getAnimationLength(PlayerSpriteState::Dead));
-    }
+    bool canCollideWith(const CollidableObject &, Collision collision) const override;
+
+    void kill();
 
 private:
     PlayerSpriteHandler sprite_handler = PlayerSpriteHandler(sprite_state, sprite, facing);
