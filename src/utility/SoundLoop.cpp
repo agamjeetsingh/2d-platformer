@@ -8,7 +8,7 @@ SoundLoop::SoundLoop(SoundEffect loop_begin, SoundEffect loop, SoundEffect loop_
 
 void SoundLoop::start() {
     begin_sound = SoundManager::getInstance().play(loop_begin);
-    if (start_loop_event) start_loop_event->cancelled = true;
+    if (start_loop_event) start_loop_event->cancel();
     start_loop_event = Scheduler::getInstance().schedule([this](std::shared_ptr<ScheduledEvent> event, float dt) {
         if (loop_sound) loop_sound->stop();
         loop_sound = SoundManager::getInstance().play(loop, true);
@@ -17,7 +17,7 @@ void SoundLoop::start() {
 
 void SoundLoop::end() {
     if (start_loop_event) {
-        start_loop_event->cancelled = true;
+        start_loop_event->cancel();
     }
     if (loop_sound) {
         loop_sound->stop();
@@ -26,7 +26,7 @@ void SoundLoop::end() {
 }
 
 void SoundLoop::abort() const {
-    if (start_loop_event) start_loop_event->cancelled = true;
+    if (start_loop_event) start_loop_event->cancel();
     if (begin_sound) begin_sound->stop();
     if (loop_sound) loop_sound->stop();
     if (end_sound) end_sound->stop();

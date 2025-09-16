@@ -25,7 +25,7 @@ public:
      *
      * @param deltaTime The time to update the player by according to the input.
      */
-    void update(float deltaTime);
+    void update(float deltaTime) const;
 
     /**
      * Gets the dash direction according to the current input. Combines the latest pressed vertical key (if any) and
@@ -34,6 +34,15 @@ public:
      * @return The dash direction according to the current input.
      */
     static DashDirection getDashDirection(const Player&);
+
+    static constexpr Key dashKey = Key::L;
+    static constexpr Key climbKey = Key::K;
+    static constexpr Key moveLeft = Key::A;
+    static constexpr Key moveRight = Key::D;
+    static constexpr Key moveDown = Key::S;
+    static constexpr Key moveUp = Key::W;
+    static constexpr Key crouchKey = Key::S;
+    static constexpr Key jumpKey = Key::Space;
 
 private:
     Player& player;
@@ -50,7 +59,7 @@ private:
         return InputManager::getInstance().wasPressedEarlierThan(key1, key2);
     }
 
-    void handleLeftRightMovement(float deltaTime);
+    void handleLeftRightMovement(float deltaTime) const;
 
     /**
      * @brief Helper math function that makes a variable approach a value from either (positive or negative) direction
@@ -60,15 +69,6 @@ private:
      * @param step The rate at which \code to_make_approach\endcode will try to approach \code to_approach\endcode.
      */
     static void approach(float& to_make_approach, float to_approach, float step);
-
-    static constexpr Key dashKey = Key::L;
-    static constexpr Key climbKey = Key::K;
-    static constexpr Key moveLeft = Key::A;
-    static constexpr Key moveRight = Key::D;
-    static constexpr Key moveDown = Key::S;
-    static constexpr Key moveUp = Key::W;
-    static constexpr Key crouchKey = Key::S;
-    static constexpr Key jumpKey = Key::Space;
 };
 
 

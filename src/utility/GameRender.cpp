@@ -20,8 +20,11 @@ void GameRender::render(sf::RenderWindow &window, float dt) {
     render_texture.clear(sf::Color::White);
     auto it = drawables.begin();
     while (it != drawables.end()) {
-        if (auto sprite = it->first(dt)) {
-            render_texture.draw(**sprite);
+        auto sprites = it->first(dt);
+        if (!sprites.empty()) {
+            for (auto sprite: sprites) {
+                render_texture.draw(*sprite);
+            }
             ++it;
         } else {
             it = drawables.erase(it);

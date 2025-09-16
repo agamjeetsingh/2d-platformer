@@ -224,6 +224,9 @@ void CollisionsHandler::moveMovables(float deltaTime) const {
             } else {
                 body.get().base_velocity += body.get().gravity_acceleration * deltaTime;
             }
+            if (player) {
+                player->base_velocity.y = std::min(Player::MAX_FALL, player->base_velocity.y);
+            }
             body.get().addPosition(body.get().getTotalVelocity() * deltaTime);
         }
     }
@@ -498,6 +501,6 @@ float CollisionsHandler::getNewCellSize() const {
         sf::Vector2f size = body.get().getHitbox().getBounds().size;
         diameters.push_back(std::max(size.x, size.y));
     }
-    return *std::ranges::max_element(diameters);
+    // return *std::ranges::max_element(diameters);
     return std::accumulate(diameters.begin(), diameters.end(), 0.f) / static_cast<float>(bodies.size());
 }

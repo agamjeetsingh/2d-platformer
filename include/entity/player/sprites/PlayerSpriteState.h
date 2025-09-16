@@ -13,6 +13,7 @@ enum class PlayerSpriteState {
     Dashing,
     Falling,
     Dead,
+    Ducking,
 };
 
 

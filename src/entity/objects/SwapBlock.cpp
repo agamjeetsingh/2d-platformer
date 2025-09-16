@@ -11,9 +11,9 @@ SwapBlock::SwapBlock(sf::Vector2f starting_pos, sf::Vector2f ending_pos): Collid
                                                                               at_start = false;
                                                                               at_end = false;
                                                                               going = true;
-                                                                              if (wait_at_end) wait_at_end->cancelled = true;
-                                                                              if (moving_back) moving_back->cancelled = true;
-                                                                              if (reached_beginning) reached_beginning->cancelled = true;
+                                                                              if (wait_at_end) wait_at_end->cancel();
+                                                                              if (moving_back) moving_back->cancel();
+                                                                              if (reached_beginning) reached_beginning->cancel();
                                                                               sound_loop.abort();
 
                                                                               wait_at_end = Scheduler::getInstance().schedule([this](std::shared_ptr<ScheduledEvent> event, float dt) {

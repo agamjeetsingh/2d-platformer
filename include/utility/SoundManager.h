@@ -5,6 +5,7 @@
 #ifndef SOUNDMANAGER_H
 #define SOUNDMANAGER_H
 #include <iostream>
+#include <map>
 #include <unordered_map>
 #include <vector>
 #include <SFML/Audio.hpp>
@@ -19,13 +20,18 @@ public:
 
     static void loadBuffers() { getInstance(); }
 
-    float getDuration(SoundEffect sound_effect) {
-        if (!buffers.contains(sound_effect)) return 0;
-        return buffers[sound_effect].getDuration().asSeconds();
-    }
+    float getDuration(SoundEffect sound_effect) const;
+
+    void removeExpiredSounds();
+
 private:
     std::unordered_map<SoundEffect, sf::SoundBuffer> buffers = {};
-    std::vector<std::shared_ptr<sf::Sound>> sounds;
+    std::map<float, std::pair<std::shared_ptr<sf::Sound>, SoundEffect>> sounds;
+    std::vector<float> sound_lifetimes; // In seconds
+    sf::Clock clock;
+
+    std::mutex sound_mutex;
+
     SoundManager();
 };
 

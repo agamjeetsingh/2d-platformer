@@ -10,6 +10,8 @@
 #include <vector>
 #include <SFML/Graphics/Sprite.hpp>
 
+#include "utility/Scheduler.h"
+
 class PhysicsObject {
 public:
     /**
@@ -25,7 +27,7 @@ public:
      * @brief Maximum velocity of the gravity. This maximum is enforced by \code setGravityVelocity()\endcode and
      * \code addGravityVelocity()\endcode.
      */
-    static constexpr float MAX_FALL = 160;
+    static constexpr float MAX_FALL = 240;
 
     /**
      * @brief Returns a const reference to the position of the object. Useful for hitboxes.
@@ -89,6 +91,8 @@ public:
      * @brief Prints the 3 velocities of the object with the address of the object as its name.
      */
     void printVelocity() const;
+
+    void squeeze(sf::Vector2f target_squeeze, float time_to_squeeze, float time_to_unsqueeze);
 
 protected:
     sf::Sprite sprite;

@@ -26,9 +26,10 @@ public:
         textures.emplace(PlayerSpriteState::Dashing, TexturesHolder(4, "../assets/player/dash/dash"));
         textures.emplace(PlayerSpriteState::Falling, TexturesHolder(8, "../assets/player/fall/fall"));
         textures.emplace(PlayerSpriteState::Dead, TexturesHolder(11, "../assets/player/death/death_h", std::vector(11, 0.03f)));
+        textures.emplace(PlayerSpriteState::Ducking, TexturesHolder(1, "../assets/player/duck"));
     }
 
-    float getAnimationLength(const PlayerSpriteState state) {
+    [[nodiscard]] float getAnimationLength(const PlayerSpriteState state) const {
         if (!textures.contains(state)) return 0;
         auto& intervals = textures.at(state).getIntervals();
         return std::accumulate(intervals.begin(), intervals.end(), 0.f);
@@ -38,31 +39,23 @@ public:
         sf::FloatRect bounds = sprite.getLocalBounds();
         sprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
 
-        auto scale = (facing == Facing::Left) ? sf::Vector2f{-1, 1} : sf::Vector2f{1, 1};
-        sprite.setScale(scale);
+        auto scale = (facing != prev_facing) ? sf::Vector2f{-1, 1} : sf::Vector2f{1, 1};
+        prev_facing = facing;
+        sprite.scale(scale);
 
         if (!textures.contains(state)) {
             return;
         }
-        const TexturesHolder& player_textures = textures.at(state);
+        TexturesHolder& player_textures = textures.at(state);
 
         if (curr_state != state) {
             curr_state = state;
-            time_in_state = 0;
-            curr_sprite_index = 0;
+            player_textures.reset();
         }
 
-        time_in_state += deltaTime;
+        player_textures.update(deltaTime);
 
-        while (player_textures.getIntervals()[curr_sprite_index] <= time_in_state) {
-            if (curr_sprite_index == player_textures.getTextures().size()) {
-                curr_sprite_index = 0;
-            }
-
-            time_in_state -= player_textures.getIntervals()[curr_sprite_index++];
-        }
-
-        sprite.setTexture(player_textures.getTextures()[curr_sprite_index]);
+        sprite.setTexture(player_textures.getCurrentTexture());
         sprite.setPosition(sprite.getPosition() + sf::Vector2f{8, 12});
         if (facing == Facing::Left) {
             sprite.setPosition(sprite.getPosition() + sf::Vector2f{-3, 0});
@@ -71,11 +64,10 @@ public:
 
 private:
     Facing& facing;
+    Facing prev_facing = facing;
     sf::Sprite& sprite;
     PlayerSpriteState& state;
     PlayerSpriteState curr_state = state;
-    float time_in_state = 0;
-    size_t curr_sprite_index = 0;
 
     std::unordered_map<PlayerSpriteState, TexturesHolder> textures;
 };

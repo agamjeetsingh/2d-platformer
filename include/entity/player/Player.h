@@ -24,7 +24,7 @@ struct PlayerOnGround;
 
 class Player final : public CollidableObject {
 public:
-    explicit Player(std::vector<sf::FloatRect> hitbox,
+    explicit Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox,
         sf::Vector2f position = {0, 0});
 
     static constexpr float MAX_STAMINA = 110;
@@ -124,24 +124,16 @@ public:
 
     bool dying = false;
 
-    void kill() {
-        SoundManager::getInstance().play(SoundEffect::DEATH);
-        sprite_state = PlayerSpriteState::Dead;
-        disableGravity();
-        friction_velocity = {0, 0};
-        base_velocity = {-10, -10};
-        dying = true;
-        auto copy = hitbox.getUnshiftedRects();
-        hitbox.setRects({{{0, 0}, {0, 0}}});
-        auto discard = Scheduler::getInstance().schedule([this, copy](const std::shared_ptr<ScheduledEvent>& event, float dt) {
-            sprite_state = PlayerSpriteState::GroundIdle;
-            setPosition(respawn_position);
-            enableGravity();
-            dying = false;
-            restoreDash();
-            restoreStamina();
-            hitbox.setRects(copy);
-        }, sprite_handler.getAnimationLength(PlayerSpriteState::Dead));
+    bool canCollideWith(const CollidableObject &, Collision collision) const override;
+
+    void kill();
+
+    void crouch();
+
+    void uncrouch();
+
+    bool isCrouching() {
+        return crouching;
     }
 
 private:
@@ -153,7 +145,11 @@ private:
 
     Listener landed;
 
+    std::vector<sf::FloatRect> uncrouched_hitbox;
+    std::vector<sf::FloatRect> crouched_hitbox;
+
     bool onGround = false;
+    bool crouching = false;
 
     // Also need to store information about which direction climbing which I guess is stored in facing
     std::optional<std::reference_wrapper<CollidableObject>> climbing = std::nullopt;

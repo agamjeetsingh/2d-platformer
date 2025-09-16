@@ -4,15 +4,17 @@
 
 #include "entity/player/Player.h"
 
+#include <utility>
+
 #include "../../../include/entity/player/ability/AbilityDash.h"
 #include "events/PlayerLanded.h"
 #include "physics/ContactsHandler.h"
 #include "events/PlayerOnGround.h"
 #include "utility/EmptyTextures.h"
 
-Player::Player(std::vector<sf::FloatRect> hitbox,
+Player::Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox,
                sf::Vector2f position) :
-CollidableObject(std::move(hitbox), std::move(sf::Sprite{EmptyTextures::getInstance().getEmpty({32, 32})}), position),
+CollidableObject(uncrouched_hitbox, std::move(sf::Sprite{EmptyTextures::getInstance().getEmpty({32, 32})}), position),
 on_ground(Listener::make_listener<PlayerOnGround>([this](const PlayerOnGround& event) {
     if (event.player != *this) return;
     onGround = true;
@@ -29,15 +31,18 @@ left_ground(Listener::make_listener<PlayerLeftGround>([this](const PlayerLeftGro
     auto discard = scheduler.schedule([this](std::shared_ptr<ScheduledEvent> event, float deltaTime) { canJumpDueToCoyoteGrace = false; }, JUMP_GRACE_COYOTE_TIME);
 }, ListenerPriority::HIGH)),
 landed(Listener::make_listener<PlayerLanded>([this](const PlayerLanded& event) {
+    if (event.player != *this) return;
     SoundManager::getInstance().play(SoundEffect::LAND);
-}, ListenerPriority::HIGH)) {
+    if (getTotalVelocity().y >= MAX_FALL) {
+        squeeze({1.2, 0.8}, 0.05, 0.1);
+    }
+}, ListenerPriority::HIGH)), uncrouched_hitbox(std::move(uncrouched_hitbox)), crouched_hitbox(std::move(crouched_hitbox)) {
     gravity_acceleration.y = GRAVITY;
 }
 
 void Player::tryJumpInFuture() {
     auto cb = [this](std::shared_ptr<ScheduledEvent> event, float deltaTime){ tryJump(); };
-    ScheduledEvent event = {std::move(cb), 0, true, 0, JUMP_GRACE_BUFFER_TIME};
-    auto discard = Scheduler::getInstance().schedule(event);
+    auto discard = Scheduler::getInstance().schedule(std::move(cb), 0, true, 0, JUMP_GRACE_BUFFER_TIME);
 }
 
 
@@ -57,5 +62,49 @@ bool Player::tryDash() {
     ability_dash.perform();
     return true;
 }
+
+
+void Player::kill() {
+    if (dying) return;
+    SoundManager::getInstance().play(SoundEffect::DEATH);
+    sprite_state = PlayerSpriteState::Dead;
+    disableGravity();
+    friction_velocity = {0, 0};
+    base_velocity = {-10, -10};
+    dying = true;
+    auto discard = Scheduler::getInstance().schedule([this](const std::shared_ptr<ScheduledEvent>& event, float dt) {
+        sprite_state = PlayerSpriteState::GroundIdle;
+        setPosition(respawn_position);
+        base_velocity = {0, 0};
+        friction_velocity = {0, 0};
+        enableGravity();
+        dying = false;
+        restoreDash();
+        restoreStamina();
+    }, sprite_handler.getAnimationLength(PlayerSpriteState::Dead));
+}
+
+
+bool Player::canCollideWith(const CollidableObject &, Collision collision) const {
+    return !dying;
+}
+
+void Player::crouch() {
+    if (crouching) return;
+    sprite_state = PlayerSpriteState::Ducking;
+    crouching = true;
+    hitbox.setRects(crouched_hitbox);
+    squeeze({1.4, 0.7}, 0.03, 0.05);
+}
+
+void Player::uncrouch() {
+    if (!crouching) return;
+    crouching = false;
+    hitbox.setRects(uncrouched_hitbox);
+    squeeze({0.8, 1.2}, 0.015, 0.05);
+}
+
+
+
 
 

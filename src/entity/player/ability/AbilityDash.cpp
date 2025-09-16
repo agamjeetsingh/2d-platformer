@@ -3,6 +3,8 @@
 //
 
 #include "../../../../include/entity/player/ability/AbilityDash.h"
+
+#include "entity/PointParticles.h"
 #include "entity/player/Player.h"
 #include "entity/player/PlayerInputHandler.h"
 #include "events/PlayerDashEvent.h"
@@ -23,7 +25,7 @@ void AbilityDash::perform() {
     assert(canPerform());
     performing = true;
     player.dashCapacity = false;
-    call_during = Scheduler::getInstance().schedule({[this](std::shared_ptr<ScheduledEvent> event, float deltaTime){ if (this->isPerforming()) { this->callDuring(); } }, 0, true, 0});
+    call_during = Scheduler::getInstance().schedule([this](std::shared_ptr<ScheduledEvent> event, float deltaTime){ if (this->isPerforming()) { this->callDuring(); } }, 0, true, 0);
 
     // TODO - Dash Freeze
 
@@ -51,7 +53,7 @@ void AbilityDash::perform() {
             player.base_velocity.y = sign * Player::DASH_RESET_SPEED_VERTICAL;
         }
         performing = false;
-        if (call_during) call_during->cancelled = true;
+        if (call_during) call_during->cancel();
     };
     dash_reset = Scheduler::getInstance().schedule(std::move(dash_reset_func), Player::DASH_SPEED_TIME);
     SoundManager::getInstance().play(directionToSoundEffect(direction));
@@ -66,7 +68,7 @@ void AbilityDash::perform() {
 
         alpha *= std::exp(-5 * deltaTime);
         if (alpha <= 1) {
-            event->cancelled = true;
+            event->cancel();
         }
     };
 
@@ -80,7 +82,7 @@ void AbilityDash::perform() {
 
         alpha *= std::exp(-5 * deltaTime);
         if (alpha <= 1) {
-            event->cancelled = true;
+            event->cancel();
         }
     };
 
@@ -94,21 +96,24 @@ void AbilityDash::perform() {
 
         alpha *= std::exp(-5 * deltaTime);
         if (alpha <= 1) {
-            event->cancelled = true;
+            event->cancel();
         }
     };
 
-    dash_snapshot = Scheduler::getInstance().schedule({std::move(dash_snapshot_func_first), Player::DASH_FIRST_SNAPSHOT_TIME, true, 0});
-    auto discard = Scheduler::getInstance().schedule({std::move(dash_snapshot_func_second), Player::DASH_SECOND_SNAPSHOT_TIME, true, 0});
-    discard = Scheduler::getInstance().schedule({std::move(dash_snapshot_func_third), Player::DASH_THIRD_SNAPSHOT_TIME, true, 0});
+    dash_snapshot = Scheduler::getInstance().schedule(std::move(dash_snapshot_func_first), Player::DASH_FIRST_SNAPSHOT_TIME, true, 0);
+    auto discard = Scheduler::getInstance().schedule(std::move(dash_snapshot_func_second), Player::DASH_SECOND_SNAPSHOT_TIME, true, 0);
+    discard = Scheduler::getInstance().schedule(std::move(dash_snapshot_func_third), Player::DASH_THIRD_SNAPSHOT_TIME, true, 0);
 
     EventBus::getInstance().emit(PlayerDashEvent(player), EventExecuteTime::NOW);
+
+    particles = std::make_shared<PointParticles>(6, PointParticles::FadingColor(sf::Color::Blue), PointParticles::ExpDampedVelocity(10.f * dash_velocity.normalized(), 1), Random::Vector2fRange(player.getPosition() - sf::Vector2f{5, 5}, player.getPosition() + sf::Vector2f{5, 5}), Random::FloatRange(0.5, 1.2));
+    GameRender::getInstance().registerDrawable(particles);
 }
 
 void AbilityDash::cancel() {
     performing = false;
-    if (dash_reset) dash_reset->cancelled = true;
-    if (call_during) call_during->cancelled = true;
+    if (dash_reset) dash_reset->cancel();
+    if (call_during) call_during->cancel();
 }
 
 // TODO - This method not being used in perform
