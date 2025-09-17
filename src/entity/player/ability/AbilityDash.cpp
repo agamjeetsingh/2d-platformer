@@ -33,6 +33,7 @@ void AbilityDash::perform() {
 
     auto vector = directionToVector(direction);
     dash_velocity = vector * Player::DASH_SPEED;
+    player.base_velocity.y = 0;
     player.base_velocity = (player.base_velocity.length() > dash_velocity.length()) ? player.base_velocity : dash_velocity;
     player.disableGravity();
 
