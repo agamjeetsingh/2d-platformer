@@ -10,20 +10,6 @@
 
 class Scheduler {
 public:
-    [[nodiscard]] std::shared_ptr<ScheduledEvent> schedule(std::function<void(std::shared_ptr<ScheduledEvent>, float)> callback, float delaySeconds) {
-        const auto event_ptr = std::make_shared<ScheduledEvent>(std::move(callback), delaySeconds);
-        event_ptr->setup_callback();
-        const std::unique_lock lock(update_mtx, std::try_to_lock);
-        if (lock) {
-            std::lock_guard events_lock{events_mtx};
-            events.push_back(event_ptr);
-        } else {
-            std::lock_guard events_buffer_lock{events_buffer_mtx};
-            eventsBuffer.push_back(event_ptr);
-        }
-        return event_ptr;
-    }
-
     template<typename... Args>
     [[nodiscard]] std::shared_ptr<ScheduledEvent> schedule(Args&&... args) {
         const auto event_ptr = std::make_shared<ScheduledEvent>(std::forward<Args>(args)...);
