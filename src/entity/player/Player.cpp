@@ -41,8 +41,13 @@ landed(Listener::make_listener<PlayerLanded>([this](const PlayerLanded& event) {
 }
 
 void Player::tryJumpInFuture() {
-    auto cb = [this](std::shared_ptr<ScheduledEvent> event, float deltaTime){ tryJump(); };
-    auto discard = Scheduler::getInstance().schedule(std::move(cb), 0, true, 0, JUMP_GRACE_BUFFER_TIME);
+    auto discard = Scheduler::getInstance().schedule([this, time_elapsed = 0.f](std::shared_ptr<ScheduledEvent> event, float deltaTime) mutable {
+        time_elapsed += deltaTime;
+        if (time_elapsed >= JUMP_GRACE_BUFFER_TIME) {
+            event->cancel();
+        }
+        tryJump();
+    }, 0, true, 0);
 }
 
 

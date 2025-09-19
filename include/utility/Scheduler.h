@@ -59,21 +59,13 @@ public:
             if (it->get()->timeRemaining <= 0.0f) {
                 it->get()->callback(dt);
                 if (it->get()->repeat) {
-                    if (it->get()->maxTime != -1 && it->get()->maxTime <= it->get()->spentTime) {
-                        it = events.erase(it);
-                    } else {
-                        it->get()->timeRemaining = it->get()->interval;
-                        ++it;
-                    }
+                    it->get()->timeRemaining = it->get()->interval;
+                    ++it;
                 } else {
                     it = events.erase(it);
                 }
             } else {
-                if (it->get()->maxTime != -1 && it->get()->maxTime <= it->get()->spentTime) {
-                    it = events.erase(it);
-                } else {
-                    ++it;
-                }
+                ++it;
             }
         }
         std::lock_guard events_buffer_lock{events_buffer_mtx};
