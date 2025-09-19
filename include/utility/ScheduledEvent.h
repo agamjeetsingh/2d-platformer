@@ -18,10 +18,12 @@ struct ScheduledEvent : std::enable_shared_from_this<ScheduledEvent> {
     const std::function<void(std::shared_ptr<ScheduledEvent>, float)> user_callback;
     const bool repeat;
     const float interval; // interval = 0 would mean run once every frame, events run a maximum of once per frame
-    const float maxTime;
 
     ScheduledEvent(std::function<void(std::shared_ptr<ScheduledEvent>, float)> cb, float time, bool repeat = false, float interval = 0)
-        : timeRemaining(time), user_callback(std::move(cb)), repeat(repeat), interval(interval), maxTime(-1) {}
+        : timeRemaining(time), user_callback(std::move(cb)), repeat(repeat), interval(interval) {
+        assert(time >= 0);
+        assert(interval >= 0);
+    }
 
     void setup_callback() {
         callback = [self = shared_from_this()](float deltaTime) {
