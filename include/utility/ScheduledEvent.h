@@ -12,7 +12,6 @@
 
 struct ScheduledEvent : std::enable_shared_from_this<ScheduledEvent> {
     float timeRemaining;
-    std::function<void(float)> callback;
     float spentTime = 0;
 
     const std::function<void(std::shared_ptr<ScheduledEvent>, float)> user_callback;
@@ -41,8 +40,13 @@ struct ScheduledEvent : std::enable_shared_from_this<ScheduledEvent> {
         return cancelled.load(std::memory_order_acquire);
     }
 
+    void call(float dt) const {
+        callback(dt);
+    }
+
 private:
     std::atomic_bool cancelled = false;
+    std::function<void(float)> callback;
 };
 
 

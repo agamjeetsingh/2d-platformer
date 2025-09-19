@@ -57,7 +57,7 @@ public:
             it->get()->timeRemaining -= dt;
             it->get()->spentTime += dt;
             if (it->get()->timeRemaining <= 0.0f) {
-                it->get()->callback(dt);
+                it->get()->call(dt);
                 if (it->get()->repeat) {
                     it->get()->timeRemaining = it->get()->interval;
                     ++it;
