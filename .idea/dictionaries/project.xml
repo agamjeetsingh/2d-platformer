@@ -4,7 +4,10 @@
       <w>cbegin</w>
       <w>cend</w>
       <w>collidable</w>
+      <w>firstgid</w>
       <w>immovables</w>
+      <w>tileheight</w>
+      <w>tilewidth</w>
     </words>
   </dictionary>
 </component>
