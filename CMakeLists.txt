@@ -106,6 +106,12 @@ if(PROJECT_IS_TOP_LEVEL)
             include/physics/3d/geometry/Vector3f.h
             include/physics/3d/geometry/Box.cpp
             include/physics/3d/geometry/Box.h
+            include/physics/3d/CollisionsHandler.cpp
+            include/physics/3d/CollisionsHandler.h
+            include/physics/3d/CollisionAxis.cpp
+            include/physics/3d/CollisionAxis.h
+            include/physics/3d/SpacialHashMap.cpp
+            include/physics/3d/SpacialHashMap.h
     )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 target_link_libraries(2d-platformer nlohmann_json::nlohmann_json)
