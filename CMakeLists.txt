@@ -110,6 +110,10 @@ if(PROJECT_IS_TOP_LEVEL)
             include/physics/3d/CollisionsHandler.h
             src/physics/3d/SpacialHashMap.cpp
             include/physics/3d/SpacialHashMap.h
+            src/physics/3d/Contact.cpp
+            include/physics/3d/Contact.h
+            include/physics/3d/ContactsHandler.cpp
+            include/physics/3d/ContactsHandler.h
     )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 target_link_libraries(2d-platformer nlohmann_json::nlohmann_json)

@@ -7,7 +7,6 @@
 #include "Hitbox.h"
 #include "PhysicsObject.h"
 #include "geometry/Box.h"
-#include "../2d/CollidableObjectType.h"
 
 
 namespace eng::d3 {
