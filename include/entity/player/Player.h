@@ -12,12 +12,12 @@
 #include "ability/DashDirection.h"
 #include "sprites/Facing.h"
 #include "sprites/PlayerSpriteState.h"
-#include "../CollidableObject.h"
+#include "../../physics/2d/CollidableObject.h"
 #include "sprites/PlayerSpriteHandler.h"
 #include "../../utility/Scheduler.h"
 #include "events/Listener.h"
 #include "events/PlayerLeftGround.h"
-#include "physics/ContactsHandler.h"
+#include "../../physics/2d/ContactsHandler.h"
 
 class ContactsHandler;
 struct PlayerOnGround;

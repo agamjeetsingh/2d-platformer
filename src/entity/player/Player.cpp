@@ -8,7 +8,7 @@
 
 #include "../../../include/entity/player/ability/AbilityDash.h"
 #include "events/PlayerLanded.h"
-#include "physics/ContactsHandler.h"
+#include "../../../include/physics/2d/ContactsHandler.h"
 #include "events/PlayerOnGround.h"
 #include "utility/EmptyTextures.h"
 

@@ -4,7 +4,6 @@
 
 #ifndef SWAPBLOCK_H
 #define SWAPBLOCK_H
-#include "entity/CollidableObject.h"
 #include "events/Listener.h"
 #include "events/PlayerDashEvent.h"
 #include "utility/EmptyTextures.h"

@@ -10,8 +10,7 @@
 #include "events/EventBus.h"
 #include "include/entity/player/Player.h"
 #include "include/entity/player/PlayerInputHandler.h"
-#include "include/physics/CollisionsHandler.h"
-#include "include/physics/ContactsHandler.h"
+#include "include/physics/2d/CollisionsHandler.h"
 #include "include/utility/InputManager.h"
 #include "utility/EmptyTextures.h"
 #include "utility/GameLevel.h"
@@ -25,12 +24,6 @@ int main() {
     std::cout << sf::VideoMode::getDesktopMode().size.x << " " << sf::VideoMode::getDesktopMode().size.y << std::endl;
     sf::Clock clock;
     SoundManager::loadBuffers();
-    sf::Texture texture;
-    if (!texture.loadFromFile("../docsoc.jpeg")) {
-        return -1;
-    }
-    std::vector<sf::FloatRect> hitbox = {sf::FloatRect({0, 0}, sf::Vector2<float>(texture.getSize()))};
-    sf::Sprite sprite(texture);
 
     auto player = std::make_shared<Player>(
         std::vector{ sf::FloatRect({0, 0}, {13, 12}) },
@@ -40,7 +33,6 @@ int main() {
 
     GameRender::getInstance().registerDrawable(player);
 
-    sprite.setScale({1, 1});
     // auto box = std::make_shared<CollidableObject>(hitbox, sprite, sf::Vector2f{0, 200}, CollidableObjectType::Immovable);
     // // box->base_velocity = {20, 0};
     //

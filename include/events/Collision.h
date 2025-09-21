@@ -6,7 +6,7 @@
 #define COLLISION_H
 
 #include <SFML/Graphics/Rect.hpp>
-#include "../physics/CollisionAxis.h"
+#include "../physics/2d/CollisionAxis.h"
 
 struct IncompleteCollision;
 class CollidableObject;

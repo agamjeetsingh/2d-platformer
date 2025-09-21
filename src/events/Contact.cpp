@@ -4,7 +4,7 @@
 
 #include "events/Contact.h"
 
-#include "entity/CollidableObject.h"
+#include "../../include/physics/2d/CollidableObject.h"
 
 bool Contact::operator==(const Contact &other) const {
     return &objectA == &other.objectA &&

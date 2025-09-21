@@ -5,10 +5,10 @@
 #ifndef TOUCHSWITCH_H
 #define TOUCHSWITCH_H
 #include "TouchSwitchState.h"
-#include "entity/CollidableObject.h"
 #include "entity/sprites/TexturesHolder.h"
 #include "events/Collision.h"
 #include "events/Listener.h"
+#include "physics/2d/CollidableObject.h"
 #include "utility/EmptyTextures.h"
 #include "utility/GameRender.h"
 

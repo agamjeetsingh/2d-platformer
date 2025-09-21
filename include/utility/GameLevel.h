@@ -11,8 +11,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "GameRender.h"
-#include "entity/CollidableObject.h"
-#include "entity/CollidableObjectType.h"
 #include "entity/objects/DashCrystal.h"
 
 using json = nlohmann::json;

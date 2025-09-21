@@ -7,7 +7,6 @@
 #include <random>
 
 #include "DashCrystalState.h"
-#include "entity/CollidableObject.h"
 #include "entity/player/Player.h"
 #include "events/Collision.h"
 #include "events/Listener.h"

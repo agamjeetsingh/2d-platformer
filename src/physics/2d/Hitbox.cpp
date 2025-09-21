@@ -2,7 +2,7 @@
 // Created by Agamjeet Singh on 17/07/25.
 //
 
-#include "physics/Hitbox.h"
+#include "../../../include/physics/2d/Hitbox.h"
 
 Hitbox::Hitbox(std::vector<sf::FloatRect> original_hitbox, const sf::Vector2f& position):
     original_hitbox(std::move(original_hitbox)),

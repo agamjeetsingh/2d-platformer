@@ -13,20 +13,20 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(PROJECT_IS_TOP_LEVEL)
     add_executable(2d-platformer main.cpp
         include/utility/InputManager.h
-        src/physics/CollisionsHandler.cpp
-        include/physics/CollisionsHandler.h
+            src/physics/2d/CollisionsHandler.cpp
+            include/physics/2d/CollisionsHandler.h
         src/entity/player/Player.cpp
         include/entity/player/Player.h
-        src/entity/CollidableObject.cpp
-        include/entity/CollidableObject.h
-        src/entity/PhysicsObject.cpp
-        include/entity/PhysicsObject.h
-        src/physics/Hitbox.cpp
-        include/physics/Hitbox.h
+            src/physics/2d/CollidableObject.cpp
+            include/physics/2d/CollidableObject.h
+            src/physics/2d/PhysicsObject.cpp
+            include/physics/2d/PhysicsObject.h
+            src/physics/2d/Hitbox.cpp
+            include/physics/2d/Hitbox.h
         src/events/Collision.cpp
         include/events/Collision.h
-        include/entity/CollidableObjectType.h
-        include/physics/CollisionAxis.h
+            include/physics/2d/CollidableObjectType.h
+            include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
@@ -38,12 +38,12 @@ if(PROJECT_IS_TOP_LEVEL)
         include/utility/ScheduledEvent.h
         src/events/Contact.cpp
         include/events/Contact.h
-        include/physics/ContactAxis.h
-        src/physics/ContactsHandler.cpp
-        include/physics/ContactsHandler.h
+            include/physics/2d/ContactAxis.h
+            src/physics/2d/ContactsHandler.cpp
+            include/physics/2d/ContactsHandler.h
         include/entity/player/ability/DashDirection.h
-        src/physics/SpacialHashMap.cpp
-        include/physics/SpacialHashMap.h
+            src/physics/2d/SpacialHashMap.cpp
+            include/physics/2d/SpacialHashMap.h
         include/entity/player/ability/Ability.h
         src/entity/player/ability/AbilityJump.cpp
         include/entity/player/ability/AbilityJump.h
@@ -102,20 +102,20 @@ target_link_libraries(2d-platformer nlohmann_json::nlohmann_json)
 # 2d-platformer with sanitizers (AddressSanitizer + UBSan + LeakSanitizer)
 add_executable(2d-platformer-sanitized main.cpp
         include/utility/InputManager.h
-        src/physics/CollisionsHandler.cpp
-        include/physics/CollisionsHandler.h
+        src/physics/2d/CollisionsHandler.cpp
+        include/physics/2d/CollisionsHandler.h
         src/entity/player/Player.cpp
         include/entity/player/Player.h
-        src/entity/CollidableObject.cpp
-        include/entity/CollidableObject.h
-        src/entity/PhysicsObject.cpp
-        include/entity/PhysicsObject.h
-        src/physics/Hitbox.cpp
-        include/physics/Hitbox.h
+        src/physics/2d/CollidableObject.cpp
+        include/physics/2d/CollidableObject.h
+        src/physics/2d/PhysicsObject.cpp
+        include/physics/2d/PhysicsObject.h
+        src/physics/2d/Hitbox.cpp
+        include/physics/2d/Hitbox.h
         src/events/Collision.cpp
         include/events/Collision.h
-        include/entity/CollidableObjectType.h
-        include/physics/CollisionAxis.h
+        include/physics/2d/CollidableObjectType.h
+        include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
@@ -127,12 +127,12 @@ add_executable(2d-platformer-sanitized main.cpp
         include/utility/ScheduledEvent.h
         src/events/Contact.cpp
         include/events/Contact.h
-        include/physics/ContactAxis.h
-        src/physics/ContactsHandler.cpp
-        include/physics/ContactsHandler.h
+        include/physics/2d/ContactAxis.h
+        src/physics/2d/ContactsHandler.cpp
+        include/physics/2d/ContactsHandler.h
         include/entity/player/ability/DashDirection.h
-        src/physics/SpacialHashMap.cpp
-        include/physics/SpacialHashMap.h
+        src/physics/2d/SpacialHashMap.cpp
+        include/physics/2d/SpacialHashMap.h
         include/entity/player/ability/Ability.h
         src/entity/player/ability/AbilityJump.cpp
         include/entity/player/ability/AbilityJump.h
@@ -189,20 +189,20 @@ find_package(SFML 3.0.1 COMPONENTS Graphics Window System Audio REQUIRED)
 
 add_executable(2d-platformer-tsan main.cpp
         include/utility/InputManager.h
-        src/physics/CollisionsHandler.cpp
-        include/physics/CollisionsHandler.h
+        src/physics/2d/CollisionsHandler.cpp
+        include/physics/2d/CollisionsHandler.h
         src/entity/player/Player.cpp
         include/entity/player/Player.h
-        src/entity/CollidableObject.cpp
-        include/entity/CollidableObject.h
-        src/entity/PhysicsObject.cpp
-        include/entity/PhysicsObject.h
-        src/physics/Hitbox.cpp
-        include/physics/Hitbox.h
+        src/physics/2d/CollidableObject.cpp
+        include/physics/2d/CollidableObject.h
+        src/physics/2d/PhysicsObject.cpp
+        include/physics/2d/PhysicsObject.h
+        src/physics/2d/Hitbox.cpp
+        include/physics/2d/Hitbox.h
         src/events/Collision.cpp
         include/events/Collision.h
-        include/entity/CollidableObjectType.h
-        include/physics/CollisionAxis.h
+        include/physics/2d/CollidableObjectType.h
+        include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
@@ -214,12 +214,12 @@ add_executable(2d-platformer-tsan main.cpp
         include/utility/ScheduledEvent.h
         src/events/Contact.cpp
         include/events/Contact.h
-        include/physics/ContactAxis.h
-        src/physics/ContactsHandler.cpp
-        include/physics/ContactsHandler.h
+        include/physics/2d/ContactAxis.h
+        src/physics/2d/ContactsHandler.cpp
+        include/physics/2d/ContactsHandler.h
         include/entity/player/ability/DashDirection.h
-        src/physics/SpacialHashMap.cpp
-        include/physics/SpacialHashMap.h
+        src/physics/2d/SpacialHashMap.cpp
+        include/physics/2d/SpacialHashMap.h
         include/entity/player/ability/Ability.h
         src/entity/player/ability/AbilityJump.cpp
         include/entity/player/ability/AbilityJump.h
@@ -278,20 +278,20 @@ find_package(SFML 3.0.1 COMPONENTS Graphics Window System Audio REQUIRED)
 # Performance test executable
 add_executable(performance_test performance_test.cpp
         include/utility/InputManager.h
-        src/physics/CollisionsHandler.cpp
-        include/physics/CollisionsHandler.h
+        src/physics/2d/CollisionsHandler.cpp
+        include/physics/2d/CollisionsHandler.h
         src/entity/player/Player.cpp
         include/entity/player/Player.h
-        src/entity/CollidableObject.cpp
-        include/entity/CollidableObject.h
-        src/entity/PhysicsObject.cpp
-        include/entity/PhysicsObject.h
-        src/physics/Hitbox.cpp
-        include/physics/Hitbox.h
+        src/physics/2d/CollidableObject.cpp
+        include/physics/2d/CollidableObject.h
+        src/physics/2d/PhysicsObject.cpp
+        include/physics/2d/PhysicsObject.h
+        src/physics/2d/Hitbox.cpp
+        include/physics/2d/Hitbox.h
         src/events/Collision.cpp
         include/events/Collision.h
-        include/entity/CollidableObjectType.h
-        include/physics/CollisionAxis.h
+        include/physics/2d/CollidableObjectType.h
+        include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
@@ -303,12 +303,12 @@ add_executable(performance_test performance_test.cpp
         include/utility/ScheduledEvent.h
         src/events/Contact.cpp
         include/events/Contact.h
-        include/physics/ContactAxis.h
-        src/physics/ContactsHandler.cpp
-        include/physics/ContactsHandler.h
+        include/physics/2d/ContactAxis.h
+        src/physics/2d/ContactsHandler.cpp
+        include/physics/2d/ContactsHandler.h
         include/entity/player/ability/DashDirection.h
-        src/physics/SpacialHashMap.cpp
-        include/physics/SpacialHashMap.h
+        src/physics/2d/SpacialHashMap.cpp
+        include/physics/2d/SpacialHashMap.h
         include/entity/player/ability/Ability.h
         src/entity/player/ability/AbilityJump.cpp
         include/entity/player/ability/AbilityJump.h
@@ -361,20 +361,20 @@ endif() # End of PROJECT_IS_TOP_LEVEL
 # Create library target with all files from 2d-platformer (excluding main.cpp)
 add_library(game_lib STATIC
         include/utility/InputManager.h
-        src/physics/CollisionsHandler.cpp
-        include/physics/CollisionsHandler.h
+        src/physics/2d/CollisionsHandler.cpp
+        include/physics/2d/CollisionsHandler.h
         src/entity/player/Player.cpp
         include/entity/player/Player.h
-        src/entity/CollidableObject.cpp
-        include/entity/CollidableObject.h
-        src/entity/PhysicsObject.cpp
-        include/entity/PhysicsObject.h
-        src/physics/Hitbox.cpp
-        include/physics/Hitbox.h
+        src/physics/2d/CollidableObject.cpp
+        include/physics/2d/CollidableObject.h
+        src/physics/2d/PhysicsObject.cpp
+        include/physics/2d/PhysicsObject.h
+        src/physics/2d/Hitbox.cpp
+        include/physics/2d/Hitbox.h
         src/events/Collision.cpp
         include/events/Collision.h
-        include/entity/CollidableObjectType.h
-        include/physics/CollisionAxis.h
+        include/physics/2d/CollidableObjectType.h
+        include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
         include/entity/player/sprites/PlayerSpriteHandler.h
@@ -386,12 +386,12 @@ add_library(game_lib STATIC
         include/utility/ScheduledEvent.h
         src/events/Contact.cpp
         include/events/Contact.h
-        include/physics/ContactAxis.h
-        src/physics/ContactsHandler.cpp
-        include/physics/ContactsHandler.h
+        include/physics/2d/ContactAxis.h
+        src/physics/2d/ContactsHandler.cpp
+        include/physics/2d/ContactsHandler.h
         include/entity/player/ability/DashDirection.h
-        src/physics/SpacialHashMap.cpp
-        include/physics/SpacialHashMap.h
+        src/physics/2d/SpacialHashMap.cpp
+        include/physics/2d/SpacialHashMap.h
         include/entity/player/ability/Ability.h
         src/entity/player/ability/AbilityJump.cpp
         include/entity/player/ability/AbilityJump.h

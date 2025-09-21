@@ -10,7 +10,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "SpacialHashMap.h"
-#include "../entity/CollidableObject.h"
+#include "CollidableObject.h"
 
 class Player;
 struct Collision;

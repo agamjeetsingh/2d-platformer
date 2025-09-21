@@ -2,7 +2,7 @@
 // Created by Agamjeet Singh on 13/07/25.
 //
 
-#include "entity/PhysicsObject.h"
+#include "../../../include/physics/2d/PhysicsObject.h"
 
 PhysicsObject::PhysicsObject(sf::Sprite sprite, sf::Vector2f position = {0, 0}) :
     sprite(std::move(sprite)),

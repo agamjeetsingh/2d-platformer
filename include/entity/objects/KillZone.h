@@ -4,7 +4,6 @@
 
 #ifndef KILLZONE_H
 #define KILLZONE_H
-#include "entity/CollidableObject.h"
 #include "entity/player/Player.h"
 #include "events/Collision.h"
 #include "events/Listener.h"

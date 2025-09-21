@@ -2,7 +2,7 @@
 // Created by Agamjeet Singh on 27/07/25.
 //
 
-#include "physics/ContactsHandler.h"
+#include "../../../include/physics/2d/ContactsHandler.h"
 #include "entity/player/Player.h"
 #include "events/EventBus.h"
 #include "events/PlayerLanded.h"

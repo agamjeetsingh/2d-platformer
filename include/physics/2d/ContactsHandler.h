@@ -5,8 +5,8 @@
 #ifndef CONTACTSHANDLER_H
 #define CONTACTSHANDLER_H
 #include <unordered_map>
-#include "../entity/CollidableObject.h"
-#include "../events/Contact.h"
+#include "CollidableObject.h"
+#include "../../events/Contact.h"
 #include "CollisionsHandler.h"
 #include <ranges>
 

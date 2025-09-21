@@ -2,12 +2,12 @@
 // Created by Agamjeet Singh on 13/07/25.
 //
 
-#include "physics/CollisionsHandler.h"
+#include "../../../include/physics/2d/CollisionsHandler.h"
 
 #include <ranges>
 
 #include "events/Collision.h"
-#include "physics/ContactsHandler.h"
+#include "../../../include/physics/2d/ContactsHandler.h"
 #include "entity/player/PlayerInputHandler.h"
 #include "events/EventBus.h"
 #include "utility/GameRender.h"
