@@ -24,9 +24,6 @@ void ContactsHandler::addContact(Contact contact) {
     contacts_vector.push_back(contact);
 
     if ((contact.objectA.isPlayer() || contact.objectB.isPlayer()) && contact.axis == ContactAxis::Y) {
-        const CollidableObject* player = contact.objectA.isPlayer() ? &contact.objectA : &contact.objectB;
-        const CollidableObject* other = contact.objectA.isPlayer() ? &contact.objectB : &contact.objectA;
-
         bool playerAboveOther = contact.objectA.isPlayer() ?
             contact.getCollidingRectA().position.y < contact.getCollidingRectB().position.y :
             contact.getCollidingRectB().position.y < contact.getCollidingRectA().position.y;
