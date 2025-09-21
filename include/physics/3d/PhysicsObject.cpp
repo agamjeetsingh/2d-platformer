@@ -5,10 +5,11 @@
 #include "PhysicsObject.h"
 
 #include <iostream>
+#include <sstream>
 
-eng::d3::PhysicsObject::PhysicsObject(sf::Vector3f position = {0, 0, 0}) : position(position) {}
+eng::d3::PhysicsObject::PhysicsObject(Vector3f position = {0, 0, 0}) : position(position) {}
 
-sf::Vector3f eng::d3::PhysicsObject::getTotalVelocity() const {
+eng::Vector3f eng::d3::PhysicsObject::getTotalVelocity() const {
     return base_velocity + friction_velocity;
 }
 

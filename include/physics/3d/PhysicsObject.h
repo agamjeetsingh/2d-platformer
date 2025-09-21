@@ -5,7 +5,9 @@
 #ifndef PHYSICSOBJECT_H
 #define PHYSICSOBJECT_H
 
-#include <SFML/Graphics.hpp>
+#include <string>
+
+#include "geometry/Vector3f.h"
 
 namespace eng::d3 {
     class PhysicsObject {
@@ -14,7 +16,7 @@ namespace eng::d3 {
          * @brief Constructs the Entity with the given sprite and position. Sets the sprite to the given position.
          * @param position the entity's position upon construction.
          */
-        explicit PhysicsObject(sf::Vector3f position);
+        explicit PhysicsObject(Vector3f position);
 
         virtual ~PhysicsObject() = default;
 
@@ -27,26 +29,26 @@ namespace eng::d3 {
         /**
         * @brief The PhysicsObject's position.
         */
-        sf::Vector3f position;
+        Vector3f position;
 
         /**
          * @brief The base velocity of the object. It will always try to move with the base velocity.
          */
-        sf::Vector3f base_velocity = {0, 0, 0};
+        Vector3f base_velocity = {0, 0, 0};
 
         /**
          * @brief The velocity imparted by the surface the object is resting on (if any) or if the object is a player
          * climbing another object.
          */
-        sf::Vector3f friction_velocity = {0, 0, 0};
+        Vector3f friction_velocity = {0, 0, 0};
 
         /**
          * @brief Returns the total velocity of the PhysicsObject. This is the object's true overall velocity.
          * @return The total velocity - sum of intrinsic, friction, impulse and gravitational velocities.
          */
-        [[nodiscard]] sf::Vector3f getTotalVelocity() const;
+        [[nodiscard]] Vector3f getTotalVelocity() const;
 
-        sf::Vector3f gravity_acceleration = {0, 0, 0};
+        Vector3f gravity_acceleration = {0, 0, 0};
 
         /**
          * @brief Prints the 3 velocities of the object with the given name in the format:
@@ -72,7 +74,7 @@ namespace eng::d3 {
         /**
          * @brief Velocity due to gravity. Is capped at \code MAX_FALL\endcode.
          */
-        sf::Vector3f gravity_velocity = {0, 0, 0};
+        Vector3f gravity_velocity = {0, 0, 0};
     };
 }
 
