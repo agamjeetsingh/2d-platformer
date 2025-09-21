@@ -2,7 +2,7 @@
 // Created by Agamjeet Singh on 21/09/25.
 //
 
-#include "Hitbox.h"
+#include "../../../include/physics/3d/Hitbox.h"
 
 eng::d3::Hitbox::Hitbox(std::vector<Box> original_hitbox, const Vector3f& position):
     original_hitbox(std::move(original_hitbox)),

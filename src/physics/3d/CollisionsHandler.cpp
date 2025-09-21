@@ -2,7 +2,7 @@
 // Created by Agamjeet Singh on 21/09/25.
 //
 
-#include "CollisionsHandler.h"
+#include "../../../include/physics/3d/CollisionsHandler.h"
 
 //
 // Created by Agamjeet Singh on 13/07/25.

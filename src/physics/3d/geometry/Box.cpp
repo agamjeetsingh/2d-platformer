@@ -2,7 +2,7 @@
 // Created by Agamjeet Singh on 21/09/25.
 //
 
-#include "Box.h"
+#include "../../../../include/physics/3d/geometry/Box.h"
 
 constexpr bool eng::d3::Box::contains(Vector3f point) const {
     return (position.x <= point.x && position.x + size.x >= point.x) &&

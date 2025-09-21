@@ -2,7 +2,7 @@
 // Created by Agamjeet Singh on 21/09/25.
 //
 
-#include "SpacialHashMap.h"
+#include "../../../include/physics/3d/SpacialHashMap.h"
 
 eng::d3::SpacialHashMap::SpacialHashMap(size_t size) : num_buckets(size) {
     buckets = std::vector<std::vector<CollidableObject*>>{4 * size / 3};

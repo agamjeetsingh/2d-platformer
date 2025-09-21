@@ -2,7 +2,7 @@
 // Created by Agamjeet Singh on 21/09/25.
 //
 
-#include "PhysicsObject.h"
+#include "../../../include/physics/3d/PhysicsObject.h"
 
 #include <iostream>
 #include <sstream>
