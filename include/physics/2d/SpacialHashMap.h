@@ -8,6 +8,39 @@
 
 class CollidableObject;
 
+class HashIterator {
+public:
+    HashIterator(int x, int y, int minX, int maxX, int minY, int maxY)
+        : x(x), y(y), minX(minX), maxX(maxX), minY(minY), maxY(maxY) {}
+
+    size_t operator*() const {
+        return std::hash<int>{}(x) ^ (std::hash<int>{}(y) << 1);
+    }
+
+    HashIterator& operator++() {
+        if (++y > maxY) {
+            y = minY;
+            ++x;
+        }
+        return *this;
+    }
+
+    bool operator!=(const HashIterator& other) const {
+        return x != other.x || y != other.y;
+    }
+
+private:
+    int x, y;
+    int minX, maxX, minY, maxY;
+};
+
+struct HashRange {
+    HashIterator begin_, end_;
+    [[nodiscard]] HashIterator begin() const { return begin_; }
+    [[nodiscard]] HashIterator end() const { return end_; }
+};
+
+
 class SpacialHashMap {
 public:
     explicit SpacialHashMap(size_t size = DEFAULT_BUCKETS);

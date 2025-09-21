@@ -2,8 +2,8 @@
 // Created by Agamjeet Singh on 09/08/25.
 //
 
-#include "physics/SpacialHashMap.h"
-#include "physics/CollisionsHandler.h"
+#include "../../../include/physics/2d/SpacialHashMap.h"
+#include "../../../include/physics/2d/CollisionsHandler.h"
 
 SpacialHashMap::SpacialHashMap(size_t size) : num_buckets(size) {
     buckets = std::vector<std::vector<CollidableObject*>>{4 * size / 3};
