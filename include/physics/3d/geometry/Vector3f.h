@@ -10,7 +10,10 @@
 namespace eng {
     class Vector3f {
     public:
-        Vector3f(const float x = 0.0f, const float y = 0.0f, const float z = 0.0f): x(x), y(y), z(z) {}
+        Vector3f(const float x, const float y, const float z): x(x), y(y), z(z) {}
+
+        Vector3f(): x(0.0f), y(0.0f), z(0.0f) {}
+
         float x, y, z;
 
         Vector3f operator+(const Vector3f& other) const { return {x+other.x, y+other.y, z+other.z}; }
