@@ -462,6 +462,25 @@ add_library(game_lib STATIC
         include/utility/ThreadPool.h
         include/utility/GameLevel.cpp
         include/utility/GameLevel.h
+        src/physics/3d/Collision.cpp
+        include/physics/3d/Collision.h
+        src/physics/3d/PhysicsObject.cpp
+        include/physics/3d/PhysicsObject.h
+        src/physics/3d/CollidableObject.cpp
+        include/physics/3d/CollidableObject.h
+        src/physics/3d/Hitbox.cpp
+        include/physics/3d/Hitbox.h
+        include/physics/3d/geometry/Vector3f.h
+        src/physics/3d/geometry/Box.cpp
+        include/physics/3d/geometry/Box.h
+        src/physics/3d/CollisionsHandler.cpp
+        include/physics/3d/CollisionsHandler.h
+        src/physics/3d/SpacialHashMap.cpp
+        include/physics/3d/SpacialHashMap.h
+        src/physics/3d/Contact.cpp
+        include/physics/3d/Contact.h
+        include/physics/3d/ContactsHandler.cpp
+        include/physics/3d/ContactsHandler.h
 )
 
 target_include_directories(game_lib PUBLIC 
