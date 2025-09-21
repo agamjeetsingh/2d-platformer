@@ -159,6 +159,8 @@ private:
 
     ContactsPtrHashMap buildContactsFaster(float deltaTime);
 
+    ContactsPtrHashMap buildContactsBlankFaster(float deltaTime);
+
     // TODO - Should take in acceleration too with s = ut + 1/2at^2
     static std::optional<IncompleteCollision> sweptCollision(
         sf::FloatRect rectA,

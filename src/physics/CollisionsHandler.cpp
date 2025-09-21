@@ -110,10 +110,18 @@ void CollisionsHandler::update(float deltaTime) {
             assert(invMassSum > 0);
             sf::Vector2f correction = (std::max(penetrationDepth - slop, 0.0f) / invMassSum) * percent * normal;
             if (objectA->type != CollidableObjectType::Immovable) {
-                objectA->addPosition(-correction * objectA->getInvMass());
+                if (objectB->type == CollidableObjectType::Immovable) {
+                    objectA->addPosition(-std::max(penetrationDepth - slop, 0.0f) * normal);
+                } else {
+                    objectA->addPosition(-correction * objectA->getInvMass());
+                }
             }
             if (objectB->type != CollidableObjectType::Immovable) {
-                objectB->addPosition(correction * objectB->getInvMass());
+                if (objectA->type == CollidableObjectType::Immovable) {
+                    objectB->addPosition(std::max(penetrationDepth - slop, 0.0f) * normal);
+                } else {
+                    objectB->addPosition(correction * objectB->getInvMass());
+                }
             }
         }
     }
@@ -124,7 +132,7 @@ void CollisionsHandler::update(float deltaTime) {
         }
     }
 
-    next_frame_contacts = buildContactsFaster(deltaTime);
+    next_frame_contacts = buildContactsBlankFaster(deltaTime);
 
     moveImmovables(deltaTime);
     moveMovables(deltaTime);
@@ -344,6 +352,56 @@ ContactsPtrHashMap CollisionsHandler::buildContactsFaster(float deltaTime) {
     return contacts;
 }
 
+ContactsPtrHashMap CollisionsHandler::buildContactsBlankFaster(float deltaTime) {
+    ContactsPtrHashMap contacts;
+    std::vector<Collision> phantom_collisions;
+
+    buildSpatialMap();
+
+    auto pairs = spacial_map.getPairs();
+
+    for (auto [bodyA, bodyB]: pairs) {
+        size_t indexA = 0;
+        for (const auto& rectA : bodyA->getHitbox()) {
+            size_t indexB = 0;
+            for (const auto& rectB : bodyB->getHitbox()) {
+                if (auto intersection = rectA.findIntersection(rectB)) {
+                    auto size = intersection.value().size;
+                    CollisionAxis axis;
+                    if (size.x >= size.y) {
+                        axis = (rectA.position.y > rectB.position.y) ? CollisionAxis::Down : CollisionAxis::Up;
+                    } else {
+                        if (size.x < 0.01) continue;
+                        axis = (rectA.position.x > rectB.position.x) ? CollisionAxis::Right : CollisionAxis::Left;
+                    }
+                    Collision collision = {*bodyA, *bodyB, {rectA, rectB, axis, deltaTime, deltaTime}, indexA, indexB};
+                    if (!bodyA->canCollideWith(*bodyB, collision) || !bodyB->canCollideWith(*bodyA, collision)) {
+                        phantom_collisions.push_back(collision);
+                    } else {
+                        contacts.emplace(std::make_pair(bodyA, bodyB), collision);
+                    }
+                }
+                indexB++;
+            }
+            indexA++;
+        }
+    }
+
+    for (const auto& collision: phantom_collisions) {
+        EventBus::getInstance().emit(collision, EventExecuteTime::POST_PHYSICS);
+    }
+
+    ContactsHandler::getInstance().newFrame();
+    for (const auto& contact: contacts | std::ranges::views::values) {
+        ContactsHandler::getInstance().addContact(Contact(contact));
+    }
+
+    ContactsHandler::getInstance().emitPlayerEvents();
+
+    return contacts;
+}
+
+
 
 float CollisionsHandler::getPenetration(sf::FloatRect rectA, sf::FloatRect rectB, CollisionAxis axis) {
     if (axis == CollisionAxis::Up || axis == CollisionAxis::Down) {
@@ -419,6 +477,9 @@ std::optional<IncompleteCollision> CollisionsHandler::sweptCollision(
     if (auto intersection = rectA.findIntersection(rectB)) {
         auto size = intersection.value().size;
         if (size.x >= size.y) {
+            // if (size.y < 0.015) {
+            //     return std::nullopt; // TODO
+            // }
             // axis = (relative_velocity.y > 0) ? CollisionAxis::Down : CollisionAxis::Up;
             axis = (rectA.position.y > rectB.position.y) ? CollisionAxis::Down : CollisionAxis::Up;
         } else {
