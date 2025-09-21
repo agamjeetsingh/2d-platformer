@@ -89,6 +89,8 @@ if(PROJECT_IS_TOP_LEVEL)
         include/utility/Random.h
         include/entity/SpriteParticles.cpp
         include/entity/SpriteParticles.h
+        include/entity/objects/Portal.cpp
+        include/entity/objects/Portal.h
         src/utility/ThreadPool.cpp
         include/utility/ThreadPool.h
         include/utility/GameLevel.cpp
@@ -433,8 +435,12 @@ add_library(game_lib STATIC
         include/entity/PointParticles.h
         src/entity/PointParticles.cpp
         include/utility/Random.h
+        include/entity/SpriteParticles.cpp
+        include/entity/SpriteParticles.h
         src/utility/ThreadPool.cpp
         include/utility/ThreadPool.h
+        include/utility/GameLevel.cpp
+        include/utility/GameLevel.h
 )
 
 target_include_directories(game_lib PUBLIC 

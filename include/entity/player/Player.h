@@ -132,7 +132,7 @@ public:
 
     void uncrouch();
 
-    bool isCrouching() {
+    bool isCrouching() const {
         return crouching;
     }
 
