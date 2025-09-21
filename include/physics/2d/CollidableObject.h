@@ -12,7 +12,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
-#include "CollidableObjectType.h"
+#include "../CollidableObjectType.h"
 #include "PhysicsObject.h"
 class Player;
 
