@@ -23,8 +23,8 @@ if(PROJECT_IS_TOP_LEVEL)
             include/physics/2d/PhysicsObject.h
             src/physics/2d/Hitbox.cpp
             include/physics/2d/Hitbox.h
-        src/events/Collision.cpp
-        include/events/Collision.h
+            src/physics/2d/Collision.cpp
+            include/physics/2d/Collision.h
             include/physics/2d/CollidableObjectType.h
             include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
@@ -36,8 +36,8 @@ if(PROJECT_IS_TOP_LEVEL)
         include/entity/player/PlayerInputHandler.h
         include/utility/Scheduler.h
         include/utility/ScheduledEvent.h
-        src/events/Contact.cpp
-        include/events/Contact.h
+            src/physics/2d/Contact.cpp
+            include/physics/2d/Contact.h
             include/physics/2d/ContactAxis.h
             src/physics/2d/ContactsHandler.cpp
             include/physics/2d/ContactsHandler.h
@@ -112,8 +112,8 @@ add_executable(2d-platformer-sanitized main.cpp
         include/physics/2d/PhysicsObject.h
         src/physics/2d/Hitbox.cpp
         include/physics/2d/Hitbox.h
-        src/events/Collision.cpp
-        include/events/Collision.h
+        src/physics/2d/Collision.cpp
+        include/physics/2d/Collision.h
         include/physics/2d/CollidableObjectType.h
         include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
@@ -125,8 +125,8 @@ add_executable(2d-platformer-sanitized main.cpp
         include/entity/player/PlayerInputHandler.h
         include/utility/Scheduler.h
         include/utility/ScheduledEvent.h
-        src/events/Contact.cpp
-        include/events/Contact.h
+        src/physics/2d/Contact.cpp
+        include/physics/2d/Contact.h
         include/physics/2d/ContactAxis.h
         src/physics/2d/ContactsHandler.cpp
         include/physics/2d/ContactsHandler.h
@@ -199,8 +199,8 @@ add_executable(2d-platformer-tsan main.cpp
         include/physics/2d/PhysicsObject.h
         src/physics/2d/Hitbox.cpp
         include/physics/2d/Hitbox.h
-        src/events/Collision.cpp
-        include/events/Collision.h
+        src/physics/2d/Collision.cpp
+        include/physics/2d/Collision.h
         include/physics/2d/CollidableObjectType.h
         include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
@@ -212,8 +212,8 @@ add_executable(2d-platformer-tsan main.cpp
         include/entity/player/PlayerInputHandler.h
         include/utility/Scheduler.h
         include/utility/ScheduledEvent.h
-        src/events/Contact.cpp
-        include/events/Contact.h
+        src/physics/2d/Contact.cpp
+        include/physics/2d/Contact.h
         include/physics/2d/ContactAxis.h
         src/physics/2d/ContactsHandler.cpp
         include/physics/2d/ContactsHandler.h
@@ -288,8 +288,8 @@ add_executable(performance_test performance_test.cpp
         include/physics/2d/PhysicsObject.h
         src/physics/2d/Hitbox.cpp
         include/physics/2d/Hitbox.h
-        src/events/Collision.cpp
-        include/events/Collision.h
+        src/physics/2d/Collision.cpp
+        include/physics/2d/Collision.h
         include/physics/2d/CollidableObjectType.h
         include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
@@ -301,8 +301,8 @@ add_executable(performance_test performance_test.cpp
         include/entity/player/PlayerInputHandler.h
         include/utility/Scheduler.h
         include/utility/ScheduledEvent.h
-        src/events/Contact.cpp
-        include/events/Contact.h
+        src/physics/2d/Contact.cpp
+        include/physics/2d/Contact.h
         include/physics/2d/ContactAxis.h
         src/physics/2d/ContactsHandler.cpp
         include/physics/2d/ContactsHandler.h
@@ -371,8 +371,8 @@ add_library(game_lib STATIC
         include/physics/2d/PhysicsObject.h
         src/physics/2d/Hitbox.cpp
         include/physics/2d/Hitbox.h
-        src/events/Collision.cpp
-        include/events/Collision.h
+        src/physics/2d/Collision.cpp
+        include/physics/2d/Collision.h
         include/physics/2d/CollidableObjectType.h
         include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
@@ -384,8 +384,8 @@ add_library(game_lib STATIC
         include/entity/player/PlayerInputHandler.h
         include/utility/Scheduler.h
         include/utility/ScheduledEvent.h
-        src/events/Contact.cpp
-        include/events/Contact.h
+        src/physics/2d/Contact.cpp
+        include/physics/2d/Contact.h
         include/physics/2d/ContactAxis.h
         src/physics/2d/ContactsHandler.cpp
         include/physics/2d/ContactsHandler.h
@@ -437,6 +437,8 @@ add_library(game_lib STATIC
         include/utility/Random.h
         include/entity/SpriteParticles.cpp
         include/entity/SpriteParticles.h
+        include/entity/objects/Portal.cpp
+        include/entity/objects/Portal.h
         src/utility/ThreadPool.cpp
         include/utility/ThreadPool.h
         include/utility/GameLevel.cpp

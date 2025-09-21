@@ -4,7 +4,7 @@
 
 #ifndef ONEWAYPLATFORM_H
 #define ONEWAYPLATFORM_H
-#include "events/Collision.h"
+#include "../../physics/2d/Collision.h"
 #include "physics/2d/CollidableObject.h"
 #include "utility/EmptyTextures.h"
 

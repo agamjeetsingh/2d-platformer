@@ -6,7 +6,7 @@
 #include <iostream>
 #include <utility>
 
-#include "events/Collision.h"
+#include "../../../include/physics/2d/Collision.h"
 #include "entity/player/Player.h"
 #include "../../../include/physics/2d/CollisionsHandler.h"
 

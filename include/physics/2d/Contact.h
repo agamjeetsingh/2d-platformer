@@ -5,9 +5,9 @@
 #ifndef CONTACT_H
 #define CONTACT_H
 
-#include "../physics/2d/CollisionAxis.h"
+#include "CollisionAxis.h"
 #include "Collision.h"
-#include "../physics/2d/ContactAxis.h"
+#include "ContactAxis.h"
 
 struct Contact {
     explicit Contact(Collision collision) :

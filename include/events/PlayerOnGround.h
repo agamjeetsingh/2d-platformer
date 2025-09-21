@@ -4,7 +4,7 @@
 
 #ifndef PLAYERONGROUND_H
 #define PLAYERONGROUND_H
-#include "Contact.h"
+#include "../physics/2d/Contact.h"
 #include "../entity/player/Player.h"
 
 

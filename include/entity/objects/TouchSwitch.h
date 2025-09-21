@@ -6,7 +6,7 @@
 #define TOUCHSWITCH_H
 #include "TouchSwitchState.h"
 #include "entity/sprites/TexturesHolder.h"
-#include "events/Collision.h"
+#include "../../physics/2d/Collision.h"
 #include "events/Listener.h"
 #include "physics/2d/CollidableObject.h"
 #include "utility/EmptyTextures.h"

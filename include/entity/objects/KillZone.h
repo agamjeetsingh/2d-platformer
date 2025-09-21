@@ -5,7 +5,7 @@
 #ifndef KILLZONE_H
 #define KILLZONE_H
 #include "entity/player/Player.h"
-#include "events/Collision.h"
+#include "../../physics/2d/Collision.h"
 #include "events/Listener.h"
 #include "utility/EmptyTextures.h"
 

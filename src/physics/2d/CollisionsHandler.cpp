@@ -6,7 +6,7 @@
 
 #include <ranges>
 
-#include "events/Collision.h"
+#include "../../../include/physics/2d/Collision.h"
 #include "../../../include/physics/2d/ContactsHandler.h"
 #include "entity/player/PlayerInputHandler.h"
 #include "events/EventBus.h"

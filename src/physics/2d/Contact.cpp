@@ -2,9 +2,9 @@
 // Created by Agamjeet Singh on 27/07/25.
 //
 
-#include "events/Contact.h"
+#include "../../../include/physics/2d/Contact.h"
 
-#include "../../include/physics/2d/CollidableObject.h"
+#include "../../../include/physics/2d/CollidableObject.h"
 
 bool Contact::operator==(const Contact &other) const {
     return &objectA == &other.objectA &&

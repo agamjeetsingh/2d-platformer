@@ -8,7 +8,7 @@
 
 #include "DashCrystalState.h"
 #include "entity/player/Player.h"
-#include "events/Collision.h"
+#include "../../physics/2d/Collision.h"
 #include "events/Listener.h"
 #include "utility/EmptyTextures.h"
 #include "utility/GameRender.h"
