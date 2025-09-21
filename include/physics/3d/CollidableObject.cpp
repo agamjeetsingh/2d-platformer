@@ -1,0 +1,37 @@
+//
+// Created by Agamjeet Singh on 21/09/25.
+//
+
+#include "CollidableObject.h"
+
+#include <cassert>
+
+eng::d3::CollidableObject::CollidableObject(std::vector<Box> hitbox,
+                                            Vector3f position,
+                                            CollidableObjectType type,
+                                            float mass) : PhysicsObject(position),
+                                                          type(type),
+                                                          mass(type == CollidableObjectType::Immovable ? 0 : mass),
+                                                          hitbox({std::move(hitbox), this->position}){
+    assert(mass >= 0);
+    if (type == CollidableObjectType::Movable) {
+        assert(mass != 0);
+    }
+    CollisionsHandler::getInstance().addObject(*this);
+}
+
+[[nodiscard]] float eng::d3::CollidableObject::getInvMass() const {
+    return (mass == 0) ? 0 : (1.0f / mass);
+}
+
+[[nodiscard]] const eng::d3::Hitbox& eng::d3::CollidableObject::getHitbox() const {
+    return hitbox;
+}
+
+bool eng::d3::CollidableObject::operator==(const CollidableObject &other) const {
+    return this == &other;
+}
+
+bool eng::d3::CollidableObject::canCollideWith(const CollidableObject& other, Collision collision) const {
+    return true;
+}
