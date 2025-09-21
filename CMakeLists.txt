@@ -95,7 +95,18 @@ if(PROJECT_IS_TOP_LEVEL)
         include/utility/ThreadPool.h
         include/utility/GameLevel.cpp
         include/utility/GameLevel.h
-)
+            include/physics/3d/Collision.cpp
+            include/physics/3d/Collision.h
+            include/physics/3d/PhysicsObject.cpp
+            include/physics/3d/PhysicsObject.h
+            include/physics/3d/CollidableObject.cpp
+            include/physics/3d/CollidableObject.h
+            include/physics/3d/Hitbox.cpp
+            include/physics/3d/Hitbox.h
+            include/physics/3d/geometry/Vector3f.h
+            include/physics/3d/geometry/Box.cpp
+            include/physics/3d/geometry/Box.h
+    )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 target_link_libraries(2d-platformer nlohmann_json::nlohmann_json)
 
