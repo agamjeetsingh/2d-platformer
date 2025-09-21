@@ -112,7 +112,7 @@ private:
     std::string getAddressAsString() const;
 
     /**
-     * @brief Velocity due to gravity. Is capped at
+     * @brief Velocity due to gravity. Is capped at \code MAX_FALL\endcode.
      */
     sf::Vector2f gravity_velocity = {0, 0};
 };
