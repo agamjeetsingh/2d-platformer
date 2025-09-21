@@ -87,6 +87,8 @@ if(PROJECT_IS_TOP_LEVEL)
         include/entity/PointParticles.h
         src/entity/PointParticles.cpp
         include/utility/Random.h
+        include/entity/SpriteParticles.cpp
+        include/entity/SpriteParticles.h
         src/utility/ThreadPool.cpp
         include/utility/ThreadPool.h
         include/utility/GameLevel.cpp
