@@ -10,15 +10,10 @@
 
 eng::d3::CollidableObject::CollidableObject(std::vector<Box> hitbox,
                                             Vector3f position,
-                                            CollidableObjectType type,
                                             float mass) : PhysicsObject(position),
-                                                          type(type),
-                                                          mass(type == CollidableObjectType::Immovable ? 0 : mass),
+                                                          mass(mass),
                                                           hitbox({std::move(hitbox), this->position}){
     assert(mass >= 0);
-    if (type == CollidableObjectType::Movable) {
-        assert(mass != 0);
-    }
     CollisionsHandler::getInstance().addObject(*this);
 }
 

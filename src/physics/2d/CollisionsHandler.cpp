@@ -110,18 +110,11 @@ void CollisionsHandler::update(float deltaTime) {
             assert(invMassSum > 0);
             sf::Vector2f correction = (std::max(penetrationDepth - slop, 0.0f) / invMassSum) * percent * normal;
             if (objectA->type != CollidableObjectType::Immovable) {
-                if (objectB->type == CollidableObjectType::Immovable) {
-                    objectA->addPosition(-std::max(penetrationDepth - slop, 0.0f) * normal);
-                } else {
-                    objectA->addPosition(-correction * objectA->getInvMass());
-                }
+                objectA->addPosition(-correction * objectA->getInvMass());
+
             }
             if (objectB->type != CollidableObjectType::Immovable) {
-                if (objectA->type == CollidableObjectType::Immovable) {
-                    objectB->addPosition(std::max(penetrationDepth - slop, 0.0f) * normal);
-                } else {
-                    objectB->addPosition(correction * objectB->getInvMass());
-                }
+                objectB->addPosition(correction * objectB->getInvMass());
             }
         }
     }

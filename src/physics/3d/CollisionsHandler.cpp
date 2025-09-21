@@ -49,8 +49,6 @@ void eng::d3::CollisionsHandler::removeObject(CollidableObject& body) {
 
 void eng::d3::CollisionsHandler::update(float deltaTime) {
 
-    std::unordered_set<CollidableObject*> friction_set_bodies;
-
     for (int i = 0; i < 8; i++) {
         for (const auto& key: next_frame_contacts | std::views::keys) {
             auto collision = next_frame_contacts.at(key);
@@ -78,38 +76,6 @@ void eng::d3::CollisionsHandler::update(float deltaTime) {
 
             Vector3f impulse = j * normal;
 
-            // ==== Friction Impulse ====
-            if (i == 0 && (objectA->type == CollidableObjectType::Immovable || objectB->type ==
-                           CollidableObjectType::Immovable)) {
-                auto *immovable = objectA->type == CollidableObjectType::Immovable ? objectA : objectB;
-                auto *movable = immovable == objectA ? objectB : objectA;
-                bool friction_set = false;
-                if (collision.axis.x != 0) {
-                    if (relative_velocity.dot(normal) > 0) {
-                        movable->friction_velocity.y = immovable->getTotalVelocity().y;
-                        movable->friction_velocity.z = immovable->getTotalVelocity().z;
-                        friction_set = true;
-                    }
-                }
-                if (collision.axis.y != 0) {
-                    if (relative_velocity.dot(normal) > 0) {
-                        movable->friction_velocity.x = immovable->getTotalVelocity().x;
-                        movable->friction_velocity.z = immovable->getTotalVelocity().z;
-                        friction_set = true;
-                    }
-                }
-                if (collision.axis.z != 0) {
-                    if (relative_velocity.dot(normal) > 0) {
-                        movable->friction_velocity.x = immovable->getTotalVelocity().x;
-                        movable->friction_velocity.y = immovable->getTotalVelocity().y;
-                        friction_set = true;
-                    }
-                }
-                if (friction_set) {
-                    friction_set_bodies.insert(movable);
-                }
-            }
-
             objectA->base_velocity += impulse * objectA->getInvMass();
             objectB->base_velocity -= impulse * objectB->getInvMass();
 
@@ -118,26 +84,8 @@ void eng::d3::CollisionsHandler::update(float deltaTime) {
             float slop = 0.01;
             assert(invMassSum > 0);
             Vector3f correction = (std::max(penetrationDepth - slop, 0.0f) / invMassSum) * percent * normal;
-            if (objectA->type != CollidableObjectType::Immovable) {
-                if (objectB->type == CollidableObjectType::Immovable) {
-                    objectA->position += -std::max(penetrationDepth - slop, 0.0f) * normal;
-                } else {
-                    objectA->position += -correction * objectA->getInvMass();
-                }
-            }
-            if (objectB->type != CollidableObjectType::Immovable) {
-                if (objectA->type == CollidableObjectType::Immovable) {
-                    objectB->position += std::max(penetrationDepth - slop, 0.0f) * normal;
-                } else {
-                    objectB->position += correction * objectB->getInvMass();
-                }
-            }
-        }
-    }
-
-    for (const auto &body: bodies) {
-        if (!friction_set_bodies.contains(&body.get())) {
-            body.get().friction_velocity = {0, 0, 0};
+            objectA->position += -correction * objectA->getInvMass();
+            objectB->position += correction * objectB->getInvMass();
         }
     }
 

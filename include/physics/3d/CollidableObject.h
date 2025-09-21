@@ -7,7 +7,7 @@
 #include "Hitbox.h"
 #include "PhysicsObject.h"
 #include "geometry/Box.h"
-#include "../CollidableObjectType.h"
+#include "../2d/CollidableObjectType.h"
 
 
 namespace eng::d3 {
@@ -30,10 +30,8 @@ namespace eng::d3 {
          */
         CollidableObject(std::vector<Box> hitbox,
                          Vector3f position = {0, 0, 0},
-                         CollidableObjectType type = CollidableObjectType::Movable,
                          float mass = 1);
 
-        const CollidableObjectType type;
         const float mass;
 
         /**

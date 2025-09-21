@@ -25,7 +25,7 @@ if(PROJECT_IS_TOP_LEVEL)
             include/physics/2d/Hitbox.h
             src/physics/2d/Collision.cpp
             include/physics/2d/Collision.h
-            include/physics/CollidableObjectType.h
+            include/physics/2d/CollidableObjectType.h
             include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
@@ -129,7 +129,7 @@ add_executable(2d-platformer-sanitized main.cpp
         include/physics/2d/Hitbox.h
         src/physics/2d/Collision.cpp
         include/physics/2d/Collision.h
-        include/physics/CollidableObjectType.h
+        include/physics/2d/CollidableObjectType.h
         include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
@@ -216,7 +216,7 @@ add_executable(2d-platformer-tsan main.cpp
         include/physics/2d/Hitbox.h
         src/physics/2d/Collision.cpp
         include/physics/2d/Collision.h
-        include/physics/CollidableObjectType.h
+        include/physics/2d/CollidableObjectType.h
         include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
@@ -305,7 +305,7 @@ add_executable(performance_test performance_test.cpp
         include/physics/2d/Hitbox.h
         src/physics/2d/Collision.cpp
         include/physics/2d/Collision.h
-        include/physics/CollidableObjectType.h
+        include/physics/2d/CollidableObjectType.h
         include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
@@ -388,7 +388,7 @@ add_library(game_lib STATIC
         include/physics/2d/Hitbox.h
         src/physics/2d/Collision.cpp
         include/physics/2d/Collision.h
-        include/physics/CollidableObjectType.h
+        include/physics/2d/CollidableObjectType.h
         include/physics/2d/CollisionAxis.h
         include/entity/player/sprites/PlayerSpriteState.h
         src/entity/player/sprites/PlayerSpriteHandler.cpp
