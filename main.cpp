@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "entity/PointParticles.h"
+#include "entity/SpriteParticles.h"
 #include "entity/objects/DashCrystal.h"
 #include "entity/objects/KillZone.h"
 #include "entity/objects/OneWayPlatform.h"
@@ -13,6 +14,7 @@
 #include "include/physics/ContactsHandler.h"
 #include "include/utility/InputManager.h"
 #include "utility/EmptyTextures.h"
+#include "utility/GameLevel.h"
 #include "utility/GameRender.h"
 #include "utility/SoundManager.h"
 
@@ -20,7 +22,7 @@ using namespace sf::Keyboard;
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(sf::VideoMode::getDesktopMode().size), "My Game");
-
+    std::cout << sf::VideoMode::getDesktopMode().size.x << " " << sf::VideoMode::getDesktopMode().size.y << std::endl;
     sf::Clock clock;
     SoundManager::loadBuffers();
     sf::Texture texture;
@@ -39,10 +41,10 @@ int main() {
     GameRender::getInstance().registerDrawable(player);
 
     sprite.setScale({1, 1});
-    auto box = std::make_shared<CollidableObject>(hitbox, sprite, sf::Vector2f{0, 200}, CollidableObjectType::Immovable);
-    // box->base_velocity = {20, 0};
-
-    GameRender::getInstance().registerDrawable(box);
+    // auto box = std::make_shared<CollidableObject>(hitbox, sprite, sf::Vector2f{0, 200}, CollidableObjectType::Immovable);
+    // // box->base_velocity = {20, 0};
+    //
+    // GameRender::getInstance().registerDrawable(box);
 
     auto touch_switches = TouchSwitch::makeTouchSwitches({{100, 75}, {180, 180}});
 
@@ -50,28 +52,50 @@ int main() {
         GameRender::getInstance().registerDrawable(ptr, 10);
     }
 
-    auto one_way_platform = std::make_shared<OneWayPlatform>(sf::Vector2f{100, 150});
-
-    GameRender::getInstance().registerDrawable(one_way_platform);
-
+    // auto one_way_platform = std::make_shared<OneWayPlatform>(sf::Vector2f{100, 150});
+    //
+    // GameRender::getInstance().registerDrawable(one_way_platform);
+    //
     auto kill_zone = std::make_shared<KillZone>(sf::Vector2f{250, 150}, sf::Vector2f{10, 10});
-    auto dash_crystal = std::make_shared<DashCrystal>(sf::Vector2f{50, 150});
-    GameRender::getInstance().registerDrawable(dash_crystal);
+    GameRender::getInstance().registerDrawable(kill_zone);
 
-    auto swap_block = std::make_shared<SwapBlock>(sf::Vector2f{20, 170}, sf::Vector2f{350, 170});
-    GameRender::getInstance().registerDrawable(swap_block);
+    // auto dash_crystal = std::make_shared<DashCrystal>(sf::Vector2f{50, 150});
+    // GameRender::getInstance().registerDrawable(dash_crystal);
+    //
+    // auto swap_block = std::make_shared<SwapBlock>(sf::Vector2f{20, 170}, sf::Vector2f{350, 170});
+    // GameRender::getInstance().registerDrawable(swap_block);
 
-    auto particles = std::make_shared<PointParticles>(1, PointParticles::FadingColor(sf::Color::Black), PointParticles::ExpDampedVelocity({10, 10}, 1), std::vector{sf::Vector2f{10, 100}}, std::vector{15.f});
-    GameRender::getInstance().registerDrawable(particles);
+    // auto particles = std::make_shared<PointParticles>(1, PointParticles::FadingColor(sf::Color::Black), PointParticles::ExpDampedVelocity({10, 10}, 1), std::vector{sf::Vector2f{10, 100}}, std::vector{15.f});
+    // GameRender::getInstance().registerDrawable(particles);
 
-    auto more_particles = std::make_shared<PointParticles>(6, PointParticles::FadingColor(sf::Color::Blue), PointParticles::ExpDampedVelocity({10, 10}, 1), Random::Vector2fRange({20, 100}, {30, 110}), Random::FloatRange(0.5, 1.2));
-    GameRender::getInstance().registerDrawable(more_particles);
+    // auto more_particles = std::make_shared<PointParticles>(6, PointParticles::FadingColor(sf::Color::Blue), PointParticles::ExpDampedVelocity({10, 10}, 1), Random::Vector2fRange({20, 100}, {30, 110}), Random::FloatRange(0.5, 1.2));
+    // GameRender::getInstance().registerDrawable(more_particles);
 
-    auto snow_particles = std::make_shared<PointParticles>(600, PointParticles::ConstantColor(sf::Color::Black), PointParticles::RandomSinWaveVelocity(Random::FloatRange(100, 180), Random::FloatRange(4, 10), Random::FloatRange(0.02, 0.03), Random::FloatRange(0, 1)), Random::Vector2fRange({-6.f * sf::VideoMode::getDesktopMode().size.x, 0}, {0,200}), Random::FloatRange(100, 100));
+    auto snow_particles = std::make_shared<PointParticles>(600, PointParticles::ConstantColor(sf::Color::White), PointParticles::RandomSinWaveVelocity(Random::FloatRange(100, 180), Random::FloatRange(4, 10), Random::FloatRange(0.02, 0.03), Random::FloatRange(0, 1)), Random::Vector2fRange({-6.f * sf::VideoMode::getDesktopMode().size.x, 0}, {0,200}), Random::FloatRange(100, 100));
     GameRender::getInstance().registerDrawable(snow_particles);
+
+    // auto sprite_particles = std::make_shared<SpriteParticles>(std::vector(2, TexturesHolder(4, "../assets/particles/smoke")), std::vector<sf::Vector2f>{{150, 150}, {160, 160}}, std::vector<float>{10, 10}, SpriteParticles::ConstantVelocity({0, 0}));
+    // GameRender::getInstance().registerDrawable(sprite_particles);
+    //
+    // auto sprite_particles_manager = SpriteParticlesManager();
+    // sprite_particles_manager.createParticles(std::vector(2, TexturesHolder(4, "../assets/particles/smoke")), std::vector<sf::Vector2f>{{130, 130}, {120, 120}}, std::vector<float>{10, 10}, SpriteParticles::ConstantVelocity({0, 0}));
+
+    // std::vector<std::shared_ptr<CollidableObject>> shared;
+    // shared.reserve(1000);
+    // for (int i = 0; i < 1000; i++) {
+    //     shared.push_back(std::make_shared<CollidableObject>(std::vector<sf::FloatRect>{{sf::Vector2f{0, 0}, Random::Vector2fRange({1, 1}, {2, 2}).getRandom()}}, sprite));
+    //     shared.back()->base_velocity.y = Random::FloatRange(1, 5).getRandom();
+    //     shared.back()->setPosition(Random::Vector2fRange({0, 0}, {200, 200}).getRandom());
+    //     shared.back()->gravity_acceleration = {0, 80};
+    // }
+
+    GameLevel game_level;
+    game_level.load();
+
     while (window.isOpen()) {
         sf::Time deltaTime = clock.restart();
-        const float dt = std::min(deltaTime.asSeconds(), 0.033f);
+        float dt = std::min(deltaTime.asSeconds(), 0.033f);
+        // dt /= 8; // SLOW-MO
 
         while (const std::optional<sf::Event> event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
@@ -131,6 +155,12 @@ int main() {
         text3.setFillColor(sf::Color::Black);
         text3.setPosition({0, 60});
 
+        sf::Text text4 = font;
+        text4.setString("x: " + std::to_string(player->getPosition().x) + " y: " + std::to_string(player->getPosition().y));
+        text4.setCharacterSize(25);
+        text4.setFillColor(sf::Color::Black);
+        text4.setPosition({0, 90});
+
         sf::Text text5 = font;
         text5.setString("onGround: " + std::to_string(ContactsHandler::getInstance().onLand(*player)) + std::to_string(player->isOnGround()) + " (according to onLand, player->onGround)");
         text5.setCharacterSize(25);
@@ -146,6 +176,7 @@ int main() {
         window.draw(text);
         window.draw(text2);
         window.draw(text3);
+        window.draw(text4);
         window.draw(text5);
         window.draw(text6);
 

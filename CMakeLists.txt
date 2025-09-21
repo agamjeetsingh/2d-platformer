@@ -89,6 +89,8 @@ if(PROJECT_IS_TOP_LEVEL)
         include/utility/Random.h
         src/utility/ThreadPool.cpp
         include/utility/ThreadPool.h
+        include/utility/GameLevel.cpp
+        include/utility/GameLevel.h
 )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 target_link_libraries(2d-platformer nlohmann_json::nlohmann_json)
