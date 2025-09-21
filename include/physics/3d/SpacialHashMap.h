@@ -4,10 +4,10 @@
 
 #ifndef SPACIALHASHMAP_H
 #define SPACIALHASHMAP_H
-#include "CollidableObject.h"
-
+#include <vector>
 
 namespace eng::d3 {
+    class CollidableObject;
     class SpacialHashMap {
     public:
         explicit SpacialHashMap(size_t size = DEFAULT_BUCKETS);

@@ -4,13 +4,13 @@
 
 #include "../../../../include/physics/3d/geometry/Box.h"
 
-constexpr bool eng::d3::Box::contains(Vector3f point) const {
+bool eng::d3::Box::contains(Vector3f point) const {
     return (position.x <= point.x && position.x + size.x >= point.x) &&
             (position.y <= point.y && position.y + size.y >= point.y) &&
             (position.z <= point.z && position.z + size.z >= point.z);
 }
 
-constexpr std::optional<eng::d3::Box> eng::d3::Box::findIntersection(const Box &other) const {
+std::optional<eng::d3::Box> eng::d3::Box::findIntersection(const Box &other) const {
     const float xMin = std::max(position.x, other.position.x);
     const float yMin = std::max(position.y, other.position.y);
     const float zMin = std::max(position.z, other.position.z);

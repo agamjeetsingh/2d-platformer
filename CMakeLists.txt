@@ -108,8 +108,6 @@ if(PROJECT_IS_TOP_LEVEL)
             include/physics/3d/geometry/Box.h
             src/physics/3d/CollisionsHandler.cpp
             include/physics/3d/CollisionsHandler.h
-            include/physics/3d/CollisionAxis.cpp
-            include/physics/3d/CollisionAxis.h
             src/physics/3d/SpacialHashMap.cpp
             include/physics/3d/SpacialHashMap.h
     )

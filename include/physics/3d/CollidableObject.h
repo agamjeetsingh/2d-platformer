@@ -4,7 +4,6 @@
 
 #ifndef COLLIDABLEOBJECT_H
 #define COLLIDABLEOBJECT_H
-#include "Collision.h"
 #include "Hitbox.h"
 #include "PhysicsObject.h"
 #include "geometry/Box.h"
@@ -12,6 +11,8 @@
 
 
 namespace eng::d3 {
+    struct Collision;
+    
     class CollidableObject : public PhysicsObject {
     public:
         /**

@@ -3,6 +3,8 @@
 //
 
 #include "../../../include/physics/3d/CollidableObject.h"
+#include "../../../include/physics/3d/CollisionsHandler.h"
+#include "../../../include/physics/3d/Collision.h"
 
 #include <cassert>
 

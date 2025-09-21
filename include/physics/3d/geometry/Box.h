@@ -17,9 +17,9 @@ namespace eng::d3 {
         Vector3f position;
         Vector3f size;
 
-        [[nodiscard]] constexpr bool contains(Vector3f point) const;
+        [[nodiscard]] bool contains(Vector3f point) const;
 
-        [[nodiscard]] constexpr std::optional<Box> findIntersection(const Box& other) const;
+        [[nodiscard]] std::optional<Box> findIntersection(const Box& other) const;
 
         [[nodiscard]] bool operator==(const Box& other) const { return position == other.position && size == other.size; }
     };

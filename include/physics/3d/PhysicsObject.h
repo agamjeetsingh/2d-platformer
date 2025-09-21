@@ -16,7 +16,7 @@ namespace eng::d3 {
          * @brief Constructs the Entity with the given sprite and position. Sets the sprite to the given position.
          * @param position the entity's position upon construction.
          */
-        explicit PhysicsObject(Vector3f position);
+        explicit PhysicsObject(Vector3f position = {0, 0, 0});
 
         virtual ~PhysicsObject() = default;
 

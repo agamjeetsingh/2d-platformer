@@ -4,9 +4,15 @@
 
 #ifndef COLLISION3D_H
 #define COLLISION3D_H
-#include "CollisionsHandler.h"
+#include <cstdio>
+
+#include "geometry/Vector3f.h"
 
 namespace eng::d3 {
+    class CollidableObject;
+    struct IncompleteCollision;
+    class Box;
+    
     struct Collision {
         Collision(CollidableObject& objectA, CollidableObject& objectB, IncompleteCollision incomplete_collision,
         std::size_t collidingBoxAIndex,
