@@ -75,6 +75,7 @@ inline fs::path resolveRelative(const fs::path& baseFile, const std::string& rel
 
 class GameLevel {
 public:
+    explicit GameLevel(CollisionsHandler& collisions_handler): collisions_handler(collisions_handler) {}
     void load() {
         std::string path = "../assets/levels/map.json";
         std::ifstream mapFile(path);
@@ -112,6 +113,7 @@ public:
                 sprite.setPosition({static_cast<float>(x * tileset->tileWidth), static_cast<float>(y * tileset->tileHeight)});
 
                 auto tile = std::make_shared<CollidableObject>(std::vector<sf::FloatRect>{{{0, 0}, {static_cast<float>(tileset->tileWidth), static_cast<float>(tileset->tileHeight)}}}, sprite, sprite.getPosition(), CollidableObjectType::Immovable);
+                collisions_handler.addObject(*tile);
                 GameRender::getInstance().registerDrawable(tile);
                 objects.emplace_back(tile);
             }
@@ -126,6 +128,7 @@ public:
                 {
                     auto dash_crystal = std::make_shared<DashCrystal>(
                         sf::Vector2f{object["x"].get<float>(), object["y"].get<float>()});
+                    collisions_handler.addObject(*dash_crystal);
                     GameRender::getInstance().registerDrawable(dash_crystal);
                     objects.emplace_back(dash_crystal);
                 }
@@ -135,6 +138,7 @@ public:
 private:
     std::vector<std::any> objects;
     std::vector<Tileset> tilesets;
+    CollisionsHandler& collisions_handler;
 };
 
 

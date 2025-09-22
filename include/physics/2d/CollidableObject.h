@@ -13,15 +13,14 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include "CollidableObjectType.h"
+#include "Collision.h"
 #include "PhysicsObject.h"
 class Player;
 
-struct Collision;
-
 class CollidableObject : public PhysicsObject {
 public:
-    /**
-     * @brief Constructor for CollidableObject. Adds the object to the \code CollisionsHandler\endcode .
+     /**
+     * @brief Constructor for CollidableObject.
      * Ensures the invariant that \code mass == 0\endcode if and only if type is \code CollidableObjectType::Immovable\endcode
      * since zero mass is our convention for infinite mass. Asserts that mass is non-negative (so all movables have a positive mass).
      * @param hitbox The hitbox of the CollidableObject

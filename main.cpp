@@ -25,11 +25,14 @@ int main() {
     sf::Clock clock;
     SoundManager::loadBuffers();
 
+    CollisionsHandler collisions_handler;
+
     auto player = std::make_shared<Player>(
         std::vector{ sf::FloatRect({0, 0}, {13, 12}) },
         std::vector{ sf::FloatRect({0, 4}, {13, 8}) },
         sf::Vector2f{50, 0}
     );
+    collisions_handler.addObject(*player);
 
     GameRender::getInstance().registerDrawable(player);
 
@@ -39,6 +42,9 @@ int main() {
     // GameRender::getInstance().registerDrawable(box);
 
     auto touch_switches = TouchSwitch::makeTouchSwitches({{100, 75}, {180, 180}});
+    for (const auto& touch_switch: touch_switches) {
+        collisions_handler.addObject(*touch_switch);
+    }
 
     for (const auto& ptr: touch_switches) {
         GameRender::getInstance().registerDrawable(ptr, 10);
@@ -50,6 +56,7 @@ int main() {
     //
     auto kill_zone = std::make_shared<KillZone>(sf::Vector2f{250, 150}, sf::Vector2f{10, 10});
     GameRender::getInstance().registerDrawable(kill_zone);
+    collisions_handler.addObject(*kill_zone);
 
     // auto dash_crystal = std::make_shared<DashCrystal>(sf::Vector2f{50, 150});
     // GameRender::getInstance().registerDrawable(dash_crystal);
@@ -81,7 +88,7 @@ int main() {
     //     shared.back()->gravity_acceleration = {0, 80};
     // }
 
-    GameLevel game_level;
+    GameLevel game_level(collisions_handler);
     game_level.load();
 
     while (window.isOpen()) {
@@ -110,7 +117,7 @@ int main() {
 
         EventBus::getInstance().execute(EventExecuteTime::PRE_PHYSICS);
 
-        CollisionsHandler::getInstance().update(dt);
+        collisions_handler.update(dt);
 
         EventBus::getInstance().execute(EventExecuteTime::POST_PHYSICS);
 
@@ -118,7 +125,7 @@ int main() {
 
         GameRender::getInstance().render(window, dt);
 
-        CollisionsHandler::getInstance().drawHitboxes();
+        collisions_handler.drawHitboxes();
         // Debug Statements Start
 
         sf::Font font;

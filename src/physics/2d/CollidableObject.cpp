@@ -22,7 +22,6 @@ CollidableObject::CollidableObject(std::vector<sf::FloatRect> hitbox,
     if (type == CollidableObjectType::Movable) {
         assert(mass != 0);
     }
-    CollisionsHandler::getInstance().addObject(*this);
 }
 
 [[nodiscard]] float CollidableObject::getInvMass() const {

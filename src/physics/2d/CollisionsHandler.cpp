@@ -30,11 +30,6 @@ std::size_t CollisionHash::operator()(const Collision& ref) const {
            std::hash<float>{}(ref.collisionTime);
 }
 
-CollisionsHandler& CollisionsHandler::getInstance() {
-    static CollisionsHandler instance;
-    return instance;
-}
-
 [[nodiscard]] const std::unordered_set<std::reference_wrapper<CollidableObject>, CollidableObjectRefHash, CollidableObjectRefEqual>& CollisionsHandler::getBodies() const {
     return bodies;
 }
@@ -528,7 +523,7 @@ void CollisionsHandler::buildSpatialMap() {
     auto updated = getCellSize(true);
 
     if (bodies.size() != spacial_map.getNumObjects()) {
-        spacial_map = SpacialHashMap{bodies.size()};
+        spacial_map = SpacialHashMap{this, bodies.size()};
     } else {
         spacial_map.clear();
     }
