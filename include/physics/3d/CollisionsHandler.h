@@ -61,12 +61,6 @@ namespace eng::d3 {
     class CollisionsHandler {
     public:
         /**
-         * @brief gives the instance of ColliderBodies.
-         * @return the singleton instance of ColliderBodies.
-         */
-        static CollisionsHandler& getInstance();
-
-        /**
          * @brief A const function that gives all the registered collider bodies.
          * @return the \code std::unordered_set\endcode that contains the reference to all the bodies.
          */

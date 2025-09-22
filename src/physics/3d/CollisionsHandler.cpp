@@ -29,11 +29,6 @@ std::size_t eng::d3::CollisionHash::operator()(const Collision& ref) const {
            std::hash<float>{}(ref.collisionTime);
 }
 
-eng::d3::CollisionsHandler&eng::d3::CollisionsHandler::getInstance() {
-    static CollisionsHandler instance;
-    return instance;
-}
-
 [[nodiscard]] const std::unordered_set<std::reference_wrapper<eng::d3::CollidableObject>,
     eng::d3::CollidableObjectRefHash, eng::d3::CollidableObjectRefEqual> &eng::d3::CollisionsHandler::getBodies() const {
     return bodies;

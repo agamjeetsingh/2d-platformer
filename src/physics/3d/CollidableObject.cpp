@@ -14,7 +14,6 @@ eng::d3::CollidableObject::CollidableObject(std::vector<Box> hitbox,
                                                           mass(mass),
                                                           hitbox({std::move(hitbox), this->position}){
     assert(mass >= 0);
-    CollisionsHandler::getInstance().addObject(*this);
 }
 
 [[nodiscard]] float eng::d3::CollidableObject::getInvMass() const {
