@@ -5,6 +5,9 @@ set(CMAKE_CXX_STANDARD 20)
 
 find_package(SFML 3.0.1 COMPONENTS Graphics Window System Audio REQUIRED)
 find_package(nlohmann_json 3.12.0 REQUIRED)
+include(FetchContent)
+find_package(glfw3 REQUIRED)
+find_package(glm REQUIRED)
 
 # Set include directories to avoid ../../../ hell
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -117,6 +120,10 @@ if(PROJECT_IS_TOP_LEVEL)
     )
 target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFML::Audio)
 target_link_libraries(2d-platformer nlohmann_json::nlohmann_json)
+    target_link_libraries(2d-platformer
+            glfw
+            glm::glm
+            "-framework OpenGL")
 
 # 2d-platformer with sanitizers (AddressSanitizer + UBSan + LeakSanitizer)
 add_executable(2d-platformer-sanitized main.cpp

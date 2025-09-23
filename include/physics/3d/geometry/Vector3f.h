@@ -6,6 +6,7 @@
 #define VECTOR3F_H
 
 #include <cmath>
+#include <glm/glm.hpp>
 
 namespace eng {
     class Vector3f {
@@ -13,6 +14,12 @@ namespace eng {
         Vector3f(const float x, const float y, const float z): x(x), y(y), z(z) {}
 
         Vector3f(): x(0.0f), y(0.0f), z(0.0f) {}
+
+        Vector3f(glm::vec3 glm_vec): x(glm_vec.x), y(glm_vec.y), z(glm_vec.z) {}
+
+        operator glm::vec3() const {
+            return {x, y, z};
+        }
 
         float x, y, z;
 
