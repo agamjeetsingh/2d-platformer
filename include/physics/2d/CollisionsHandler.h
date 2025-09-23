@@ -59,7 +59,7 @@ using BodiesHashTable = std::unordered_set<std::reference_wrapper<CollidableObje
 
 class CollisionsHandler {
 public:
-    CollisionsHandler(): spacial_map(this) {}
+    CollisionsHandler();
 
     /**
      * @brief A const function that gives all the registered collider bodies.

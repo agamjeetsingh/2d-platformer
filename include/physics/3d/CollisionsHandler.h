@@ -11,7 +11,6 @@
 #include "geometry/Box.h"
 #include "geometry/Vector3f.h"
 
-
 namespace eng::d3 {
     struct Collision;
 
@@ -60,7 +59,7 @@ namespace eng::d3 {
 
     class CollisionsHandler {
     public:
-        CollisionsHandler(): spacial_map(this) {}
+        CollisionsHandler();
 
         /**
          * @brief A const function that gives all the registered collider bodies.

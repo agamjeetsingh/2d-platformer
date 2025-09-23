@@ -14,6 +14,8 @@
 
 struct Collision;
 
+CollisionsHandler::CollisionsHandler(): spacial_map(this) {}
+
 std::size_t CollisionHash::operator()(const Collision& ref) const {
     return std::hash<void*>{}(&ref.objectA) ^
            std::hash<void*>{}(&ref.objectB) ^
