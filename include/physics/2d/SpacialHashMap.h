@@ -67,7 +67,6 @@ private:
 
     size_t num_objects = 0;
 
-    static std::vector<size_t> getHashes(const CollidableObject* ptr);
     CollisionsHandler* collisions_handler;
 
     std::vector<size_t> getHashes(const CollidableObject* ptr) const;
