@@ -6,8 +6,9 @@
 
 #include "entity/PointParticles.h"
 
-DashCrystal::DashCrystal(sf::Vector2f position): CollidableObject({{{3, 3}, {10, 10}}}, sf::Sprite{EmptyTextures::getInstance().getEmpty({16, 16})}, position),
-                                                 collision_listener(Listener::make_listener<Collision>([this](const Collision& collision) {
+DashCrystal::DashCrystal(sf::Vector2f position, SoundManager<SoundEffect>& sound_manager): CollidableObject({{{3, 3}, {10, 10}}}, sf::Sprite{EmptyTextures::getInstance().getEmpty({16, 16})}, position),
+                                                sound_manager(sound_manager),
+                                                 collision_listener(Listener::make_listener<Collision>([this, &sound_manager](const Collision& collision) {
                                                      if (&collision.objectA != this && &collision.objectB != this) return;
                                                      CollidableObject& other = &collision.objectA == this ? collision.objectB : collision.objectA;
                                                      if (!other.isPlayer()) return;
@@ -18,11 +19,11 @@ DashCrystal::DashCrystal(sf::Vector2f position): CollidableObject({{{3, 3}, {10,
                                                      state = DashCrystalState::EMPTY;
                                                      flash_textures_holder.reset();
                                                      full_crystal_texture_holder.reset();
-                                                     SoundManager::getInstance().play(crystal_touch_sound_effects[Random::getInstance().getInt(0, 2)]);
+                                                     sound_manager.play(crystal_touch_sound_effects[Random::getInstance().getInt(0, 2)]);
                                                      GameRender::getInstance().shake(axisToVector(collision.axis), 3, 6, 1);
-                                                     auto discard = Scheduler::getInstance().schedule([this](std::shared_ptr<ScheduledEvent> event, float dt) {
+                                                     auto discard = Scheduler::getInstance().schedule([this, &sound_manager](std::shared_ptr<ScheduledEvent> event, float dt) {
                                                          state = DashCrystalState::FULL;
-                                                         SoundManager::getInstance().play(crystal_return_sound_effects[Random::getInstance().getInt(0, 2)]);
+                                                         sound_manager.play(crystal_return_sound_effects[Random::getInstance().getInt(0, 2)]);
                                                      }, RESPAWN_TIME);
                                                  })),
                                                  state(DashCrystalState::FULL), full_crystal_texture_holder(5, "../assets/dashRefill/idle", std::vector<float>(5, 0.2f)),

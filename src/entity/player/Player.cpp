@@ -8,11 +8,11 @@
 
 #include "../../../include/entity/player/ability/AbilityDash.h"
 #include "events/PlayerLanded.h"
-#include "physics/ContactsHandler.h"
+#include "../../../include/physics/2d/ContactsHandler.h"
 #include "events/PlayerOnGround.h"
 #include "utility/EmptyTextures.h"
 
-Player::Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox,
+Player::Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox, SoundManager<SoundEffect>& sound_manager,
                sf::Vector2f position) :
 CollidableObject(uncrouched_hitbox, std::move(sf::Sprite{EmptyTextures::getInstance().getEmpty({32, 32})}), position),
 on_ground(Listener::make_listener<PlayerOnGround>([this](const PlayerOnGround& event) {
@@ -30,19 +30,24 @@ left_ground(Listener::make_listener<PlayerLeftGround>([this](const PlayerLeftGro
     Scheduler& scheduler = Scheduler::getInstance();
     auto discard = scheduler.schedule([this](std::shared_ptr<ScheduledEvent> event, float deltaTime) { canJumpDueToCoyoteGrace = false; }, JUMP_GRACE_COYOTE_TIME);
 }, ListenerPriority::HIGH)),
-landed(Listener::make_listener<PlayerLanded>([this](const PlayerLanded& event) {
+landed(Listener::make_listener<PlayerLanded>([this, &sound_manager](const PlayerLanded& event) {
     if (event.player != *this) return;
-    SoundManager::getInstance().play(SoundEffect::LAND);
+    sound_manager.play(SoundEffect::LAND);
     if (getTotalVelocity().y >= MAX_FALL) {
         squeeze({1.2, 0.8}, 0.05, 0.1);
     }
-}, ListenerPriority::HIGH)), uncrouched_hitbox(std::move(uncrouched_hitbox)), crouched_hitbox(std::move(crouched_hitbox)) {
+}, ListenerPriority::HIGH)), uncrouched_hitbox(std::move(uncrouched_hitbox)), crouched_hitbox(std::move(crouched_hitbox)), sound_manager(sound_manager), ability_dash(sound_manager, *this) {
     gravity_acceleration.y = GRAVITY;
 }
 
 void Player::tryJumpInFuture() {
-    auto cb = [this](std::shared_ptr<ScheduledEvent> event, float deltaTime){ tryJump(); };
-    auto discard = Scheduler::getInstance().schedule(std::move(cb), 0, true, 0, JUMP_GRACE_BUFFER_TIME);
+    auto discard = Scheduler::getInstance().schedule([this, time_elapsed = 0.f](std::shared_ptr<ScheduledEvent> event, float deltaTime) mutable {
+        time_elapsed += deltaTime;
+        if (time_elapsed >= JUMP_GRACE_BUFFER_TIME) {
+            event->cancel();
+        }
+        tryJump();
+    }, 0, true, 0);
 }
 
 
@@ -66,7 +71,7 @@ bool Player::tryDash() {
 
 void Player::kill() {
     if (dying) return;
-    SoundManager::getInstance().play(SoundEffect::DEATH);
+    sound_manager.play(SoundEffect::DEATH);
     sprite_state = PlayerSpriteState::Dead;
     disableGravity();
     friction_velocity = {0, 0};

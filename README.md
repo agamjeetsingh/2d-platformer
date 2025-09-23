@@ -66,32 +66,32 @@ Features include a physics engine, an extensible event bus, a flexible callback 
 ### Prerequisites
 - C++20 compiler (GCC 10+, Clang 10+, or MSVC 2019+)
 - CMake 3.31+
-- SFML 3.0.1+
+- GLFW 3.4+ (required; other dependencies are handled automatically)
 
-### Installing SFML
+### Installing GLFW
 **macOS (using Homebrew):**
 ```bash
-brew install sfml
+brew install glfw
 ```
 
 **Ubuntu/Debian:**
 ```bash
-# Note: Most package managers have older SFML versions
-# You may need to build SFML 3.0.1+ from source or use a PPA
 sudo apt update
-sudo apt install libsfml-dev  # This installs older version
-# For SFML 3.0.1+, consider building from source: https://github.com/SFML/SFML
+sudo apt install libglfw3-dev
 ```
 
-**Windows:**
-Download SFML 3.0.1+ from https://www.sfml-dev.org/download/
+Windows:
+Download GLFW from https://www.glfw.org/download.html
+and follow instructions to install it.
+
+⚠️ SFML 3.0.1+, GLM, and nlohmann_json are automatically downloaded and configured via CMake’s FetchContent. No manual installation required.
 
 ### Build & Run
 ```bash
-git clone https://github.com/agamjeetsingh/2d-platformer.git
+git clone https://github.com/agamjeetsingh/2d-game-engine.git
 cd 2d-platformer
 mkdir build && cd build
 cmake ..
-make
+cmake --build .  # or 'make' if using Makefiles
 ./2d-platformer
 ```

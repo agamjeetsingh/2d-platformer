@@ -17,7 +17,7 @@ void GameRender::render(sf::RenderWindow &window, float dt) {
             shake_time = 0.f;
         }
     }
-    render_texture.clear(sf::Color::White);
+    render_texture.clear(sf::Color::Black);
     auto it = drawables.begin();
     while (it != drawables.end()) {
         auto sprites = it->first(dt);

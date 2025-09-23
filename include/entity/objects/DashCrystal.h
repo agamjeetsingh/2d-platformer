@@ -7,16 +7,15 @@
 #include <random>
 
 #include "DashCrystalState.h"
-#include "entity/CollidableObject.h"
 #include "entity/player/Player.h"
-#include "events/Collision.h"
+#include "../../physics/2d/Collision.h"
 #include "events/Listener.h"
 #include "utility/EmptyTextures.h"
 #include "utility/GameRender.h"
 
 class DashCrystal: public CollidableObject {
 public:
-    explicit DashCrystal(sf::Vector2f position = {0, 0});
+    explicit DashCrystal(sf::Vector2f position, SoundManager<SoundEffect>& sound_manager);
 
     bool canCollideWith(const CollidableObject &, Collision collision) const override;
 
@@ -34,6 +33,7 @@ private:
     float time_moving = 0;
 
     DashCrystalState state;
+    SoundManager<SoundEffect>& sound_manager;
 
     sf::Texture empty_crystal_texture;
     sf::RenderTexture combined_render_texture;

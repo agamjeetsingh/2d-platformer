@@ -12,19 +12,19 @@
 #include "ability/DashDirection.h"
 #include "sprites/Facing.h"
 #include "sprites/PlayerSpriteState.h"
-#include "../CollidableObject.h"
+#include "../../physics/2d/CollidableObject.h"
 #include "sprites/PlayerSpriteHandler.h"
 #include "../../utility/Scheduler.h"
 #include "events/Listener.h"
 #include "events/PlayerLeftGround.h"
-#include "physics/ContactsHandler.h"
+#include "../../physics/2d/ContactsHandler.h"
 
 class ContactsHandler;
 struct PlayerOnGround;
 
 class Player final : public CollidableObject {
 public:
-    explicit Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox,
+    explicit Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox, SoundManager<SoundEffect>& sound_manager,
         sf::Vector2f position = {0, 0});
 
     static constexpr float MAX_STAMINA = 110;
@@ -116,7 +116,7 @@ public:
 
     // Dash
     bool dashCapacity = true;
-    AbilityDash ability_dash{*this};
+    AbilityDash ability_dash;
 
     // ===== Player Death =====
 
@@ -132,7 +132,7 @@ public:
 
     void uncrouch();
 
-    bool isCrouching() {
+    bool isCrouching() const {
         return crouching;
     }
 
@@ -147,6 +147,8 @@ private:
 
     std::vector<sf::FloatRect> uncrouched_hitbox;
     std::vector<sf::FloatRect> crouched_hitbox;
+
+    SoundManager<SoundEffect>& sound_manager;
 
     bool onGround = false;
     bool crouching = false;

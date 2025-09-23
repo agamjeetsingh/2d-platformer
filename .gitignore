@@ -1,0 +1,8 @@
+# CLion/CMake build directories
+cmake-build-*
+_build/
+CMakeFiles/
+CMakeCache.txt
+Makefile
+build.ninja
+.idea

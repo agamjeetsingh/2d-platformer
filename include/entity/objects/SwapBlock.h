@@ -4,7 +4,6 @@
 
 #ifndef SWAPBLOCK_H
 #define SWAPBLOCK_H
-#include "entity/CollidableObject.h"
 #include "events/Listener.h"
 #include "events/PlayerDashEvent.h"
 #include "utility/EmptyTextures.h"
@@ -13,7 +12,7 @@
 
 class SwapBlock final : public CollidableObject {
 public:
-    SwapBlock(sf::Vector2f starting_pos, sf::Vector2f ending_pos);
+    SwapBlock(sf::Vector2f starting_pos, sf::Vector2f ending_pos, SoundManager<SoundEffect>& sound_manager);
 
     void updateSprite(float deltaTime);
 
@@ -41,8 +40,9 @@ private:
 
     sf::Texture start_texture;
     sf::Texture end_texture;
+    SoundManager<SoundEffect>& sound_manager;
 
-    SoundLoop sound_loop{SoundEffect::SWAP_BLOCK_RETURN_LOOP_INTRO, SoundEffect::SWAP_BLOCK_RETURN_LOOP, SoundEffect::SWAP_BLOCK_RETURN_LOOP_END};
+    SoundLoop sound_loop{sound_manager, SoundEffect::SWAP_BLOCK_RETURN_LOOP_INTRO, SoundEffect::SWAP_BLOCK_RETURN_LOOP, SoundEffect::SWAP_BLOCK_RETURN_LOOP_END};
 };
 
 
