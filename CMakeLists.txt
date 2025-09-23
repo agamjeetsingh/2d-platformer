@@ -125,7 +125,7 @@ if(PROJECT_IS_TOP_LEVEL)
         include/entity/objects/Portal.h
         src/utility/ThreadPool.cpp
         include/utility/ThreadPool.h
-        include/utility/GameLevel.cpp
+            src/utility/GameLevel.cpp
         include/utility/GameLevel.h
             src/physics/3d/Collision.cpp
             include/physics/3d/Collision.h
@@ -497,7 +497,7 @@ add_library(game_lib STATIC
         include/entity/objects/Portal.h
         src/utility/ThreadPool.cpp
         include/utility/ThreadPool.h
-        include/utility/GameLevel.cpp
+        src/utility/GameLevel.cpp
         include/utility/GameLevel.h
         src/physics/3d/Collision.cpp
         include/physics/3d/Collision.h
