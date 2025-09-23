@@ -10,9 +10,9 @@
 #include "SpacialHashMap.h"
 #include "geometry/Box.h"
 #include "geometry/Vector3f.h"
+#include "Collision.h"
 
 namespace eng::d3 {
-    struct Collision;
 
     struct IncompleteCollision {
         Box collidingBoxA;
