@@ -24,7 +24,7 @@ struct PlayerOnGround;
 
 class Player final : public CollidableObject {
 public:
-    explicit Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox,
+    explicit Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox, SoundManager& sound_manager,
         sf::Vector2f position = {0, 0});
 
     static constexpr float MAX_STAMINA = 110;
@@ -116,7 +116,7 @@ public:
 
     // Dash
     bool dashCapacity = true;
-    AbilityDash ability_dash{*this};
+    AbilityDash ability_dash;
 
     // ===== Player Death =====
 
@@ -147,6 +147,8 @@ private:
 
     std::vector<sf::FloatRect> uncrouched_hitbox;
     std::vector<sf::FloatRect> crouched_hitbox;
+
+    SoundManager& sound_manager;
 
     bool onGround = false;
     bool crouching = false;

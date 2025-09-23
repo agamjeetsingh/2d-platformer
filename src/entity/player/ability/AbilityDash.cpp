@@ -10,11 +10,12 @@
 #include "events/PlayerDashEvent.h"
 #include "utility/GameRender.h"
 
-AbilityDash::AbilityDash(Player &player):
+AbilityDash::AbilityDash(SoundManager& sound_manager, Player &player):
 Ability(player),
 snapshot_first(std::make_shared<DashSnapshot>(player)),
 snapshot_second(std::make_shared<DashSnapshot>(player)),
-snapshot_third(std::make_shared<DashSnapshot>(player)) {}
+snapshot_third(std::make_shared<DashSnapshot>(player)),
+sound_manager(sound_manager) {}
 
 
 bool AbilityDash::canPerform() const {
@@ -57,7 +58,7 @@ void AbilityDash::perform() {
         if (call_during) call_during->cancel();
     };
     dash_reset = Scheduler::getInstance().schedule(std::move(dash_reset_func), Player::DASH_SPEED_TIME);
-    SoundManager::getInstance().play(directionToSoundEffect(direction));
+    sound_manager.play(directionToSoundEffect(direction));
 
     auto dash_snapshot_func_first = [this, alpha = static_cast<float>(255)](std::shared_ptr<ScheduledEvent> event, float deltaTime) mutable {
         snapshot_first->setAlpha(static_cast<uint8_t>(alpha));

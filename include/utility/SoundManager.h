@@ -14,15 +14,28 @@
 
 class SoundManager {
 public:
-    static SoundManager& getInstance();
-
     std::shared_ptr<sf::Sound> play(SoundEffect sound_effect, bool loop = false, float volume = 100);
 
-    static void loadBuffers() { getInstance(); }
-
-    float getDuration(SoundEffect sound_effect) const;
+    [[nodiscard]] float getDuration(SoundEffect sound_effect) const;
 
     void removeExpiredSounds();
+
+    bool registerSoundEffect(const SoundEffect effect, const std::string& filename) {
+        static bool first_time = true;
+        const bool success = buffers[effect].loadFromFile(filename);
+        if (!success) {
+            std::cerr << "Error: Could not load " << filename << std::endl;
+        }
+
+        if (first_time) {
+            sf::Sound dummy(buffers.begin()->second);
+            dummy.play();
+            dummy.stop();
+        }
+        first_time = false;
+
+        return success;
+    }
 
 private:
     std::unordered_map<SoundEffect, sf::SoundBuffer> buffers = {};
@@ -31,8 +44,6 @@ private:
     sf::Clock clock;
 
     std::mutex sound_mutex;
-
-    SoundManager();
 };
 
 

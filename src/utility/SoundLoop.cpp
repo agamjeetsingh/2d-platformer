@@ -4,15 +4,15 @@
 
 #include "../../include/utility/SoundLoop.h"
 
-SoundLoop::SoundLoop(SoundEffect loop_begin, SoundEffect loop, SoundEffect loop_end) : loop_begin(loop_begin), loop(loop), loop_end(loop_end) {}
+SoundLoop::SoundLoop(SoundManager& sound_manager, SoundEffect loop_begin, SoundEffect loop, SoundEffect loop_end) : sound_manager(sound_manager), loop_begin(loop_begin), loop(loop), loop_end(loop_end) {}
 
 void SoundLoop::start() {
-    begin_sound = SoundManager::getInstance().play(loop_begin);
+    begin_sound = sound_manager.play(loop_begin);
     if (start_loop_event) start_loop_event->cancel();
     start_loop_event = Scheduler::getInstance().schedule([this](std::shared_ptr<ScheduledEvent> event, float dt) {
         if (loop_sound) loop_sound->stop();
-        loop_sound = SoundManager::getInstance().play(loop, true);
-    }, SoundManager::getInstance().getDuration(loop_begin));
+        loop_sound = sound_manager.play(loop, true);
+    }, sound_manager.getDuration(loop_begin));
 }
 
 void SoundLoop::end() {
@@ -22,7 +22,7 @@ void SoundLoop::end() {
     if (loop_sound) {
         loop_sound->stop();
     }
-    end_sound = SoundManager::getInstance().play(loop_end);
+    end_sound = sound_manager.play(loop_end);
 }
 
 void SoundLoop::abort() const {
