@@ -60,6 +60,8 @@ namespace eng::d3 {
 
     class CollisionsHandler {
     public:
+        CollisionsHandler(): spacial_map(this) {}
+
         /**
          * @brief A const function that gives all the registered collider bodies.
          * @return the \code std::unordered_set\endcode that contains the reference to all the bodies.
