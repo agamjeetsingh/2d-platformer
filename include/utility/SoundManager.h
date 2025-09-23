@@ -10,9 +10,11 @@
 #include <vector>
 #include <SFML/Audio.hpp>
 
-template <typename Key>
+template <typename Key = std::string, typename Hash = std::hash<Key>, typename KeyEqual = std::equal_to<Key>>
 class SoundManager {
 public:
+    SoundManager(Hash hash = Hash{}, KeyEqual equal = KeyEqual{}): buffers(0, hash, equal) {}
+
     std::shared_ptr<sf::Sound> play(Key sound_effect, const bool loop = false, float volume = 100) {
         removeExpiredSounds();
         volume = std::clamp(volume, 0.f, 100.f);
@@ -72,7 +74,7 @@ public:
     }
 
 private:
-    std::unordered_map<Key, sf::SoundBuffer> buffers = {};
+    std::unordered_map<Key, sf::SoundBuffer, Hash, KeyEqual> buffers = {};
     std::map<float, std::pair<std::shared_ptr<sf::Sound>, Key>> sounds;
     std::vector<float> sound_lifetimes; // In seconds
     sf::Clock clock;
