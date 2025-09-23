@@ -5,7 +5,7 @@
 #include "../../../include/physics/2d/SpacialHashMap.h"
 #include "../../../include/physics/2d/CollisionsHandler.h"
 
-SpacialHashMap::SpacialHashMap(size_t size) : num_buckets(size) {
+SpacialHashMap::SpacialHashMap(CollisionsHandler* collisions_handler, size_t size) : num_buckets(size), collisions_handler(collisions_handler) {
     buckets = std::vector<std::vector<CollidableObject*>>{4 * size / 3};
 }
 
@@ -39,8 +39,8 @@ std::vector<std::pair<CollidableObject *, CollidableObject *> > SpacialHashMap::
     return pairs;
 }
 
-std::vector<size_t> SpacialHashMap::getHashes(const CollidableObject *ptr) {
-    const float cellSize = CollisionsHandler::getInstance().getCellSize();
+std::vector<size_t> SpacialHashMap::getHashes(const CollidableObject *ptr) const {
+    const float cellSize = collisions_handler->getCellSize();
     const auto bounds = ptr->getHitbox().getBounds();
     
     const int cellX_min = static_cast<int>(std::floor(bounds.position.x / cellSize));

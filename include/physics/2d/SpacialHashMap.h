@@ -6,6 +6,7 @@
 #define SPACIALHASHMAP_H
 #include <vector>
 
+class CollisionsHandler;
 class CollidableObject;
 
 class HashIterator {
@@ -43,7 +44,7 @@ struct HashRange {
 
 class SpacialHashMap {
 public:
-    explicit SpacialHashMap(size_t size = DEFAULT_BUCKETS);
+    explicit SpacialHashMap(CollisionsHandler* collisions_handler, size_t size = DEFAULT_BUCKETS);
 
     [[nodiscard]] size_t getSize() const {
         return num_buckets;
@@ -67,6 +68,10 @@ private:
     size_t num_objects = 0;
 
     static std::vector<size_t> getHashes(const CollidableObject* ptr);
+    CollisionsHandler* collisions_handler;
+
+    std::vector<size_t> getHashes(const CollidableObject* ptr) const;
+
 
     static constexpr size_t DEFAULT_BUCKETS = 16;
 };
