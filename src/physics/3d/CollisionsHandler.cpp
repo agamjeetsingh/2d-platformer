@@ -182,7 +182,7 @@ void eng::d3::CollisionsHandler::buildSpatialMap() {
     auto updated = getCellSize(true);
 
     if (bodies.size() != spacial_map.getNumObjects()) {
-        spacial_map = SpacialHashMap{bodies.size()};
+        spacial_map = SpacialHashMap{this, bodies.size()};
     } else {
         spacial_map.clear();
     }
