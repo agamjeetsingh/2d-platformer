@@ -76,8 +76,7 @@ inline fs::path resolveRelative(const fs::path& baseFile, const std::string& rel
 class GameLevel {
 public:
     explicit GameLevel(CollisionsHandler& collisions_handler, SoundManager<SoundEffect>& sound_manager): collisions_handler(collisions_handler), sound_manager(sound_manager) {}
-    void load() {
-        std::string path = "../assets/levels/map.json";
+    void load(const std::string& path) {
         std::ifstream mapFile(path);
         json map;
         mapFile >> map;
@@ -93,47 +92,61 @@ public:
         int height = map["height"];
         auto layers = map["layers"];
 
-        auto data = layers[0]["data"];
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; ++x) {
-                int gid = data[y * width + x];
-                if (gid == 0) continue; // empty
+        for (const auto& layer : layers) {
+            std::string type = layer["type"];
 
-                const Tileset* tileset = nullptr;
-                for (auto& ts : tilesets) {
-                    if (gid >= ts.firstgid) {
-                        tileset = &ts;
+            if (type == "tilelayer") {
+                auto data = layer["data"];
+                for (int y = 0; y < height; ++y) {
+                    for (int x = 0; x < width; ++x) {
+                        int gid = data[y * width + x];
+                        if (gid == 0) continue;
+
+                        const Tileset* tileset = nullptr;
+                        for (auto& ts : tilesets) {
+                            if (gid >= ts.firstgid) {
+                                tileset = &ts;
+                            }
+                        }
+                        assert(tileset);
+
+                        int localID = gid - tileset->firstgid;
+
+                        sf::Sprite sprite = tileset->getSprite(localID);
+                        sprite.setPosition({static_cast<float>(x * tileset->tileWidth), static_cast<float>(y * tileset->tileHeight)});
+
+                        auto tile = std::make_shared<CollidableObject>(
+                            std::vector<sf::FloatRect>{{{0,0}, {static_cast<float>(tileset->tileWidth), static_cast<float>(tileset->tileHeight)}}},
+                            sprite,
+                            sprite.getPosition(),
+                            CollidableObjectType::Immovable
+                        );
+                        collisions_handler.addObject(*tile);
+                        GameRender::getInstance().registerDrawable(tile);
+                        objects.emplace_back(tile);
                     }
                 }
-                assert(tileset);
-
-                int localID = gid - tileset->firstgid;
-
-                sf::Sprite sprite = tileset->getSprite(localID);
-                sprite.setPosition({static_cast<float>(x * tileset->tileWidth), static_cast<float>(y * tileset->tileHeight)});
-
-                auto tile = std::make_shared<CollidableObject>(std::vector<sf::FloatRect>{{{0, 0}, {static_cast<float>(tileset->tileWidth), static_cast<float>(tileset->tileHeight)}}}, sprite, sprite.getPosition(), CollidableObjectType::Immovable);
-                collisions_handler.addObject(*tile);
-                GameRender::getInstance().registerDrawable(tile);
-                objects.emplace_back(tile);
             }
-        }
-
-        auto object_layer = layers[1]["objects"];
-        for (const auto& object: object_layer) {
-            const auto& properties = object["properties"];
-            for (const auto& prop : properties) {
-                if (prop["name"].get<std::string>() == "dash_crystal" &&
-                    prop["value"].get<bool>())
-                {
-                    auto dash_crystal = std::make_shared<DashCrystal>(
-                        sf::Vector2f{object["x"].get<float>(), object["y"].get<float>()}, sound_manager);
-                    collisions_handler.addObject(*dash_crystal);
-                    GameRender::getInstance().registerDrawable(dash_crystal);
-                    objects.emplace_back(dash_crystal);
+            else if (type == "objectgroup") {
+                for (const auto& object : layer["objects"]) {
+                    const auto& properties = object["properties"];
+                    for (const auto& prop : properties) {
+                        if (prop["name"].get<std::string>() == "dash_crystal" &&
+                            prop["value"].get<bool>())
+                        {
+                            auto dash_crystal = std::make_shared<DashCrystal>(
+                                sf::Vector2f{object["x"].get<float>(), object["y"].get<float>()},
+                                sound_manager
+                            );
+                            collisions_handler.addObject(*dash_crystal);
+                            GameRender::getInstance().registerDrawable(dash_crystal);
+                            objects.emplace_back(dash_crystal);
+                        }
+                    }
                 }
             }
         }
+
     }
 private:
     std::vector<std::any> objects;
