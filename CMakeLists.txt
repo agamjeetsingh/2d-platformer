@@ -3,7 +3,15 @@ project(2d-platformer)
 
 set(CMAKE_CXX_STANDARD 20)
 
-find_package(SFML 3.0.1 COMPONENTS Graphics Window System Audio REQUIRED)
+include(FetchContent)
+
+FetchContent_Declare(
+        SFML
+        GIT_REPOSITORY https://github.com/SFML/SFML.git
+        GIT_TAG 3.0.1
+)
+FetchContent_MakeAvailable(SFML)
+
 find_package(nlohmann_json 3.12.0 REQUIRED)
 include(FetchContent)
 find_package(glfw3 REQUIRED)
@@ -124,6 +132,11 @@ target_link_libraries(2d-platformer nlohmann_json::nlohmann_json)
             glfw
             glm::glm
             "-framework OpenGL")
+    add_custom_command(TARGET 2d-platformer POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/assets
+            $<TARGET_FILE_DIR:2d-platformer>/assets
+    )
 
 # 2d-platformer with sanitizers (AddressSanitizer + UBSan + LeakSanitizer)
 add_executable(2d-platformer-sanitized main.cpp
@@ -211,8 +224,6 @@ target_compile_options(2d-platformer-sanitized PRIVATE -fsanitize=address,undefi
 target_link_options(2d-platformer-sanitized PRIVATE -fsanitize=address,undefined)
 target_link_libraries(2d-platformer-sanitized SFML::Graphics SFML::Window SFML::System SFML::Audio)
 
-find_package(SFML 3.0.1 COMPONENTS Graphics Window System Audio REQUIRED)
-
 add_executable(2d-platformer-tsan main.cpp
         include/utility/InputManager.h
         src/physics/2d/CollisionsHandler.cpp
@@ -298,8 +309,6 @@ add_executable(2d-platformer-tsan main.cpp
 target_compile_options(2d-platformer-tsan PRIVATE -fsanitize=thread -g)
 target_link_options(2d-platformer-tsan PRIVATE -fsanitize=thread)
 target_link_libraries(2d-platformer-tsan SFML::Graphics SFML::Window SFML::System SFML::Audio)
-
-find_package(SFML 3.0.1 COMPONENTS Graphics Window System Audio REQUIRED)
 
 # Performance test executable
 add_executable(performance_test performance_test.cpp
