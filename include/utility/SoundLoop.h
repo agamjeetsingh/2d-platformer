@@ -11,7 +11,7 @@
 
 class SoundLoop {
 public:
-    SoundLoop(SoundManager& sound_manager, SoundEffect loop_begin, SoundEffect loop, SoundEffect loop_end);
+    SoundLoop(SoundManager<SoundEffect>& sound_manager, SoundEffect loop_begin, SoundEffect loop, SoundEffect loop_end);
 
     void start();
 
@@ -20,7 +20,7 @@ public:
     void abort() const;
 
 private:
-    SoundManager& sound_manager;
+    SoundManager<SoundEffect>& sound_manager;
     SoundEffect loop_begin;
     SoundEffect loop;
     SoundEffect loop_end;

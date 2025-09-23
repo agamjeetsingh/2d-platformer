@@ -24,7 +24,7 @@ struct PlayerOnGround;
 
 class Player final : public CollidableObject {
 public:
-    explicit Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox, SoundManager& sound_manager,
+    explicit Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox, SoundManager<SoundEffect>& sound_manager,
         sf::Vector2f position = {0, 0});
 
     static constexpr float MAX_STAMINA = 110;
@@ -148,7 +148,7 @@ private:
     std::vector<sf::FloatRect> uncrouched_hitbox;
     std::vector<sf::FloatRect> crouched_hitbox;
 
-    SoundManager& sound_manager;
+    SoundManager<SoundEffect>& sound_manager;
 
     bool onGround = false;
     bool crouching = false;

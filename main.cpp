@@ -25,7 +25,7 @@ int main() {
     sf::Clock clock;
 
     CollisionsHandler collisions_handler;
-    SoundManager sound_manager;
+    SoundManager<SoundEffect> sound_manager;
 
     sound_manager.registerSoundEffect(SoundEffect::DASH_LEFT, "../assets/player/audio/dash_red_left.wav");
     sound_manager.registerSoundEffect(SoundEffect::DASH_RIGHT, "../assets/player/audio/dash_red_right.wav");

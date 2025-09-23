@@ -75,7 +75,7 @@ inline fs::path resolveRelative(const fs::path& baseFile, const std::string& rel
 
 class GameLevel {
 public:
-    explicit GameLevel(CollisionsHandler& collisions_handler, SoundManager& sound_manager): collisions_handler(collisions_handler), sound_manager(sound_manager) {}
+    explicit GameLevel(CollisionsHandler& collisions_handler, SoundManager<SoundEffect>& sound_manager): collisions_handler(collisions_handler), sound_manager(sound_manager) {}
     void load() {
         std::string path = "../assets/levels/map.json";
         std::ifstream mapFile(path);
@@ -139,7 +139,7 @@ private:
     std::vector<std::any> objects;
     std::vector<Tileset> tilesets;
     CollisionsHandler& collisions_handler;
-    SoundManager& sound_manager;
+    SoundManager<SoundEffect>& sound_manager;
 };
 
 

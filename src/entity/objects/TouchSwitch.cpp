@@ -6,7 +6,7 @@
 
 #include "utility/SoundManager.h"
 
-TouchSwitch::TouchSwitch(SoundManager& sound_manager, sf::Vector2f position):
+TouchSwitch::TouchSwitch(SoundManager<SoundEffect>& sound_manager, sf::Vector2f position):
 CollidableObject({{{2, 2}, {16, 16}}}, sf::Sprite{{EmptyTextures::getInstance().getEmpty({20, 20})}}, position),
 collision_listener(Listener::make_listener<Collision>([this](const Collision& collision) {
     if (&collision.objectA != this && &collision.objectB != this) return;
@@ -72,7 +72,7 @@ bool TouchSwitch::areAllActivated() const {
     });
 }
 
-std::vector<std::shared_ptr<TouchSwitch>> TouchSwitch::makeTouchSwitches(const std::vector<sf::Vector2f>& positions, SoundManager& sound_manager)  {
+std::vector<std::shared_ptr<TouchSwitch>> TouchSwitch::makeTouchSwitches(const std::vector<sf::Vector2f>& positions, SoundManager<SoundEffect>& sound_manager)  {
     std::vector<std::shared_ptr<TouchSwitch>> switches;
 
     switches.reserve(positions.size());

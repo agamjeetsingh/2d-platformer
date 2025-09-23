@@ -12,7 +12,7 @@
 #include "events/PlayerOnGround.h"
 #include "utility/EmptyTextures.h"
 
-Player::Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox, SoundManager& sound_manager,
+Player::Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox, SoundManager<SoundEffect>& sound_manager,
                sf::Vector2f position) :
 CollidableObject(uncrouched_hitbox, std::move(sf::Sprite{EmptyTextures::getInstance().getEmpty({32, 32})}), position),
 on_ground(Listener::make_listener<PlayerOnGround>([this](const PlayerOnGround& event) {

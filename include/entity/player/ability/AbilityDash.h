@@ -37,7 +37,7 @@ private:
 
 class AbilityDash final : public Ability {
 public:
-    explicit AbilityDash(SoundManager& sound_manager, Player& player);
+    explicit AbilityDash(SoundManager<SoundEffect>& sound_manager, Player& player);
 
     [[nodiscard]] bool canPerform() const override;
 
@@ -59,7 +59,7 @@ private:
     std::shared_ptr<DashSnapshot> snapshot_third;
     std::shared_ptr<PointParticles> particles; // TODO - Fix, this will cause only one set of particles to exist right now
     sf::Vector2f dash_velocity;
-    SoundManager& sound_manager;
+    SoundManager<SoundEffect>& sound_manager;
 };
 
 

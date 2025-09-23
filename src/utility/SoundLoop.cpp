@@ -4,7 +4,7 @@
 
 #include "../../include/utility/SoundLoop.h"
 
-SoundLoop::SoundLoop(SoundManager& sound_manager, SoundEffect loop_begin, SoundEffect loop, SoundEffect loop_end) : sound_manager(sound_manager), loop_begin(loop_begin), loop(loop), loop_end(loop_end) {}
+SoundLoop::SoundLoop(SoundManager<SoundEffect>& sound_manager, SoundEffect loop_begin, SoundEffect loop, SoundEffect loop_end) : sound_manager(sound_manager), loop_begin(loop_begin), loop(loop), loop_end(loop_end) {}
 
 void SoundLoop::start() {
     begin_sound = sound_manager.play(loop_begin);

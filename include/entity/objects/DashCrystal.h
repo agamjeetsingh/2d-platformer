@@ -15,7 +15,7 @@
 
 class DashCrystal: public CollidableObject {
 public:
-    explicit DashCrystal(sf::Vector2f position, SoundManager& sound_manager);
+    explicit DashCrystal(sf::Vector2f position, SoundManager<SoundEffect>& sound_manager);
 
     bool canCollideWith(const CollidableObject &, Collision collision) const override;
 
@@ -33,7 +33,7 @@ private:
     float time_moving = 0;
 
     DashCrystalState state;
-    SoundManager& sound_manager;
+    SoundManager<SoundEffect>& sound_manager;
 
     sf::Texture empty_crystal_texture;
     sf::RenderTexture combined_render_texture;

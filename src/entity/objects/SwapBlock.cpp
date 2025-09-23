@@ -4,7 +4,7 @@
 
 #include "../../../include/entity/objects/SwapBlock.h"
 
-SwapBlock::SwapBlock(sf::Vector2f starting_pos, sf::Vector2f ending_pos, SoundManager& sound_manager): CollidableObject({{{0, 0}, {24, 24}}}, sf::Sprite{EmptyTextures::getInstance().getEmpty({24, 24})}, starting_pos, CollidableObjectType::Immovable),
+SwapBlock::SwapBlock(sf::Vector2f starting_pos, sf::Vector2f ending_pos, SoundManager<SoundEffect>& sound_manager): CollidableObject({{{0, 0}, {24, 24}}}, sf::Sprite{EmptyTextures::getInstance().getEmpty({24, 24})}, starting_pos, CollidableObjectType::Immovable),
                                                                           dash_listener(Listener::make_listener<PlayerDashEvent>([this](const PlayerDashEvent& event) {
                                                                               // Starting swap
                                                                               base_velocity = swap_velocity;

@@ -10,7 +10,7 @@
 #include "events/PlayerDashEvent.h"
 #include "utility/GameRender.h"
 
-AbilityDash::AbilityDash(SoundManager& sound_manager, Player &player):
+AbilityDash::AbilityDash(SoundManager<SoundEffect>& sound_manager, Player &player):
 Ability(player),
 snapshot_first(std::make_shared<DashSnapshot>(player)),
 snapshot_second(std::make_shared<DashSnapshot>(player)),

@@ -11,12 +11,13 @@
 #include "physics/2d/CollidableObject.h"
 #include "utility/EmptyTextures.h"
 #include "utility/GameRender.h"
+#include "utility/SoundEffect.h"
 #include "utility/SoundManager.h"
 
 
 class TouchSwitch final : public CollidableObject {
 public:
-    explicit TouchSwitch(SoundManager& sound_manager, sf::Vector2f position = {0, 0});
+    explicit TouchSwitch(SoundManager<SoundEffect>& sound_manager, sf::Vector2f position = {0, 0});
 
     void updateSprite(float deltaTime);
 
@@ -30,7 +31,7 @@ public:
 
     bool areAllActivated() const;
 
-    [[nodiscard]] static std::vector<std::shared_ptr<TouchSwitch>> makeTouchSwitches(const std::vector<sf::Vector2f>& positions, SoundManager& sound_manager);
+    [[nodiscard]] static std::vector<std::shared_ptr<TouchSwitch>> makeTouchSwitches(const std::vector<sf::Vector2f>& positions, SoundManager<SoundEffect>& sound_manager);
 
 private:
     bool activated = false;
@@ -44,7 +45,7 @@ private:
 
     Listener collision_listener;
     TouchSwitch* leader;
-    SoundManager& sound_manager;
+    SoundManager<SoundEffect>& sound_manager;
 
     void updateState();
 };
