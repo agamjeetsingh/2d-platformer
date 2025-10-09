@@ -6,9 +6,11 @@ Features include a physics engine, an extensible event bus, a flexible callback 
 
 ---
 
-## Demo GIF
+## Example Game GIF
 
 ![Demo](assets/demo.gif)
+
+Demo uses sprites and tiles from Celeste (© Maddy Makes Games), used here for non-commercial demonstration purposes only.
 
 ## Features
 - **Physics Engine**
@@ -74,11 +76,6 @@ cmake --build .
 
 ---
 
-## Example Game
-
-
----
-
 ## Roadmap
 ### Towards Testing and Dependency Injection
 Currently, the project barely has any tests, which is partially attributed to singleton spam. 
@@ -87,20 +84,18 @@ use dependency injection. Some classes (CollisionsHandler, SoundManager) have al
 a lot of work to do.
 
 ### The Project as a Library
-My initial idea was to make a Celeste-inspired platformer game. But I didn't want to use a game engine. I wanted to get
-a taste of implementing most things from scratch. Later on, the project's game engine aspect became quite strong and
-feature-full so I wanted to highlight that part more. This comes with a caveat: I have to make my project *actually*
-usable as a library. Currently, I am using many classes that are coupled with my "general" game engine code that are 
-specific to my platformer game. Additionally, I have to wrap the entire project in appropriate namespaces. So its a lot
-of refactoring. But more importantly, it makes me think deeply about how to change my classes to make them as easy as
-possible to understand and use. It also prompted to work on writing a GitHub Wiki (Work in Progress!).
+This project started as a Celeste-inspired platformer built from scratch without using existing game engines. As
+development progressed, the engine framework became robust enough to warrant extracting it as a reusable library.
+This transition requires significant refactoring: decoupling game-specific code from general engine components,
+implementing proper namespace organisation, and designing intuitive APIs. The refactoring process is pushing me to
+think critically about software architecture and API design, and it also prompted me to make a GitHub Wiki (Work in 
+Progress!).
 
 ### Graphics, SFML and OpenGL
 I recently started working on a project to make my own [Minecraft clone](https://github.com/agamjeetsingh/3d-voxel)
-from scratch. So I am learning OpenGL alongside it. It really got me thinking, if I can render a 3D world, what's
-stopping me from rendering a 2D one? Why do I need SFML? I think it would be instructive to try and replace SFML in my
-project and use my own graphics rendering pipeline, built on top of OpenGL. For complete freedom, I might learn OpenAL
-for audio too, although I am not sure yet if I want to go that far.
+from scratch, learning OpenGL in the process. This sparked a realisation: if I can build a 3D rendering pipeline,
+why rely on SFML for 2D? I'm planning to replace SFML with my own OpenGL-based graphics pipeline to gain complete
+control over the rendering process and deepen my understanding of graphics programming.
 
 ### Platformer Game
 These are some general ideas I had for my platformer game that I haven't implemented yet.
@@ -108,6 +103,3 @@ These are some general ideas I had for my platformer game that I haven't impleme
 - Full lighting system with shaders
 - Camera that follows the player naturally
 - Pausing the game, general input buffering, freeze frames
-
-# License
-
