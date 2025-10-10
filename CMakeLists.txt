@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.28)
 project(2d-platformer)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -35,7 +35,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glm)
 
-include(FetchContent)
 find_package(glfw3 REQUIRED)
 
 # Set include directories to avoid ../../../ hell
@@ -151,8 +150,7 @@ target_link_libraries(2d-platformer SFML::Graphics SFML::Window SFML::System SFM
 target_link_libraries(2d-platformer nlohmann_json::nlohmann_json)
     target_link_libraries(2d-platformer
             glfw
-            glm::glm
-            "-framework OpenGL")
+            glm::glm)
     add_custom_command(TARGET 2d-platformer POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/assets
@@ -240,10 +238,37 @@ add_executable(2d-platformer-sanitized main.cpp
         include/entity/SpriteParticles.h
         include/entity/objects/Portal.cpp
         include/entity/objects/Portal.h
+                src/utility/ThreadPool.cpp
+        include/utility/ThreadPool.h
+            src/utility/GameLevel.cpp
+        include/utility/GameLevel.h
+            src/physics/3d/Collision.cpp
+            include/physics/3d/Collision.h
+            src/physics/3d/PhysicsObject.cpp
+            include/physics/3d/PhysicsObject.h
+            src/physics/3d/CollidableObject.cpp
+            include/physics/3d/CollidableObject.h
+            src/physics/3d/Hitbox.cpp
+            include/physics/3d/Hitbox.h
+            include/physics/3d/geometry/Vector3f.h
+            src/physics/3d/geometry/Box.cpp
+            include/physics/3d/geometry/Box.h
+            src/physics/3d/CollisionsHandler.cpp
+            include/physics/3d/CollisionsHandler.h
+            src/physics/3d/SpacialHashMap.cpp
+            include/physics/3d/SpacialHashMap.h
+            src/physics/3d/Contact.cpp
+            include/physics/3d/Contact.h
+            include/physics/3d/ContactsHandler.cpp
+            include/physics/3d/ContactsHandler.h
 )
 target_compile_options(2d-platformer-sanitized PRIVATE -fsanitize=address,undefined -g)
 target_link_options(2d-platformer-sanitized PRIVATE -fsanitize=address,undefined)
 target_link_libraries(2d-platformer-sanitized SFML::Graphics SFML::Window SFML::System SFML::Audio)
+target_link_libraries(2d-platformer-sanitized nlohmann_json::nlohmann_json)
+target_link_libraries(2d-platformer-sanitized
+            glfw
+            glm::glm)
 
 add_executable(2d-platformer-tsan main.cpp
         include/utility/InputManager.h
@@ -325,11 +350,38 @@ add_executable(2d-platformer-tsan main.cpp
         include/entity/SpriteParticles.h
         include/entity/objects/Portal.cpp
         include/entity/objects/Portal.h
+                src/utility/ThreadPool.cpp
+        include/utility/ThreadPool.h
+            src/utility/GameLevel.cpp
+        include/utility/GameLevel.h
+            src/physics/3d/Collision.cpp
+            include/physics/3d/Collision.h
+            src/physics/3d/PhysicsObject.cpp
+            include/physics/3d/PhysicsObject.h
+            src/physics/3d/CollidableObject.cpp
+            include/physics/3d/CollidableObject.h
+            src/physics/3d/Hitbox.cpp
+            include/physics/3d/Hitbox.h
+            include/physics/3d/geometry/Vector3f.h
+            src/physics/3d/geometry/Box.cpp
+            include/physics/3d/geometry/Box.h
+            src/physics/3d/CollisionsHandler.cpp
+            include/physics/3d/CollisionsHandler.h
+            src/physics/3d/SpacialHashMap.cpp
+            include/physics/3d/SpacialHashMap.h
+            src/physics/3d/Contact.cpp
+            include/physics/3d/Contact.h
+            include/physics/3d/ContactsHandler.cpp
+            include/physics/3d/ContactsHandler.h
 )
 
 target_compile_options(2d-platformer-tsan PRIVATE -fsanitize=thread -g)
 target_link_options(2d-platformer-tsan PRIVATE -fsanitize=thread)
 target_link_libraries(2d-platformer-tsan SFML::Graphics SFML::Window SFML::System SFML::Audio)
+target_link_libraries(2d-platformer-tsan nlohmann_json::nlohmann_json)
+target_link_libraries(2d-platformer-tsan
+            glfw
+            glm::glm)
 
 endif() # End of PROJECT_IS_TOP_LEVEL
 
@@ -446,3 +498,6 @@ target_include_directories(game_lib PUBLIC
 
 target_link_libraries(game_lib SFML::Graphics SFML::Window SFML::System SFML::Audio)
 target_link_libraries(game_lib nlohmann_json::nlohmann_json)
+target_link_libraries(game_lib
+            glfw
+            glm::glm)
