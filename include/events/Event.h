@@ -8,7 +8,7 @@
 #include <typeindex>
 
 #include "EventExecuteTime.h"
-
+#include <memory>
 
 /**
  * @brief A type-erased container for events with execution timing information.

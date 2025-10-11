@@ -11,6 +11,8 @@
 #include "geometry/Box.h"
 #include "geometry/Vector3f.h"
 #include "Collision.h"
+#include <unordered_map>
+#include "../2d/CollisionsHandler.h"
 
 namespace eng::d3 {
 

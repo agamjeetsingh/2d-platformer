@@ -18,7 +18,7 @@ void SpacialHashMap::clear() {
 
 
 void SpacialHashMap::addObject(CollidableObject *ptr) {
-    for (size_t hash: getHashes(ptr)) {
+    for (size_t hash: getHashesFaster(ptr)) {
         buckets[hash % num_buckets].push_back(ptr);
     }
     num_objects++;
@@ -58,6 +58,21 @@ std::vector<size_t> SpacialHashMap::getHashes(const CollidableObject *ptr) const
     }
 
     return hashes;
+}
+
+HashRange SpacialHashMap::getHashesFaster(const CollidableObject* ptr) const {
+    const float cellSize = collisions_handler->getCellSize();
+    const auto bounds = ptr->getHitbox().getBounds();
+
+    const int cellX_min = static_cast<int>(std::floor(bounds.position.x / cellSize));
+    const int cellY_min = static_cast<int>(std::floor(bounds.position.y / cellSize));
+    const int cellX_max = static_cast<int>(std::floor((bounds.position.x + bounds.size.x) / cellSize));
+    const int cellY_max = static_cast<int>(std::floor((bounds.position.y + bounds.size.y) / cellSize));
+
+    return {
+        HashIterator(cellX_min, cellY_min, cellX_min, cellX_max, cellY_min, cellY_max),
+        HashIterator(cellX_max + 1, cellY_min, cellX_min, cellX_max, cellY_min, cellY_max) // end sentinel
+    };
 }
 
 

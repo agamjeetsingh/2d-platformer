@@ -8,6 +8,7 @@
 #include <cassert>
 #include <utility>
 #include <memory>
+#include <atomic>
 
 
 struct ScheduledEvent : std::enable_shared_from_this<ScheduledEvent> {

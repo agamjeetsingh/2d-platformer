@@ -2,12 +2,12 @@
 // Created by Agamjeet Singh on 22/09/25.
 //
 
-#include "ContactsHandler.h"
-#include "CollidableObject.h"
+#include "../../../include/physics/3d/ContactsHandler.h"
+#include "../../../include/physics/3d/CollidableObject.h"
 
 #include <ranges>
 #include "events/EventBus.h"
-#include "Contact.h"
+#include "../../../include/physics/3d/Contact.h"
 
 eng::d3::ContactsHandler &eng::d3::ContactsHandler::getInstance() {
     static ContactsHandler instance;

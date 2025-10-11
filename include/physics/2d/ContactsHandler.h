@@ -9,6 +9,7 @@
 #include "Contact.h"
 #include "CollisionsHandler.h"
 #include <ranges>
+#include <algorithm>
 
 class Player;
 enum class Facing;

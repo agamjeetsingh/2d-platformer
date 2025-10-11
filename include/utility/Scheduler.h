@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "ScheduledEvent.h"
+#include <mutex>
 
 class Scheduler {
 public:
