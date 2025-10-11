@@ -12,6 +12,8 @@ Features include a physics engine, an extensible event bus, a flexible callback 
 
 Demo uses sprites and tiles from Celeste (© Maddy Makes Games), used here for non-commercial demonstration purposes only.
 
+Find details about this game on [this](https://github.com/agamjeetsingh/2d-game-engine/wiki/2D-Platformer) wiki page.
+
 ## Features
 - **Physics Engine**
     - AABB collision detection, impulse-based resolution,
