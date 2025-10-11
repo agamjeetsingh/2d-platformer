@@ -71,6 +71,7 @@ private:
 
     std::vector<size_t> getHashes(const CollidableObject* ptr) const;
 
+    HashRange getHashesFaster(const CollidableObject* ptr) const;
 
     static constexpr size_t DEFAULT_BUCKETS = 16;
 };
