@@ -8,7 +8,8 @@
 #include <utility>
 #include <vector>
 #include <SFML/Graphics.hpp>
-#include <__ranges/transform_view.h>
+#include <ranges>
+#include <functional>
 
 #include "sprites/TexturesHolder.h"
 #include "utility/GameRender.h"

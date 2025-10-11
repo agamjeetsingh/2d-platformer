@@ -7,6 +7,8 @@
 #include <functional>
 
 #include "Contact.h"
+#include <algorithm>
+#include <ranges>
 
 struct Contact;
 

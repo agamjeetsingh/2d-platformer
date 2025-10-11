@@ -5,6 +5,7 @@
 #ifndef SPACIALHASHMAP_H
 #define SPACIALHASHMAP_H
 #include <vector>
+#include <cmath>
 
 class CollisionsHandler;
 class CollidableObject;

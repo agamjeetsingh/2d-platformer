@@ -7,8 +7,10 @@
 
 #include <random>
 #include <SFML/Graphics.hpp>
-
+#include <functional>
 #include "utility/Random.h"
+#include <ranges>
+#include <algorithm>
 
 struct Particle {
     Particle(sf::Vector2f velocity, float lifetime): velocity(velocity), lifetime(lifetime) {}
