@@ -108,7 +108,7 @@ set(GAME_SOURCES
     include/utility/Random.h
     src/entity/SpriteParticles.cpp
     include/entity/SpriteParticles.h
-        src/entity/objects/Portal.cpp
+    src/entity/objects/Portal.cpp
     include/entity/objects/Portal.h
     src/utility/ThreadPool.cpp
     include/utility/ThreadPool.h
@@ -131,7 +131,7 @@ set(GAME_SOURCES
     include/physics/3d/SpacialHashMap.h
     src/physics/3d/Contact.cpp
     include/physics/3d/Contact.h
-        src/physics/3d/ContactsHandler.cpp
+    src/physics/3d/ContactsHandler.cpp
     include/physics/3d/ContactsHandler.h
 )
 
