@@ -13,7 +13,8 @@
 #include "utility/GameRender.h"
 #include "utility/SoundEffect.h"
 #include "utility/SoundManager.h"
-
+#include <ranges>
+#include <algorithm>
 
 class TouchSwitch final : public CollidableObject {
 public:

@@ -8,6 +8,8 @@
 #include <memory>
 #include <set>
 #include <SFML/Graphics.hpp>
+#include <functional>
+#include <cmath>
 
 template <typename T>
 concept Drawable = requires(T t) {

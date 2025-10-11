@@ -7,6 +7,7 @@
 #include <cassert>
 
 #include "events/Listener.h"
+#include <mutex>
 
 EventBus &EventBus::getInstance() {
     static EventBus instance;
