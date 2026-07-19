@@ -4,11 +4,12 @@
 
 #include "../../../include/entity/objects/TouchSwitch.h"
 
+#include "events/EventBus.h"
 #include "utility/SoundManager.h"
 
-TouchSwitch::TouchSwitch(SoundManager<SoundEffect>& sound_manager, sf::Vector2f position):
+TouchSwitch::TouchSwitch(SoundManager<SoundEffect>& sound_manager, EventBus& post_physics_bus, sf::Vector2f position):
 CollidableObject({{{2, 2}, {16, 16}}}, sf::Sprite{{EmptyTextures::getInstance().getEmpty({20, 20})}}, position),
-collision_listener(Listener::make_listener<Collision>([this](const Collision& collision) {
+collision_listener(Listener::make_listener<Collision>(post_physics_bus, [this](const Collision& collision) {
     if (&collision.objectA != this && &collision.objectB != this) return;
     CollidableObject& other = &collision.objectA == this ? collision.objectB : collision.objectA;
     if (!other.isPlayer()) return;
@@ -72,12 +73,12 @@ bool TouchSwitch::areAllActivated() const {
     });
 }
 
-std::vector<std::shared_ptr<TouchSwitch>> TouchSwitch::makeTouchSwitches(const std::vector<sf::Vector2f>& positions, SoundManager<SoundEffect>& sound_manager)  {
+std::vector<std::shared_ptr<TouchSwitch>> TouchSwitch::makeTouchSwitches(const std::vector<sf::Vector2f>& positions, SoundManager<SoundEffect>& sound_manager, EventBus& post_physics_bus)  {
     std::vector<std::shared_ptr<TouchSwitch>> switches;
 
     switches.reserve(positions.size());
     for (auto& pos : positions) {
-        switches.push_back(std::make_shared<TouchSwitch>(sound_manager, pos));
+        switches.push_back(std::make_shared<TouchSwitch>(sound_manager, post_physics_bus, pos));
     }
 
     for (int i = 0; i < switches.size(); i++) {

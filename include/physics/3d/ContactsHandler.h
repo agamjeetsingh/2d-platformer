@@ -11,6 +11,7 @@
 #include <ranges>
 
 struct Contact;
+class EventBus;
 
 namespace eng::d3 {
     class CollidableObject;
@@ -51,7 +52,7 @@ namespace eng::d3 {
          * @warning If the pair of objects in the contact map previously exist, in the same order, then it doesn't add the new contact
          * @param contact The contact to be added.
          */
-        void addContact(Contact contact);
+        void addContact(Contact contact, EventBus& post_physics_bus);
 
         void newFrame();
 

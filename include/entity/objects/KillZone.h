@@ -10,9 +10,11 @@
 #include "utility/EmptyTextures.h"
 
 
+class EventBus;
+
 class KillZone final : public CollidableObject {
 public:
-    explicit KillZone(sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0}, std::optional<std::string> path_to_texture = std::nullopt);
+    explicit KillZone(EventBus& post_physics_bus, sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0}, std::optional<std::string> path_to_texture = std::nullopt);
 
     bool canCollideWith(const CollidableObject &, Collision collision) const override;
 

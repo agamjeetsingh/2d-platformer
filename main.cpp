@@ -43,18 +43,25 @@ int main() {
     sound_manager.registerSoundEffect(SoundEffect::SWAP_BLOCK_RETURN_LOOP, "../assets/swapBlock/swapblock_return_loop.wav");
     sound_manager.registerSoundEffect(SoundEffect::SWAP_BLOCK_RETURN_LOOP_END, "../assets/swapBlock/swapblock_return_loop_end.wav");
 
-    CollisionsHandler collisions_handler;
+    EventBus pre_input_bus;
+    EventBus pre_physics_bus;
+    EventBus post_physics_bus;
+    EventBus now_bus;
+
+    CollisionsHandler collisions_handler{post_physics_bus};
     auto player = std::make_shared<Player>(
         std::vector{ sf::FloatRect({0, 0}, {13, 12}) },
         std::vector{ sf::FloatRect({0, 4}, {13, 8}) },
         sound_manager,
+        post_physics_bus,
+        now_bus,
         sf::Vector2f{50, 0}
     );
     collisions_handler.addObject(*player);
 
     GameRender::getInstance().registerDrawable(player);
 
-    auto touch_switches = TouchSwitch::makeTouchSwitches({{100, 75}, {180, 180}}, sound_manager);
+    auto touch_switches = TouchSwitch::makeTouchSwitches({{100, 75}, {180, 180}}, sound_manager, post_physics_bus);
     for (const auto& touch_switch: touch_switches) {
         collisions_handler.addObject(*touch_switch);
     }
@@ -66,7 +73,7 @@ int main() {
     auto snow_particles = std::make_shared<PointParticles>(600, PointParticles::ConstantColor(sf::Color::White), PointParticles::RandomSinWaveVelocity(Random::FloatRange(100, 180), Random::FloatRange(4, 10), Random::FloatRange(0.02, 0.03), Random::FloatRange(0, 1)), Random::Vector2fRange({-6.f * sf::VideoMode::getDesktopMode().size.x, 0}, {0,200}), Random::FloatRange(100, 100));
     GameRender::getInstance().registerDrawable(snow_particles);
 
-    GameLevel game_level(collisions_handler, sound_manager);
+    GameLevel game_level(collisions_handler, sound_manager, post_physics_bus);
     game_level.load("../assets/levels/map.json");
 
     while (window.isOpen()) {
@@ -88,15 +95,15 @@ int main() {
 
         window.clear(sf::Color::White);
 
-        EventBus::getInstance().execute(EventExecuteTime::PRE_INPUT);
+        pre_input_bus.execute();
 
         PlayerInputHandler{*player}.update(dt);
 
-        EventBus::getInstance().execute(EventExecuteTime::PRE_PHYSICS);
+        pre_physics_bus.execute();
 
         collisions_handler.update(dt);
 
-        EventBus::getInstance().execute(EventExecuteTime::POST_PHYSICS);
+        post_physics_bus.execute();
 
         Scheduler::getInstance().update(dt);
 

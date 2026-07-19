@@ -16,6 +16,7 @@ class Player;
 #include "utility/SoundManager.h"
 
 class PlayerInputHandler;
+class EventBus;
 
 class DashSnapshot {
 public:
@@ -37,7 +38,7 @@ private:
 
 class AbilityDash final : public Ability {
 public:
-    explicit AbilityDash(SoundManager<SoundEffect>& sound_manager, Player& player);
+    explicit AbilityDash(SoundManager<SoundEffect>& sound_manager, Player& player, EventBus& now_bus);
 
     [[nodiscard]] bool canPerform() const override;
 
@@ -60,6 +61,7 @@ private:
     std::shared_ptr<PointParticles> particles; // TODO - Fix, this will cause only one set of particles to exist right now
     sf::Vector2f dash_velocity;
     SoundManager<SoundEffect>& sound_manager;
+    EventBus& now_bus;
 };
 
 

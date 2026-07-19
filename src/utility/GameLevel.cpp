@@ -28,7 +28,7 @@ sf::Sprite Tileset::getSprite(int localID) const {
     return sprite;
 }
 
-GameLevel::GameLevel(CollisionsHandler &collisions_handler, SoundManager<SoundEffect> &sound_manager): collisions_handler(collisions_handler), sound_manager(sound_manager) {}
+GameLevel::GameLevel(CollisionsHandler &collisions_handler, SoundManager<SoundEffect> &sound_manager, EventBus& post_physics_bus): collisions_handler(collisions_handler), sound_manager(sound_manager), post_physics_bus(post_physics_bus) {}
 
 void GameLevel::load(const std::string &path) {
     std::ifstream mapFile(path);
@@ -90,7 +90,8 @@ void GameLevel::load(const std::string &path) {
                     {
                         auto dash_crystal = std::make_shared<DashCrystal>(
                             sf::Vector2f{object["x"].get<float>(), object["y"].get<float>()},
-                            sound_manager
+                            sound_manager,
+                            post_physics_bus
                         );
                         collisions_handler.addObject(*dash_crystal);
                         GameRender::getInstance().registerDrawable(dash_crystal);

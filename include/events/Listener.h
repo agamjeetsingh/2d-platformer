@@ -26,7 +26,7 @@
  * Usage:
  * \code
  * // Create a listener in a constructor or member initializer
- * auto listener = Listener::make_listener<MyEvent>([this](const MyEvent& event) {
+ * auto listener = Listener::make_listener<MyEvent>(bus, [this](const MyEvent& event) {
  *     // Handle the event
  *     processEvent(event);
  * }, ListenerPriority::HIGH);
@@ -35,24 +35,25 @@
 class Listener {
 public:
     /**
-     * @brief Create a type-safe listener for events of type T.
-     * 
+     * @brief Create a type-safe listener for events of type T, registered with the given bus.
+     *
      * This is the primary way to construct listeners. The callback must take a const T&
-     * and return void. The listener will be automatically registered with the EventBus.
-     * 
+     * and return void. The listener will be automatically registered with the given EventBus.
+     *
      * @tparam T The event type to listen for.
      * @tparam F The callback function type.
+     * @param bus The EventBus to register this listener with.
      * @param cb The callback function that will be invoked when the event is dispatched.
      * @param priority The priority of this listener (defaults to NORMAL).
      * @return A constructed Listener that has been registered with the EventBus.
-     * 
+     *
      * @note The callback constraint: std::invocable<F, const T&> && std::same_as<std::invoke_result_t<F, const T&>, void>
      */
     template<typename T, typename F>
     requires std::invocable<F, const T&> &&
              std::same_as<std::invoke_result_t<F, const T&>, void>
-    static Listener make_listener(F&& cb, ListenerPriority priority = ListenerPriority::NORMAL) {
-        return Listener(std::type_identity<T>{}, std::forward<F>(cb), priority);
+    static Listener make_listener(EventBus& bus, F&& cb, ListenerPriority priority = ListenerPriority::NORMAL) {
+        return Listener(bus, std::type_identity<T>{}, std::forward<F>(cb), priority);
     }
 
     /** @brief The priority of this listener, determines execution order. */
@@ -79,6 +80,7 @@ private:
      * 
      * @tparam T The event type.
      * @tparam F The callback function type.
+     * @param bus The EventBus to register this listener with.
      * @param std::type_identity<T> Type identity wrapper for template deduction.
      * @param cb The callback function to wrap.
      * @param priority The listener priority.
@@ -86,14 +88,14 @@ private:
     template<typename T, typename F>
     requires std::invocable<F, const T&> &&
              std::same_as<std::invoke_result_t<F, const T&>, void>
-    explicit Listener(std::type_identity<T>, F&& cb, ListenerPriority priority = ListenerPriority::NORMAL) :
+    explicit Listener(EventBus& bus, std::type_identity<T>, F&& cb, ListenerPriority priority = ListenerPriority::NORMAL) :
         priority(priority), type_index(typeid(T)), erased_cb([fn = std::forward<F>(cb)](const void* ev) {
             const Event& e = *static_cast<const Event*>(ev);
             if (auto payload = e.getIf<T>()) {
                 fn(*payload);
             }
         }) {
-        EventBus::getInstance().registerListener(*this);
+        bus.registerListener(*this);
     }
 };
 

@@ -14,6 +14,7 @@
 
 class Player;
 struct Collision;
+class EventBus;
 
 struct IncompleteCollision {
     sf::FloatRect collidingRectA;
@@ -59,7 +60,7 @@ using BodiesHashTable = std::unordered_set<std::reference_wrapper<CollidableObje
 
 class CollisionsHandler {
 public:
-    CollisionsHandler();
+    explicit CollisionsHandler(EventBus& post_physics_bus);
 
     /**
      * @brief A const function that gives all the registered collider bodies.
@@ -168,6 +169,8 @@ private:
     SpacialHashMap spacial_map;
 
     ContactsPtrHashMap next_frame_contacts;
+
+    EventBus& post_physics_bus;
 
     void buildSpatialMap();
 

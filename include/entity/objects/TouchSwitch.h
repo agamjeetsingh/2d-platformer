@@ -16,9 +16,11 @@
 #include <ranges>
 #include <algorithm>
 
+class EventBus;
+
 class TouchSwitch final : public CollidableObject {
 public:
-    explicit TouchSwitch(SoundManager<SoundEffect>& sound_manager, sf::Vector2f position = {0, 0});
+    explicit TouchSwitch(SoundManager<SoundEffect>& sound_manager, EventBus& post_physics_bus, sf::Vector2f position = {0, 0});
 
     void updateSprite(float deltaTime);
 
@@ -32,7 +34,7 @@ public:
 
     bool areAllActivated() const;
 
-    [[nodiscard]] static std::vector<std::shared_ptr<TouchSwitch>> makeTouchSwitches(const std::vector<sf::Vector2f>& positions, SoundManager<SoundEffect>& sound_manager);
+    [[nodiscard]] static std::vector<std::shared_ptr<TouchSwitch>> makeTouchSwitches(const std::vector<sf::Vector2f>& positions, SoundManager<SoundEffect>& sound_manager, EventBus& post_physics_bus);
 
 private:
     bool activated = false;

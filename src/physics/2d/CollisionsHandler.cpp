@@ -14,7 +14,7 @@
 
 struct Collision;
 
-CollisionsHandler::CollisionsHandler(): spacial_map(this) {}
+CollisionsHandler::CollisionsHandler(EventBus& post_physics_bus): spacial_map(this), post_physics_bus(post_physics_bus) {}
 
 std::size_t CollisionHash::operator()(const Collision& ref) const {
     return std::hash<void*>{}(&ref.objectA) ^
@@ -274,7 +274,7 @@ ContactsPtrHashMap CollisionsHandler::buildContacts(float deltaTime) const {
     ContactsHandler::getInstance().newFrame();
 
     for (const auto& contact: contacts | std::views::values) {
-        ContactsHandler::getInstance().addContact(Contact(contact));
+        ContactsHandler::getInstance().addContact(Contact(contact), post_physics_bus);
     }
 
     return contacts;
@@ -329,15 +329,15 @@ ContactsPtrHashMap CollisionsHandler::buildContactsFaster(float deltaTime) {
     }
 
     for (const auto& collision: phantom_collisions) {
-        EventBus::getInstance().emit(collision, EventExecuteTime::POST_PHYSICS);
+        post_physics_bus.emit(collision);
     }
 
     ContactsHandler::getInstance().newFrame();
     for (const auto& contact: contacts | std::ranges::views::values) {
-        ContactsHandler::getInstance().addContact(Contact(contact));
+        ContactsHandler::getInstance().addContact(Contact(contact), post_physics_bus);
     }
 
-    ContactsHandler::getInstance().emitPlayerEvents();
+    ContactsHandler::getInstance().emitPlayerEvents(post_physics_bus);
 
     return contacts;
 }
@@ -378,15 +378,15 @@ ContactsPtrHashMap CollisionsHandler::buildContactsBlankFaster(float deltaTime) 
     }
 
     for (const auto& collision: phantom_collisions) {
-        EventBus::getInstance().emit(collision, EventExecuteTime::POST_PHYSICS);
+        post_physics_bus.emit(collision);
     }
 
     ContactsHandler::getInstance().newFrame();
     for (const auto& contact: contacts | std::ranges::views::values) {
-        ContactsHandler::getInstance().addContact(Contact(contact));
+        ContactsHandler::getInstance().addContact(Contact(contact), post_physics_bus);
     }
 
-    ContactsHandler::getInstance().emitPlayerEvents();
+    ContactsHandler::getInstance().emitPlayerEvents(post_physics_bus);
 
     return contacts;
 }

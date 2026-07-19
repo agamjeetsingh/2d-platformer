@@ -13,9 +13,9 @@
 #include "utility/EmptyTextures.h"
 
 Player::Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox, SoundManager<SoundEffect>& sound_manager,
-               sf::Vector2f position) :
+               EventBus& post_physics_bus, EventBus& now_bus, sf::Vector2f position) :
 CollidableObject(uncrouched_hitbox, std::move(sf::Sprite{EmptyTextures::getInstance().getEmpty({32, 32})}), position),
-on_ground(Listener::make_listener<PlayerOnGround>([this](const PlayerOnGround& event) {
+on_ground(Listener::make_listener<PlayerOnGround>(post_physics_bus, [this](const PlayerOnGround& event) {
     if (event.player != *this) return;
     onGround = true;
     if (!ability_dash.isPerforming()) {
@@ -23,20 +23,20 @@ on_ground(Listener::make_listener<PlayerOnGround>([this](const PlayerOnGround& e
     }
     restoreStamina();
 }, ListenerPriority::HIGH)),
-left_ground(Listener::make_listener<PlayerLeftGround>([this](const PlayerLeftGround& event) {
+left_ground(Listener::make_listener<PlayerLeftGround>(post_physics_bus, [this](const PlayerLeftGround& event) {
     if (event.player != *this) return;
     onGround = false;
     canJumpDueToCoyoteGrace = true;
     Scheduler& scheduler = Scheduler::getInstance();
     auto discard = scheduler.schedule([this](std::shared_ptr<ScheduledEvent> event, float deltaTime) { canJumpDueToCoyoteGrace = false; }, JUMP_GRACE_COYOTE_TIME);
 }, ListenerPriority::HIGH)),
-landed(Listener::make_listener<PlayerLanded>([this, &sound_manager](const PlayerLanded& event) {
+landed(Listener::make_listener<PlayerLanded>(post_physics_bus, [this, &sound_manager](const PlayerLanded& event) {
     if (event.player != *this) return;
     sound_manager.play(SoundEffect::LAND);
     if (getTotalVelocity().y >= MAX_FALL) {
         squeeze({1.2, 0.8}, 0.05, 0.1);
     }
-}, ListenerPriority::HIGH)), uncrouched_hitbox(std::move(uncrouched_hitbox)), crouched_hitbox(std::move(crouched_hitbox)), sound_manager(sound_manager), ability_dash(sound_manager, *this) {
+}, ListenerPriority::HIGH)), uncrouched_hitbox(std::move(uncrouched_hitbox)), crouched_hitbox(std::move(crouched_hitbox)), sound_manager(sound_manager), ability_dash(sound_manager, *this, now_bus) {
     gravity_acceleration.y = GRAVITY;
 }
 
