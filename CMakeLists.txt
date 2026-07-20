@@ -72,7 +72,6 @@ set(GAME_SOURCES
     include/events/EventBus.h
     src/events/Event.cpp
     include/events/Event.h
-    include/events/EventExecuteTime.h
     src/entity/player/ability/Ability.cpp
     include/events/ListenerPriority.h
     src/events/Listener.cpp
