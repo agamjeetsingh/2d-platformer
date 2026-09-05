@@ -113,6 +113,11 @@ public:
     [[nodiscard]] float getCellSize(bool update = false) const;
 
 private:
+    // Grants benchmarks/CollisionBenchmark.cpp access to the private buildContacts /
+    // buildContactsFaster / buildContactsBlankFaster methods so their performance can be measured in
+    // isolation without changing their access level (and thus their call surface) for production code.
+    friend class CollisionsHandlerBenchmarkAccess;
+
     /**
      * @brief The hash table that stores all the bodies.
      */

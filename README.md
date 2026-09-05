@@ -78,6 +78,48 @@ cmake --build .
 
 ---
 
+## Benchmarks
+
+`benchmarks/CollisionBenchmark.cpp` uses [Google Benchmark](https://github.com/google/benchmark) (fetched via
+CMake `FetchContent`, built as a separate `benchmarks` target — it is never linked into the GoogleTest suite,
+so no timing assertions run there) to measure `CollisionsHandler`'s three contact-building strategies:
+
+- `buildContacts` — naive all-pairs, swept AABB
+- `buildContactsFaster` — spatial hash + swept AABB
+- `buildContactsBlankFaster` — spatial hash + direct rect intersection (the one `update()` actually calls in production)
+
+Objects are scattered pseudorandomly (fixed seed) across a 4000×2000px play area with hitboxes ranging 8-64px a
+side and a 70/30 immovable/movable split, so the spatial hash meaningfully partitions space instead of
+degenerating into one bucket.
+
+**Build config:** `CMAKE_BUILD_TYPE=Release` → AppleClang 17.0.0 (arm64), flags `-O3 -DNDEBUG -std=gnu++20`.
+**Machine:** Apple M4, macOS 26.0.1, 10 cores.
+
+Run with:
+```bash
+cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
+cmake --build build-release --target benchmarks
+./build-release/benchmarks --benchmark_min_time=0.3s --benchmark_repetitions=3 --benchmark_report_aggregates_only=true
+```
+
+Measured (mean of 3 repetitions, ms/frame, Release build). `buildContacts` and `buildContactsFaster` run the
+*same* swept-AABB algorithm, differing only in all-pairs vs. spatial hashing, so this is the fair, isolated
+measurement of what spatial partitioning alone buys:
+
+| Objects | Naive (`buildContacts`) | Spatial (`buildContactsFaster`) | Speedup |
+|--------:|-------------------------:|----------------------------------:|--------:|
+| 100     | 0.858 ms                 | 0.014 ms                          | ~61x    |
+| 500     | 21.4 ms                  | 0.214 ms                          | ~100x   |
+| 1000    | 85.8 ms                  | 0.831 ms                          | ~103x   |
+| 2000    | 340 ms                   | 3.30 ms                           | ~103x   |
+
+`buildContactsBlankFaster` — the one `update()` actually calls in production — is faster still, but that
+comparison isn't apples-to-apples: on top of spatial hashing it also drops swept (continuous) collision for a
+cheaper direct rect-intersection test, so part of its speedup is a different, simpler algorithm rather than
+partitioning. Numbers will vary by machine/compiler; re-run the benchmark above to reproduce.
+
+---
+
 ## Roadmap
 ### Towards Testing and Dependency Injection
 Currently, the project barely has any tests, which is partially attributed to singleton spam. 
