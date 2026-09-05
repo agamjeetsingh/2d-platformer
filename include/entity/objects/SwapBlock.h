@@ -10,9 +10,11 @@
 #include "utility/SoundLoop.h"
 
 
+class EventBus;
+
 class SwapBlock final : public CollidableObject {
 public:
-    SwapBlock(sf::Vector2f starting_pos, sf::Vector2f ending_pos, SoundManager<SoundEffect>& sound_manager);
+    SwapBlock(sf::Vector2f starting_pos, sf::Vector2f ending_pos, SoundManager<SoundEffect>& sound_manager, EventBus& now_bus);
 
     void updateSprite(float deltaTime);
 

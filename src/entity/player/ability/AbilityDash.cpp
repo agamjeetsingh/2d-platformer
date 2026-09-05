@@ -7,15 +7,16 @@
 #include "entity/PointParticles.h"
 #include "entity/player/Player.h"
 #include "entity/player/PlayerInputHandler.h"
+#include "events/EventBus.h"
 #include "events/PlayerDashEvent.h"
 #include "utility/GameRender.h"
 
-AbilityDash::AbilityDash(SoundManager<SoundEffect>& sound_manager, Player &player):
+AbilityDash::AbilityDash(SoundManager<SoundEffect>& sound_manager, Player &player, EventBus& now_bus):
 Ability(player),
 snapshot_first(std::make_shared<DashSnapshot>(player)),
 snapshot_second(std::make_shared<DashSnapshot>(player)),
 snapshot_third(std::make_shared<DashSnapshot>(player)),
-sound_manager(sound_manager) {}
+sound_manager(sound_manager), now_bus(now_bus) {}
 
 
 bool AbilityDash::canPerform() const {
@@ -106,7 +107,7 @@ void AbilityDash::perform() {
     auto discard = Scheduler::getInstance().schedule(std::move(dash_snapshot_func_second), Player::DASH_SECOND_SNAPSHOT_TIME, true, 0);
     discard = Scheduler::getInstance().schedule(std::move(dash_snapshot_func_third), Player::DASH_THIRD_SNAPSHOT_TIME, true, 0);
 
-    EventBus::getInstance().emit(PlayerDashEvent(player), EventExecuteTime::NOW);
+    now_bus.emitNow(PlayerDashEvent(player));
 
     particles = std::make_shared<PointParticles>(6, PointParticles::FadingColor(sf::Color::Blue), PointParticles::ExpDampedVelocity(10.f * dash_velocity.normalized(), 1), Random::Vector2fRange(player.getPosition() - sf::Vector2f{5, 5}, player.getPosition() + sf::Vector2f{5, 5}), Random::FloatRange(0.5, 1.2));
     GameRender::getInstance().registerDrawable(particles);

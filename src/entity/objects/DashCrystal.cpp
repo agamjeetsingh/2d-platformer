@@ -5,10 +5,11 @@
 #include "../../../include/entity/objects/DashCrystal.h"
 
 #include "entity/PointParticles.h"
+#include "events/EventBus.h"
 
-DashCrystal::DashCrystal(sf::Vector2f position, SoundManager<SoundEffect>& sound_manager): CollidableObject({{{3, 3}, {10, 10}}}, sf::Sprite{EmptyTextures::getInstance().getEmpty({16, 16})}, position),
+DashCrystal::DashCrystal(sf::Vector2f position, SoundManager<SoundEffect>& sound_manager, EventBus& post_physics_bus): CollidableObject({{{3, 3}, {10, 10}}}, sf::Sprite{EmptyTextures::getInstance().getEmpty({16, 16})}, position),
                                                 sound_manager(sound_manager),
-                                                 collision_listener(Listener::make_listener<Collision>([this, &sound_manager](const Collision& collision) {
+                                                 collision_listener(Listener::make_listener<Collision>(post_physics_bus, [this, &sound_manager](const Collision& collision) {
                                                      if (&collision.objectA != this && &collision.objectB != this) return;
                                                      CollidableObject& other = &collision.objectA == this ? collision.objectB : collision.objectA;
                                                      if (!other.isPlayer()) return;

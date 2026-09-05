@@ -14,7 +14,7 @@ eng::d3::ContactsHandler &eng::d3::ContactsHandler::getInstance() {
     return instance;
 }
 
-void eng::d3::ContactsHandler::addContact(Contact contact) {
+void eng::d3::ContactsHandler::addContact(Contact contact, EventBus& post_physics_bus) {
     auto keyA = std::ref(contact.objectA);
     auto keyB = std::ref(contact.objectB);
     contacts[keyA].push_back(contact);
@@ -23,7 +23,7 @@ void eng::d3::ContactsHandler::addContact(Contact contact) {
     }
     contacts_vector.push_back(contact);
 
-    EventBus::getInstance().emit(contact, EventExecuteTime::POST_PHYSICS);
+    post_physics_bus.emit(contact);
 }
 
 void eng::d3::ContactsHandler::newFrame() {

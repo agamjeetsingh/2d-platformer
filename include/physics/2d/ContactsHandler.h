@@ -13,6 +13,7 @@
 
 class Player;
 enum class Facing;
+class EventBus;
 
 /**
  * Hash function for \code std::reference_wrapper<const Collider>\endcode
@@ -53,7 +54,7 @@ public:
      * @warning If the pair of objects in the contact map previously exist, in the same order, then it doesn't add the new contact
      * @param contact The contact to be added.
      */
-    void addContact(Contact contact);
+    void addContact(Contact contact, EventBus& post_physics_bus);
 
     void newFrame();
 
@@ -67,7 +68,7 @@ public:
 
     [[nodiscard]] std::vector<Contact> getContacts() const;
 
-    void emitPlayerEvents() const;
+    void emitPlayerEvents(EventBus& post_physics_bus) const;
 
 private:
     std::unordered_map<std::reference_wrapper<const CollidableObject>, std::vector<Contact>, CollidableObjectConstRefHash, CollidableObjectConstRefEqual> contacts;

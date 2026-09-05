@@ -14,7 +14,7 @@ ContactsHandler &ContactsHandler::getInstance() {
     return instance;
 }
 
-void ContactsHandler::addContact(Contact contact) {
+void ContactsHandler::addContact(Contact contact, EventBus& post_physics_bus) {
     auto keyA = std::ref(contact.objectA);
     auto keyB = std::ref(contact.objectB);
     contacts[keyA].push_back(contact);
@@ -27,12 +27,12 @@ void ContactsHandler::addContact(Contact contact) {
         bool playerAboveOther = contact.objectA.isPlayer() ?
             contact.getCollidingRectA().position.y < contact.getCollidingRectB().position.y :
             contact.getCollidingRectB().position.y < contact.getCollidingRectA().position.y;
-            
+
         if (playerAboveOther) {
-            EventBus::getInstance().emit(PlayerOnGround{contact}, EventExecuteTime::POST_PHYSICS);
+            post_physics_bus.emit(PlayerOnGround{contact});
         }
     }
-    EventBus::getInstance().emit(contact, EventExecuteTime::POST_PHYSICS);
+    post_physics_bus.emit(contact);
 }
 
 void ContactsHandler::newFrame() {
@@ -110,18 +110,17 @@ std::vector<CollidableObject> ContactsHandler::nextToVerticalSurfaces(const Coll
     return contacts_vector;
 }
 
-void ContactsHandler::emitPlayerEvents() const {
+void ContactsHandler::emitPlayerEvents(EventBus& post_physics_bus) const {
     for (const auto& object: std::views::keys(previous_frame_contacts)) {
         if (object.get().isPlayer() && onLand(object.get(), true) && !onLand(object.get())) {
-            EventBus::getInstance().emit(PlayerLeftGround{*object.get().isPlayer()}, EventExecuteTime::POST_PHYSICS);
+            post_physics_bus.emit(PlayerLeftGround{*object.get().isPlayer()});
         }
     }
     for (const auto& object: std::views::keys(contacts)) {
         if (object.get().isPlayer() && !onLand(object.get(), true) && onLand(object.get()) && object.get().getTotalVelocity().y >= 0) {
             auto contacts = restingOnSurfaces(object.get());
             assert(!contacts.empty());
-            EventBus::getInstance().emit(PlayerLanded{*object.get().isPlayer(), contacts[0]},
-                                         EventExecuteTime::POST_PHYSICS);
+            post_physics_bus.emit(PlayerLanded{*object.get().isPlayer(), contacts[0]});
         }
     }
 }

@@ -14,7 +14,7 @@
 
 #include "events/EventBus.h"
 
-eng::d3::CollisionsHandler::CollisionsHandler(): spacial_map(this) {}
+eng::d3::CollisionsHandler::CollisionsHandler(EventBus& post_physics_bus): spacial_map(this), post_physics_bus(post_physics_bus) {}
 
 std::size_t eng::d3::CollisionHash::operator()(const Collision& ref) const {
     return std::hash<void*>{}(&ref.objectA) ^
@@ -137,7 +137,7 @@ eng::d3::ContactsPtrHashMap eng::d3::CollisionsHandler::buildContacts(float delt
     }
 
     for (const auto& collision: phantom_collisions) {
-        EventBus::getInstance().emit(collision, EventExecuteTime::POST_PHYSICS);
+        post_physics_bus.emit(collision);
     }
 
     // ContactsHandler::getInstance().newFrame();

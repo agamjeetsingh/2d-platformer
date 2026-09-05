@@ -10,7 +10,6 @@
 #include <unordered_map>
 
 #include "Event.h"
-#include "events/EventExecuteTime.h"
 #include <mutex>
 
 class Listener;
@@ -18,73 +17,76 @@ class Listener;
 struct ListenerComparator;
 
 /**
- * @brief A singleton event bus that provides communication between different systems.
- * 
- * The EventBus enables communication between different systems (e.g., Input,
- * Physics, Scheduler) through event emission and dispatch. Instead of direct calls,
- * events are emitted and dispatched to listeners at defined execution times.
- * 
+ * @brief An event bus that provides communication between different systems.
+ *
+ * An EventBus enables communication between different systems through event emission
+ * and dispatch, instead of direct calls between them. An application is expected to
+ * own as many EventBus instances as it needs (e.g. one per phase of its own update
+ * loop) and to call execute() on each at the point in that loop where its queued
+ * events should be dispatched.
+ *
  * Key Features:
  * - Type-safe event emission using templates
- * - Priority-based listener execution 
- * - Deferred event execution at specific times
- * - FIFO event processing per execution time
- * 
+ * - Priority-based listener execution
+ * - Either deferred (queued) or immediate event execution
+ * - FIFO event processing
+ *
  * Usage:
  * \code
- * // Emit an event to be executed later
- * EventBus::getInstance().emit(MyEvent{data}, EventExecuteTime::POST_PHYSICS);
- * 
- * // Execute all queued events for a specific time
- * EventBus::getInstance().execute(EventExecuteTime::POST_PHYSICS);
+ * // Emit an event to be executed on the next execute() call
+ * bus.emit(MyEvent{data});
+ *
+ * // Emit an event to be dispatched immediately, bypassing the queue
+ * bus.emitNow(MyEvent{data});
+ *
+ * // Execute all queued events
+ * bus.execute();
  * \endcode
- * 
+ *
  * @note The correctness of the system depends on calling execute() at the appropriate times.
  */
 class EventBus {
 public:
     /**
-     * @brief Get the singleton instance of EventBus.
-     * @return Reference to the EventBus singleton instance.
-     */
-    static EventBus& getInstance();
-
-    /**
-     * @brief Emit an event to be executed at the specified time.
-     * 
-     * Events are wrapped into type-erased Event objects and queued for execution
-     * at the specified time. If execute_time is NOW, the event is dispatched immediately.
+     * @brief Emit an event to be executed on the next execute() call.
+     *
+     * Events are wrapped into type-erased Event objects and queued for execution.
      * If no listeners are registered for this event type, the event is discarded.
      *
-     * @note If an event is called with EventExecuteTime::NOW, then the listeners lock would be acquired. Otherwise,
-     * the events lock is acquired via a `executeNow` call.
-     * 
      * @tparam T The event type (any class can be used as an event).
      * @param event The event instance to emit.
-     * @param execute_time When to execute the event (NOW, PRE_INPUT, PRE_PHYSICS, POST_PHYSICS).
      */
     template<typename T>
-    void emit(T event, EventExecuteTime execute_time) {
-        emit(Event{event, execute_time});
+    void emit(T event) {
+        emit(Event{event});
     }
 
     /**
-     * @brief Execute all queued events for the specified execution time.
-     * 
+     * @brief Emit an event and dispatch it immediately, bypassing the queue.
+     *
+     * @tparam T The event type (any class can be used as an event).
+     * @param event The event instance to emit.
+     */
+    template<typename T>
+    void emitNow(T event) {
+        executeNow(Event{event});
+    }
+
+    /**
+     * @brief Execute all queued events.
+     *
      * Events are processed in FIFO order. For each event, listeners are called
      * according to their ListenerPriority: LOWEST → LOW → NORMAL → HIGH → HIGHEST → MONITOR.
      *
      * @note Acquires event and listener locks. But doesn't hold any locks when a listener is called.
-     * 
-     * @param time The execution time for which to process events.
      */
-    void execute(EventExecuteTime time);
+    void execute();
 
     /**
      * @brief Register a listener to receive events.
-     * 
+     *
      * This method is typically called automatically from the Listener constructor.
-     * 
+     *
      * @param listener The listener to register.
      */
     void registerListener(Listener listener);
@@ -96,8 +98,8 @@ public:
     void clear();
 
 private:
-    /** @brief Events queued by execution time. */
-    std::unordered_map<EventExecuteTime, std::queue<Event>> events_by_execution;
+    /** @brief Queued events, to be processed on the next execute() call. */
+    std::queue<Event> events;
 
     /** @brief Listeners organized by event type and sorted by priority. */
     std::unordered_map<std::type_index, std::multiset<Listener, ListenerComparator>> listeners;

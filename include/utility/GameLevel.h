@@ -39,9 +39,11 @@ inline fs::path resolveRelative(const fs::path& baseFile, const std::string& rel
 }
 
 
+class EventBus;
+
 class GameLevel {
 public:
-    explicit GameLevel(CollisionsHandler& collisions_handler, SoundManager<SoundEffect>& sound_manager);
+    explicit GameLevel(CollisionsHandler& collisions_handler, SoundManager<SoundEffect>& sound_manager, EventBus& post_physics_bus);
 
     void load(const std::string& path);
 private:
@@ -49,6 +51,7 @@ private:
     std::vector<Tileset> tilesets;
     CollisionsHandler& collisions_handler;
     SoundManager<SoundEffect>& sound_manager;
+    EventBus& post_physics_bus;
 };
 
 

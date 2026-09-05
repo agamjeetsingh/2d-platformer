@@ -14,6 +14,8 @@
 #include <unordered_map>
 #include "../2d/CollisionsHandler.h"
 
+class EventBus;
+
 namespace eng::d3 {
 
     struct IncompleteCollision {
@@ -61,7 +63,7 @@ namespace eng::d3 {
 
     class CollisionsHandler {
     public:
-        CollisionsHandler();
+        explicit CollisionsHandler(EventBus& post_physics_bus);
 
         /**
          * @brief A const function that gives all the registered collider bodies.
@@ -130,6 +132,8 @@ namespace eng::d3 {
         SpacialHashMap spacial_map;
 
         ContactsPtrHashMap next_frame_contacts;
+
+        EventBus& post_physics_bus;
 
         void buildSpatialMap();
 

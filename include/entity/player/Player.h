@@ -21,11 +21,12 @@
 
 class ContactsHandler;
 struct PlayerOnGround;
+class EventBus;
 
 class Player final : public CollidableObject {
 public:
     explicit Player(std::vector<sf::FloatRect> uncrouched_hitbox, std::vector<sf::FloatRect> crouched_hitbox, SoundManager<SoundEffect>& sound_manager,
-        sf::Vector2f position = {0, 0});
+        EventBus& post_physics_bus, EventBus& now_bus, sf::Vector2f position = {0, 0});
 
     static constexpr float MAX_STAMINA = 110;
     static constexpr float JUMP_GRACE_COYOTE_TIME = 0.1; // In seconds

@@ -4,46 +4,38 @@
 
 #ifndef EVENT_H
 #define EVENT_H
-#include <functional>
+#include <memory>
 #include <typeindex>
 
-#include "EventExecuteTime.h"
-#include <memory>
-
 /**
- * @brief A type-erased container for events with execution timing information.
- * 
+ * @brief A type-erased container for events.
+ *
  * The Event class wraps any event type into a type-erased container while preserving
- * type information through std::type_index. This allows the EventBus to store and
+ * type information through std::type_index. This allows an EventBus to store and
  * dispatch events of different types in a unified manner.
- * 
+ *
  * Key Features:
  * - Type erasure with type safety through std::type_index
  * - Type checking with getIf<T>() and is<T>()
- * - Execution time scheduling
  * - Shared ownership of event data
  */
 class Event {
 public:
     /**
      * @brief Construct an Event from any event type.
-     * 
+     *
      * @tparam T The concrete event type.
      * @param event The event instance to wrap.
-     * @param execute_time When this event should be executed.
      */
     template <typename T>
-    explicit Event(T event, EventExecuteTime execute_time) : type_index(typeid(event)), execute_time(execute_time), meta_data(std::make_shared<GeneralEvent<T>>(std::move(event))) {}
+    explicit Event(T event) : type_index(typeid(event)), meta_data(std::make_shared<GeneralEvent<T>>(std::move(event))) {}
 
     /** @brief The runtime type information of the wrapped event. */
     const std::type_index type_index;
-    
-    /** @brief When this event should be executed. */
-    const EventExecuteTime execute_time;
 
     /**
      * @brief Safely cast the event to the specified type.
-     * 
+     *
      * @tparam EventType The type to cast to.
      * @return Pointer to the event data if the cast is valid, nullptr otherwise.
      */
@@ -56,7 +48,7 @@ public:
 
     /**
      * @brief Check if this event is of the specified type.
-     * 
+     *
      * @tparam EventType The type to check against.
      * @return true if the event is of type EventType, false otherwise.
      */
@@ -72,7 +64,7 @@ private:
     struct GeneralEventBase {
         virtual ~GeneralEventBase() = default;
     };
-    
+
     /**
      * @brief Concrete implementation for storing events of type EventType.
      * @tparam EventType The concrete event type being stored.
@@ -84,7 +76,7 @@ private:
          * @param data The event data to store.
          */
         GeneralEvent(EventType data) : data(std::move(data)) {}
-        
+
         /** @brief The actual event data. */
         EventType data;
     };

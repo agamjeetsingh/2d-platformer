@@ -13,9 +13,11 @@
 #include "utility/EmptyTextures.h"
 #include "utility/GameRender.h"
 
+class EventBus;
+
 class DashCrystal: public CollidableObject {
 public:
-    explicit DashCrystal(sf::Vector2f position, SoundManager<SoundEffect>& sound_manager);
+    explicit DashCrystal(sf::Vector2f position, SoundManager<SoundEffect>& sound_manager, EventBus& post_physics_bus);
 
     bool canCollideWith(const CollidableObject &, Collision collision) const override;
 
