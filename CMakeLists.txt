@@ -26,6 +26,22 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glm)
 
+option(BUILD_BENCHMARKS "Build the Google Benchmark performance suite (benchmarks/)" ${PROJECT_IS_TOP_LEVEL})
+
+if(BUILD_BENCHMARKS)
+    set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+    set(BENCHMARK_ENABLE_INSTALL OFF CACHE BOOL "" FORCE)
+    set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE BOOL "" FORCE)
+    set(BENCHMARK_ENABLE_WERROR OFF CACHE BOOL "" FORCE)
+
+    FetchContent_Declare(
+        googlebenchmark
+        GIT_REPOSITORY https://github.com/google/benchmark.git
+        GIT_TAG v1.9.1
+    )
+    FetchContent_MakeAvailable(googlebenchmark)
+endif()
+
 find_package(glfw3 REQUIRED)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -166,9 +182,14 @@ endif() # End of PROJECT_IS_TOP_LEVEL
 
 add_library(game_lib STATIC ${GAME_SOURCES})
 
-target_include_directories(game_lib PUBLIC 
+target_include_directories(game_lib PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
 link_game_libraries(game_lib)
+
+if(BUILD_BENCHMARKS)
+    add_executable(benchmarks benchmarks/CollisionBenchmark.cpp)
+    target_link_libraries(benchmarks PRIVATE game_lib benchmark::benchmark)
+endif()
